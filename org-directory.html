@@ -29,12 +29,16 @@ header { background: var(--accent); padding: 20px 32px; display: flex; align-ite
 /* ADMIN BAR */
 #admin-bar { display: none; background: #fffbf0; border-bottom: 2px solid var(--admin); padding: 10px 32px; gap: 10px; align-items: center; flex-wrap: wrap; }
 #admin-bar.visible { display: flex; }
-#admin-bar span { font-family: var(--mono); font-size: 11px; color: #a07000; }
-.bar-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border-radius: 4px; border: 1px solid; cursor: pointer; transition: all .15s; }
-.bar-btn.export { border-color: #2a2825; background: #2a2825; color: #fff; }
-.bar-btn.export:hover { background: #1a1917; }
+.bar-label { font-family: var(--mono); font-size: 11px; color: #a07000; flex: 1; }
+.save-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3B6D11; margin-right: 5px; opacity: 0; transition: opacity .3s; vertical-align: middle; }
+.save-dot.show { opacity: 1; }
+.bar-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border-radius: 4px; border: 1px solid; cursor: pointer; transition: all .15s; white-space: nowrap; }
 .bar-btn.add-team { border-color: var(--border-strong); background: transparent; color: var(--muted); }
 .bar-btn.add-team:hover { background: var(--border); color: var(--text); }
+.bar-btn.lock { border-color: var(--border-strong); background: transparent; color: var(--muted); }
+.bar-btn.lock:hover { background: var(--border); color: var(--text); }
+.bar-btn.reset-data { border-color: #f0c0c0; background: transparent; color: #c03030; }
+.bar-btn.reset-data:hover { background: #fde8e8; }
 
 /* CONTROLS */
 .controls { padding: 14px 32px; display: flex; gap: 10px; flex-wrap: wrap; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 9; }
@@ -61,7 +65,6 @@ main { padding: 24px 32px; }
 .team-badge { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; }
 .chevron { font-size: 10px; color: var(--faint); transition: transform .2s; flex-shrink: 0; cursor: pointer; }
 .chevron.open { transform: rotate(90deg); }
-/* admin team controls */
 .team-admin-btns { display: none; align-items: center; gap: 6px; }
 .admin-mode .team-admin-btns { display: flex; }
 .t-btn { font-family: var(--mono); font-size: 10px; padding: 4px 9px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; }
@@ -71,7 +74,6 @@ main { padding: 24px 32px; }
 .t-btn.hide-team { border-color: #fad090; color: #a07000; }
 .t-btn.hide-team:hover { background: #fff3cc; }
 .team-hidden-badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 99px; background: #f5f0e0; color: #a07000; border: 1px solid #f0d880; }
-/* reorder arrows */
 .t-btn.reorder { padding: 4px 7px; font-size: 11px; line-height: 1; }
 .t-btn.reorder:disabled { opacity: .25; cursor: default; background: transparent; }
 
@@ -113,18 +115,20 @@ main { padding: 24px 32px; }
 /* FOOTER */
 footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 10px; color: var(--faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
-/* MODAL */
+/* MODALS */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
 .modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: 8px; border: 1px solid var(--border); padding: 24px; width: 360px; max-width: 90vw; box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+.modal { background: var(--surface); border-radius: 8px; border: 1px solid var(--border); padding: 24px; width: 360px; max-width: 90vw; }
 .modal h3 { font-size: 14px; font-weight: 500; margin-bottom: 18px; color: var(--text); }
 .field { margin-bottom: 14px; }
 .field label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
-.field input[type="text"], .field select { width: 100%; padding: 8px 10px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); outline: none; }
+.field input[type="text"], .field input[type="password"], .field select { width: 100%; padding: 8px 10px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); outline: none; }
+.field input[type="password"] { font-family: var(--mono); letter-spacing: .1em; }
 .field input:focus, .field select:focus { border-color: var(--border-strong); }
 .field.checkbox-field { display: flex; align-items: center; gap: 8px; }
 .field.checkbox-field label { margin: 0; font-size: 12px; text-transform: none; letter-spacing: 0; cursor: pointer; }
 .field.checkbox-field input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
+.field-error { font-family: var(--mono); font-size: 11px; color: #c03030; margin-top: 5px; min-height: 14px; }
 .modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: space-between; }
 .modal-actions .left { display: flex; gap: 8px; }
 .m-btn { font-family: var(--mono); font-size: 11px; padding: 8px 16px; border-radius: 4px; border: 1px solid; cursor: pointer; }
@@ -135,9 +139,12 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
 .m-btn.delete { border-color: #f0c0c0; color: #c03030; background: transparent; }
 .m-btn.delete:hover { background: #fde8e8; }
 
+/* PASSWORD MODAL specifics */
+#pwModal .modal { width: 300px; }
+#pwModal p { font-size: 12px; color: var(--muted); font-family: var(--mono); margin-top: -10px; margin-bottom: 18px; }
+
 @media (max-width: 600px) {
-  header, .controls, main, footer { padding-left: 16px; padding-right: 16px; }
-  #admin-bar { padding-left: 16px; padding-right: 16px; }
+  header, .controls, main, footer, #admin-bar { padding-left: 16px; padding-right: 16px; }
   .team-sub { display: none; }
 }
 </style>
@@ -156,9 +163,13 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
 </header>
 
 <div id="admin-bar">
-  <span>✦ edit mode — click any card to edit</span>
+  <span class="bar-label">
+    <span class="save-dot" id="saveDot"></span>
+    edit mode — click any card to edit
+  </span>
   <button class="bar-btn add-team" onclick="openAddTeam()">+ Add Team</button>
-  <button class="bar-btn export" onclick="exportJSON()">↓ Export roster.json</button>
+  <button class="bar-btn lock" onclick="lockAdmin()">Lock</button>
+  <button class="bar-btn reset-data" onclick="resetToDefault()">Reset to Default</button>
 </div>
 
 <div class="controls">
@@ -179,6 +190,23 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
   <span>gm-request-management / org-directory.html</span>
   <span id="footer-date"></span>
 </footer>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="pwModal">
+  <div class="modal">
+    <h3>Edit Mode</h3>
+    <p>Enter password to unlock</p>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="pw-input" onkeydown="if(event.key==='Enter')checkPassword()">
+    </div>
+    <div class="field-error" id="pw-error"></div>
+    <div class="modal-actions">
+      <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
+      <button class="m-btn save" onclick="checkPassword()">Unlock</button>
+    </div>
+  </div>
+</div>
 
 <!-- Edit Member Modal -->
 <div class="modal-overlay" id="editModal">
@@ -205,7 +233,7 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
     <div class="modal-actions">
       <div class="left">
         <button class="m-btn cancel" onclick="closeModal()">Cancel</button>
-        <button class="m-btn delete" id="deleteBtn" onclick="deleteMember()">Remove</button>
+        <button class="m-btn delete" onclick="deleteMember()">Remove</button>
       </div>
       <button class="m-btn save" onclick="saveMember()">Save</button>
     </div>
@@ -270,6 +298,11 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
 </div>
 
 <script>
+// ── CONFIG — change password here ────────────────────────────
+const ADMIN_PASSWORD = 'greasemonkeys';
+const STORAGE_KEY = 'gm-directory-roster';
+
+// ── COLOR MAP ─────────────────────────────────────────────────
 const COLOR_MAP = {
   blue:   { dot:"#378ADD", badgeBg:"#E6F1FB", badgeText:"#185FA5" },
   green:  { dot:"#639922", badgeBg:"#EAF3DE", badgeText:"#3B6D11" },
@@ -281,56 +314,91 @@ const COLOR_MAP = {
   red:    { dot:"#E24B4A", badgeBg:"#FCEBEB", badgeText:"#A32D2D" },
 };
 
+// ── DEFAULT ROSTER (source of truth if localStorage is empty) ─
+const DEFAULT_ROSTER = {"teams":[{"id":"marketing","label":"Marketing","visible":true,"dot":"#378ADD","badgeBg":"#E6F1FB","badgeText":"#185FA5","members":[{"name":"Richard Prince","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Tina Teschner","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Matt George","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Chandler Warrick","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Camille Bunch","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Jacob Reinmiller","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Sam Curbelo","role":"Marketer","teamNum":"","isLeader":false,"visible":true}]},{"id":"elp","label":"ELP System","visible":false,"dot":"#EF9F27","badgeBg":"#FAEEDA","badgeText":"#854F0B","members":[{"name":"ELP API_User","role":"System","teamNum":"","isLeader":false,"visible":true},{"name":"CRM Fusion","role":"System","teamNum":"","isLeader":false,"visible":true}]},{"id":"financial","label":"Financial Services","visible":true,"dot":"#1D9E75","badgeBg":"#E1F5EE","badgeText":"#0F6E56","members":[{"name":"Danielle Bothe","role":"Finance","teamNum":"","isLeader":true,"visible":true}]},{"id":"operations","label":"Sales Operations","visible":false,"dot":"#D85A30","badgeBg":"#FAECE7","badgeText":"#993C1D","members":[{"name":"Karlee Hildebrand","role":"AD","teamNum":"","isLeader":true,"visible":true},{"name":"Lena Kelly","role":"AD","teamNum":"","isLeader":false,"visible":true}]},{"id":"enablement","label":"Sales Enablement","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Amanda Martin","role":"Enablement","teamNum":"","isLeader":true,"visible":true}]},{"id":"acquisition","label":"Acquisition Sales","visible":true,"dot":"#7F77DD","badgeBg":"#EEEDFE","badgeText":"#534AB7","members":[{"name":"Chandler Gaines","role":"Leader","teamNum":"","isLeader":true,"visible":true},{"name":"Alex Shepherd","role":"Leader","teamNum":"","isLeader":true,"visible":true},{"name":"Zac Karr","role":"AD","teamNum":"1","isLeader":false,"visible":true},{"name":"John Markle","role":"AD","teamNum":"2","isLeader":false,"visible":true},{"name":"Aubrey Blinkley","role":"AD","teamNum":"3","isLeader":false,"visible":true},{"name":"Julie Butcher","role":"AE","teamNum":"1","isLeader":false,"visible":true},{"name":"Halli Smith","role":"MRR","teamNum":"1","isLeader":false,"visible":true},{"name":"Hayes Holland","role":"AE","teamNum":"2","isLeader":false,"visible":true},{"name":"Kristin Pope","role":"AE","teamNum":"2","isLeader":false,"visible":true},{"name":"Brian Ward","role":"MRR","teamNum":"2","isLeader":false,"visible":true},{"name":"Conor Wiley","role":"SDR","teamNum":"2","isLeader":false,"visible":true},{"name":"Jacob Stone","role":"SDR","teamNum":"2","isLeader":false,"visible":true},{"name":"Rylan Wilisford","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Johnny Drennan","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Caitlin Hogan","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Anna Wood","role":"MRR","teamNum":"3","isLeader":false,"visible":true},{"name":"Jalen Rogers","role":"Leader","teamNum":"3","isLeader":false,"visible":true},{"name":"Dalton Walker","role":"SDR","teamNum":"3","isLeader":false,"visible":true},{"name":"Autumn Hampton","role":"SDR","teamNum":"3","isLeader":false,"visible":true}]},{"id":"coaching","label":"Coaching","visible":true,"dot":"#D4537E","badgeBg":"#FBEAF0","badgeText":"#993556","members":[{"name":"Lacy Bell","role":"AD","teamNum":"1","isLeader":true,"visible":true},{"name":"Daniel McKinnon","role":"AD","teamNum":"1","isLeader":true,"visible":true},{"name":"Scott Lerman","role":"AD","teamNum":"2","isLeader":true,"visible":true},{"name":"Ryan Puhr","role":"AD","teamNum":"3-5","isLeader":true,"visible":true},{"name":"Ashley Cook","role":"Coach","teamNum":"1","isLeader":false,"visible":true},{"name":"Cynthia Navarro","role":"Coach","teamNum":"1","isLeader":false,"visible":true},{"name":"Conner Brooke Binkley","role":"AD","teamNum":"2","isLeader":false,"visible":true},{"name":"Justin Nguyen","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Kevin Dunn","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Sarah Francis","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Danae Hall","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Colin Bellios","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Tori Wheeler","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Angelica Dotson","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Katrien Shaw","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Emily Cummings","role":"Coach","teamNum":"5","isLeader":false,"visible":true},{"name":"David LaBahn","role":"Coach","teamNum":"5","isLeader":false,"visible":true}]},{"id":"relationship","label":"Relationship Management","visible":true,"dot":"#E24B4A","badgeBg":"#FCEBEB","badgeText":"#A32D2D","members":[{"name":"Jordan Farley","role":"Leader","teamNum":"","isLeader":true,"visible":true}]},{"id":"advocate","label":"Customer Advocate","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Ramsey Trusted","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Jessica Ross","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Jessica Bissett","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Julie Goward","role":"Advocate","teamNum":"","isLeader":false,"visible":true}]}]};
+
+// ── STATE ─────────────────────────────────────────────────────
 let roster = { teams: [] };
 let adminMode = false;
 let collapsed = {};
 let editingTeamId = null;
 let editingMemberIdx = null;
 let addingToTeamId = null;
+let renamingTeamId = null;
+let saveDotTimer = null;
 
-// ── Load roster.json, fall back to embedded default ──────────
-async function init() {
-  try {
-    const res = await fetch('roster.json');
-    if (!res.ok) throw new Error();
-    roster = await res.json();
-  } catch {
-    // roster.json not found — use embedded default (populated below)
-    roster = EMBEDDED_ROSTER;
-  }
+// ── INIT ──────────────────────────────────────────────────────
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  roster = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_ROSTER));
   buildFilter();
   render();
   document.getElementById('footer-date').textContent =
     'updated ' + new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
 
+// ── PERSIST ───────────────────────────────────────────────────
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(roster));
+  const dot = document.getElementById('saveDot');
+  dot.classList.add('show');
+  clearTimeout(saveDotTimer);
+  saveDotTimer = setTimeout(() => dot.classList.remove('show'), 1800);
+}
+
+// ── PASSWORD ──────────────────────────────────────────────────
+function toggleAdmin() {
+  if (adminMode) {
+    lockAdmin();
+  } else {
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-error').textContent = '';
+    document.getElementById('pwModal').classList.add('open');
+    setTimeout(() => document.getElementById('pw-input').focus(), 50);
+  }
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === ADMIN_PASSWORD) {
+    document.getElementById('pwModal').classList.remove('open');
+    adminMode = true;
+    document.getElementById('adminToggle').classList.add('active');
+    document.getElementById('admin-bar').classList.add('visible');
+    document.body.classList.add('admin-mode');
+    render();
+  } else {
+    document.getElementById('pw-error').textContent = 'incorrect password';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function lockAdmin() {
+  adminMode = false;
+  document.getElementById('adminToggle').classList.remove('active');
+  document.getElementById('admin-bar').classList.remove('visible');
+  document.body.classList.remove('admin-mode');
+  render();
+}
+
+function resetToDefault() {
+  if (!confirm('Reset directory to default data? This will clear all your changes.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  roster = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
+  buildFilter();
+  render();
+}
+
+// ── FILTER ────────────────────────────────────────────────────
 function buildFilter() {
   const sel = document.getElementById('filter');
   sel.innerHTML = '<option value="">All teams</option>';
   roster.teams.forEach(t => {
     const o = document.createElement('option');
-    o.value = t.id;
-    o.textContent = t.label;
+    o.value = t.id; o.textContent = t.label;
     sel.appendChild(o);
   });
-}
-
-function slug(name) {
-  return name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-}
-function initials(name) {
-  return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
-}
-function headshotPath(name) {
-  return `headshots/${name.toLowerCase().replace(/\s+/g,'-')}.jpg`;
-}
-
-function toggleAdmin() {
-  adminMode = !adminMode;
-  document.getElementById('adminToggle').classList.toggle('active', adminMode);
-  document.getElementById('admin-bar').classList.toggle('visible', adminMode);
-  document.body.classList.toggle('admin-mode', adminMode);
-  render();
 }
 
 function clearFilters() {
@@ -339,10 +407,12 @@ function clearFilters() {
   render();
 }
 
-function toggleCollapse(id) {
-  collapsed[id] = !collapsed[id];
-  render();
-}
+// ── HELPERS ───────────────────────────────────────────────────
+function slug(name) { return name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''); }
+function initials(name) { return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+function headshotPath(name) { return `headshots/${name.toLowerCase().replace(/\s+/g,'-')}.jpg`; }
+
+function toggleCollapse(id) { collapsed[id] = !collapsed[id]; render(); }
 
 // ── RENDER ────────────────────────────────────────────────────
 function render() {
@@ -367,7 +437,6 @@ function render() {
     const leadText = leaders.length
       ? leaders.slice(0,2).join(', ') + (leaders.length > 2 ? ` +${leaders.length-2} more` : '')
       : 'No leader set';
-
     const hiddenBadge = (!team.visible && adminMode)
       ? `<span class="team-hidden-badge">hidden</span>` : '';
 
@@ -393,10 +462,10 @@ function render() {
       <div class="cards ${isOpen ? '' : 'hidden'}">`;
 
     if (members.length === 0 && adminMode) {
-      html += `<div class="card" style="color:var(--faint);font-size:12px;font-family:var(--mono);">No members</div>`;
+      html += `<div class="card" style="color:var(--faint);font-size:12px;font-family:var(--mono);">No members yet</div>`;
     }
 
-    members.forEach((m, idx) => {
+    members.forEach(m => {
       const realIdx = team.members.indexOf(m);
       const leaderIcon = m.isLeader ? `<span class="leader-star">★</span>` : '';
       const metaParts = [m.role, m.teamNum ? `Team ${m.teamNum}` : ''].filter(Boolean);
@@ -417,8 +486,7 @@ function render() {
 
     html += `<div class="add-member-row">
         <button onclick="openAddMember('${team.id}')">+ Add person to ${team.label}</button>
-      </div>
-    </div></div>`;
+      </div></div></div>`;
   });
 
   if (!html) html = `<div class="empty">// no results</div>`;
@@ -438,36 +506,19 @@ function moveTeam(teamId, dir) {
   if (newIdx < 0 || newIdx >= roster.teams.length) return;
   const [team] = roster.teams.splice(idx, 1);
   roster.teams.splice(newIdx, 0, team);
-  buildFilter(); render();
-}
-
-let renamingTeamId = null;
-function openRenameTeam(teamId) {
-  renamingTeamId = teamId;
-  const t = roster.teams.find(t => t.id === teamId);
-  document.getElementById('rt-name').value = t.label;
-  document.getElementById('renameTeamModal').classList.add('open');
-  setTimeout(() => document.getElementById('rt-name').select(), 50);
-}
-function saveRenameTeam() {
-  const name = document.getElementById('rt-name').value.trim();
-  if (!name) return;
-  const t = roster.teams.find(t => t.id === renamingTeamId);
-  t.label = name;
-  buildFilter(); closeModal(); render();
+  save(); buildFilter(); render();
 }
 
 function toggleTeamVisibility(teamId) {
   const t = roster.teams.find(t => t.id === teamId);
-  if (t) { t.visible = !t.visible; render(); }
+  if (t) { t.visible = !t.visible; save(); render(); }
 }
 
 function deleteTeam(teamId) {
   const t = roster.teams.find(t => t.id === teamId);
-  if (!t) return;
-  if (!confirm(`Delete "${t.label}" and all its members? This can't be undone.`)) return;
+  if (!t || !confirm(`Delete "${t.label}" and all its members?`)) return;
   roster.teams = roster.teams.filter(t => t.id !== teamId);
-  buildFilter(); render();
+  save(); buildFilter(); render();
 }
 
 function openAddTeam() {
@@ -478,24 +529,31 @@ function openAddTeam() {
 function saveNewTeam() {
   const name = document.getElementById('at-name').value.trim();
   if (!name) return;
-  const colorKey = document.getElementById('at-color').value;
-  const c = COLOR_MAP[colorKey];
-  roster.teams.push({
-    id: slug(name) + '-' + Date.now(),
-    label: name, visible: true,
-    dot: c.dot, badgeBg: c.badgeBg, badgeText: c.badgeText,
-    members: []
-  });
-  buildFilter(); closeModal(); render();
+  const c = COLOR_MAP[document.getElementById('at-color').value];
+  roster.teams.push({ id: slug(name)+'-'+Date.now(), label: name, visible: true, dot: c.dot, badgeBg: c.badgeBg, badgeText: c.badgeText, members: [] });
+  save(); buildFilter(); closeModal(); render();
+}
+
+function openRenameTeam(teamId) {
+  renamingTeamId = teamId;
+  const t = roster.teams.find(t => t.id === teamId);
+  document.getElementById('rt-name').value = t.label;
+  document.getElementById('renameTeamModal').classList.add('open');
+  setTimeout(() => document.getElementById('rt-name').select(), 50);
+}
+
+function saveRenameTeam() {
+  const name = document.getElementById('rt-name').value.trim();
+  if (!name) return;
+  roster.teams.find(t => t.id === renamingTeamId).label = name;
+  save(); buildFilter(); closeModal(); render();
 }
 
 // ── MEMBER ACTIONS ────────────────────────────────────────────
 function openEditMember(teamId, memberIdx) {
   if (!adminMode) return;
-  editingTeamId = teamId;
-  editingMemberIdx = memberIdx;
-  const team = roster.teams.find(t => t.id === teamId);
-  const m = team.members[memberIdx];
+  editingTeamId = teamId; editingMemberIdx = memberIdx;
+  const m = roster.teams.find(t => t.id === teamId).members[memberIdx];
   document.getElementById('modal-title').textContent = 'Edit — ' + m.name;
   document.getElementById('f-name').value = m.name;
   document.getElementById('f-role').value = m.role;
@@ -506,14 +564,13 @@ function openEditMember(teamId, memberIdx) {
 }
 
 function saveMember() {
-  const team = roster.teams.find(t => t.id === editingTeamId);
-  const m = team.members[editingMemberIdx];
-  m.name = document.getElementById('f-name').value.trim() || m.name;
-  m.role = document.getElementById('f-role').value;
+  const m = roster.teams.find(t => t.id === editingTeamId).members[editingMemberIdx];
+  m.name    = document.getElementById('f-name').value.trim() || m.name;
+  m.role    = document.getElementById('f-role').value;
   m.teamNum = document.getElementById('f-teamnum').value.trim();
-  m.isLeader = document.getElementById('f-leader').checked;
+  m.isLeader= document.getElementById('f-leader').checked;
   m.visible = document.getElementById('f-visible').checked;
-  closeModal(); render();
+  save(); closeModal(); render();
 }
 
 function deleteMember() {
@@ -521,7 +578,7 @@ function deleteMember() {
   const m = team.members[editingMemberIdx];
   if (!confirm(`Remove ${m.name} from ${team.label}?`)) return;
   team.members.splice(editingMemberIdx, 1);
-  closeModal(); render();
+  save(); closeModal(); render();
 }
 
 function openAddMember(teamId) {
@@ -536,16 +593,16 @@ function openAddMember(teamId) {
 function saveNewMember() {
   const name = document.getElementById('a-name').value.trim();
   if (!name) return;
-  const team = roster.teams.find(t => t.id === addingToTeamId);
-  team.members.push({
+  roster.teams.find(t => t.id === addingToTeamId).members.push({
     name, visible: true,
     role: document.getElementById('a-role').value,
     teamNum: document.getElementById('a-teamnum').value.trim(),
     isLeader: document.getElementById('a-leader').checked,
   });
-  closeModal(); render();
+  save(); closeModal(); render();
 }
 
+// ── MODALS ────────────────────────────────────────────────────
 function closeModal() {
   document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
   editingTeamId = editingMemberIdx = addingToTeamId = renamingTeamId = null;
@@ -555,21 +612,11 @@ document.querySelectorAll('.modal-overlay').forEach(o =>
 );
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
-  if (e.key === 'Enter' && document.getElementById('renameTeamModal').classList.contains('open')) saveRenameTeam();
+  if (e.key === 'Enter') {
+    if (document.getElementById('renameTeamModal').classList.contains('open')) saveRenameTeam();
+    if (document.getElementById('pwModal').classList.contains('open')) checkPassword();
+  }
 });
-
-// ── EXPORT ────────────────────────────────────────────────────
-function exportJSON() {
-  const json = JSON.stringify(roster, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'roster.json'; a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ── EMBEDDED DEFAULT (used when roster.json not yet in repo) ──
-const EMBEDDED_ROSTER = {"teams":[{"id":"marketing","label":"Marketing","visible":true,"dot":"#378ADD","badgeBg":"#E6F1FB","badgeText":"#185FA5","members":[{"name":"Richard Prince","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Tina Teschner","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Matt George","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Chandler Warrick","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Camille Bunch","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Jacob Reinmiller","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Sam Curbelo","role":"Marketer","teamNum":"","isLeader":false,"visible":true}]},{"id":"elp","label":"ELP System","visible":false,"dot":"#EF9F27","badgeBg":"#FAEEDA","badgeText":"#854F0B","members":[{"name":"ELP API_User","role":"System","teamNum":"","isLeader":false,"visible":true},{"name":"CRM Fusion","role":"System","teamNum":"","isLeader":false,"visible":true}]},{"id":"financial","label":"Financial Services","visible":true,"dot":"#1D9E75","badgeBg":"#E1F5EE","badgeText":"#0F6E56","members":[{"name":"Danielle Bothe","role":"Finance","teamNum":"","isLeader":true,"visible":true}]},{"id":"operations","label":"Sales Operations","visible":false,"dot":"#D85A30","badgeBg":"#FAECE7","badgeText":"#993C1D","members":[{"name":"Karlee Hildebrand","role":"AD","teamNum":"","isLeader":true,"visible":true},{"name":"Lena Kelly","role":"AD","teamNum":"","isLeader":false,"visible":true}]},{"id":"enablement","label":"Sales Enablement","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Amanda Martin","role":"Enablement","teamNum":"","isLeader":true,"visible":true}]},{"id":"acquisition","label":"Acquisition Sales","visible":true,"dot":"#7F77DD","badgeBg":"#EEEDFE","badgeText":"#534AB7","members":[{"name":"Chandler Gaines","role":"Leader","teamNum":"","isLeader":true,"visible":true},{"name":"Alex Shepherd","role":"Leader","teamNum":"","isLeader":true,"visible":true},{"name":"Zac Karr","role":"AD","teamNum":"1","isLeader":false,"visible":true},{"name":"John Markle","role":"AD","teamNum":"2","isLeader":false,"visible":true},{"name":"Aubrey Blinkley","role":"AD","teamNum":"3","isLeader":false,"visible":true},{"name":"Julie Butcher","role":"AE","teamNum":"1","isLeader":false,"visible":true},{"name":"Halli Smith","role":"MRR","teamNum":"1","isLeader":false,"visible":true},{"name":"Hayes Holland","role":"AE","teamNum":"2","isLeader":false,"visible":true},{"name":"Kristin Pope","role":"AE","teamNum":"2","isLeader":false,"visible":true},{"name":"Brian Ward","role":"MRR","teamNum":"2","isLeader":false,"visible":true},{"name":"Conor Wiley","role":"SDR","teamNum":"2","isLeader":false,"visible":true},{"name":"Jacob Stone","role":"SDR","teamNum":"2","isLeader":false,"visible":true},{"name":"Rylan Wilisford","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Johnny Drennan","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Caitlin Hogan","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Anna Wood","role":"MRR","teamNum":"3","isLeader":false,"visible":true},{"name":"Jalen Rogers","role":"Leader","teamNum":"3","isLeader":false,"visible":true},{"name":"Dalton Walker","role":"SDR","teamNum":"3","isLeader":false,"visible":true},{"name":"Autumn Hampton","role":"SDR","teamNum":"3","isLeader":false,"visible":true}]},{"id":"coaching","label":"Coaching","visible":true,"dot":"#D4537E","badgeBg":"#FBEAF0","badgeText":"#993556","members":[{"name":"Lacy Bell","role":"AD","teamNum":"1","isLeader":true,"visible":true},{"name":"Daniel McKinnon","role":"AD","teamNum":"1","isLeader":true,"visible":true},{"name":"Scott Lerman","role":"AD","teamNum":"2","isLeader":true,"visible":true},{"name":"Ryan Puhr","role":"AD","teamNum":"3-5","isLeader":true,"visible":true},{"name":"Ashley Cook","role":"Coach","teamNum":"1","isLeader":false,"visible":true},{"name":"Cynthia Navarro","role":"Coach","teamNum":"1","isLeader":false,"visible":true},{"name":"Conner Brooke Binkley","role":"AD","teamNum":"2","isLeader":false,"visible":true},{"name":"Justin Nguyen","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Kevin Dunn","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Sarah Francis","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Danae Hall","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Colin Bellios","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Tori Wheeler","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Angelica Dotson","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Katrien Shaw","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Emily Cummings","role":"Coach","teamNum":"5","isLeader":false,"visible":true},{"name":"David LaBahn","role":"Coach","teamNum":"5","isLeader":false,"visible":true}]},{"id":"relationship","label":"Relationship Management","visible":true,"dot":"#E24B4A","badgeBg":"#FCEBEB","badgeText":"#A32D2D","members":[{"name":"Jordan Farley","role":"Leader","teamNum":"","isLeader":true,"visible":true}]},{"id":"advocate","label":"Customer Advocate","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Ramsey Trusted","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Jessica Ross","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Jessica Bissett","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Julie Goward","role":"Advocate","teamNum":"","isLeader":false,"visible":true}]}]};
 
 init();
 </script>
