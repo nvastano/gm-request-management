@@ -1,0 +1,148 @@
+{
+  "teams": [
+    {
+      "id": "marketing",
+      "label": "Marketing",
+      "visible": true,
+      "dot": "#378ADD",
+      "badgeBg": "#E6F1FB",
+      "badgeText": "#185FA5",
+      "members": [
+        { "name": "Richard Prince",   "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Tina Teschner",    "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Matt George",      "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Chandler Warrick", "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Camille Bunch",    "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Jacob Reinmiller", "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Sam Curbelo",      "role": "Marketer",  "teamNum": "", "isLeader": false, "visible": true }
+      ]
+    },
+    {
+      "id": "elp",
+      "label": "ELP System",
+      "visible": false,
+      "dot": "#EF9F27",
+      "badgeBg": "#FAEEDA",
+      "badgeText": "#854F0B",
+      "members": [
+        { "name": "ELP API_User", "role": "System", "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "CRM Fusion",   "role": "System", "teamNum": "", "isLeader": false, "visible": true }
+      ]
+    },
+    {
+      "id": "financial",
+      "label": "Financial Services",
+      "visible": true,
+      "dot": "#1D9E75",
+      "badgeBg": "#E1F5EE",
+      "badgeText": "#0F6E56",
+      "members": [
+        { "name": "Danielle Bothe", "role": "Finance", "teamNum": "", "isLeader": true, "visible": true }
+      ]
+    },
+    {
+      "id": "operations",
+      "label": "Sales Operations",
+      "visible": false,
+      "dot": "#D85A30",
+      "badgeBg": "#FAECE7",
+      "badgeText": "#993C1D",
+      "members": [
+        { "name": "Karlee Hildebrand", "role": "AD", "teamNum": "", "isLeader": true,  "visible": true },
+        { "name": "Lena Kelly",        "role": "AD", "teamNum": "", "isLeader": false, "visible": true }
+      ]
+    },
+    {
+      "id": "enablement",
+      "label": "Sales Enablement",
+      "visible": true,
+      "dot": "#639922",
+      "badgeBg": "#EAF3DE",
+      "badgeText": "#3B6D11",
+      "members": [
+        { "name": "Amanda Martin", "role": "Enablement", "teamNum": "", "isLeader": true, "visible": true }
+      ]
+    },
+    {
+      "id": "acquisition",
+      "label": "Acquisition Sales",
+      "visible": true,
+      "dot": "#7F77DD",
+      "badgeBg": "#EEEDFE",
+      "badgeText": "#534AB7",
+      "members": [
+        { "name": "Chandler Gaines",  "role": "Leader", "teamNum": "",  "isLeader": true,  "visible": true },
+        { "name": "Alex Shepherd",    "role": "Leader", "teamNum": "",  "isLeader": true,  "visible": true },
+        { "name": "Zac Karr",         "role": "AD",     "teamNum": "1", "isLeader": false, "visible": true },
+        { "name": "John Markle",      "role": "AD",     "teamNum": "2", "isLeader": false, "visible": true },
+        { "name": "Aubrey Blinkley",  "role": "AD",     "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Julie Butcher",    "role": "AE",     "teamNum": "1", "isLeader": false, "visible": true },
+        { "name": "Halli Smith",      "role": "MRR",    "teamNum": "1", "isLeader": false, "visible": true },
+        { "name": "Hayes Holland",    "role": "AE",     "teamNum": "2", "isLeader": false, "visible": true },
+        { "name": "Kristin Pope",     "role": "AE",     "teamNum": "2", "isLeader": false, "visible": true },
+        { "name": "Brian Ward",       "role": "MRR",    "teamNum": "2", "isLeader": false, "visible": true },
+        { "name": "Conor Wiley",      "role": "SDR",    "teamNum": "2", "isLeader": false, "visible": true },
+        { "name": "Jacob Stone",      "role": "SDR",    "teamNum": "2", "isLeader": false, "visible": true },
+        { "name": "Rylan Wilisford",  "role": "AE",     "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Johnny Drennan",   "role": "AE",     "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Caitlin Hogan",    "role": "AE",     "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Anna Wood",        "role": "MRR",    "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Jalen Rogers",     "role": "Leader", "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Dalton Walker",    "role": "SDR",    "teamNum": "3", "isLeader": false, "visible": true },
+        { "name": "Autumn Hampton",   "role": "SDR",    "teamNum": "3", "isLeader": false, "visible": true }
+      ]
+    },
+    {
+      "id": "coaching",
+      "label": "Coaching",
+      "visible": true,
+      "dot": "#D4537E",
+      "badgeBg": "#FBEAF0",
+      "badgeText": "#993556",
+      "members": [
+        { "name": "Lacy Bell",             "role": "AD",    "teamNum": "1",   "isLeader": true,  "visible": true },
+        { "name": "Daniel McKinnon",       "role": "AD",    "teamNum": "1",   "isLeader": true,  "visible": true },
+        { "name": "Scott Lerman",          "role": "AD",    "teamNum": "2",   "isLeader": true,  "visible": true },
+        { "name": "Ryan Puhr",             "role": "AD",    "teamNum": "3-5", "isLeader": true,  "visible": true },
+        { "name": "Ashley Cook",           "role": "Coach", "teamNum": "1",   "isLeader": false, "visible": true },
+        { "name": "Cynthia Navarro",       "role": "Coach", "teamNum": "1",   "isLeader": false, "visible": true },
+        { "name": "Conner Brooke Binkley", "role": "AD",    "teamNum": "2",   "isLeader": false, "visible": true },
+        { "name": "Justin Nguyen",         "role": "Coach", "teamNum": "2",   "isLeader": false, "visible": true },
+        { "name": "Kevin Dunn",            "role": "Coach", "teamNum": "2",   "isLeader": false, "visible": true },
+        { "name": "Sarah Francis",         "role": "Coach", "teamNum": "2",   "isLeader": false, "visible": true },
+        { "name": "Danae Hall",            "role": "Coach", "teamNum": "3",   "isLeader": false, "visible": true },
+        { "name": "Colin Bellios",         "role": "Coach", "teamNum": "3",   "isLeader": false, "visible": true },
+        { "name": "Tori Wheeler",          "role": "Coach", "teamNum": "3",   "isLeader": false, "visible": true },
+        { "name": "Angelica Dotson",       "role": "Coach", "teamNum": "3",   "isLeader": false, "visible": true },
+        { "name": "Katrien Shaw",          "role": "Coach", "teamNum": "3",   "isLeader": false, "visible": true },
+        { "name": "Emily Cummings",        "role": "Coach", "teamNum": "5",   "isLeader": false, "visible": true },
+        { "name": "David LaBahn",          "role": "Coach", "teamNum": "5",   "isLeader": false, "visible": true }
+      ]
+    },
+    {
+      "id": "relationship",
+      "label": "Relationship Management",
+      "visible": true,
+      "dot": "#E24B4A",
+      "badgeBg": "#FCEBEB",
+      "badgeText": "#A32D2D",
+      "members": [
+        { "name": "Jordan Farley", "role": "Leader", "teamNum": "", "isLeader": true, "visible": true }
+      ]
+    },
+    {
+      "id": "advocate",
+      "label": "Customer Advocate",
+      "visible": true,
+      "dot": "#639922",
+      "badgeBg": "#EAF3DE",
+      "badgeText": "#3B6D11",
+      "members": [
+        { "name": "Ramsey Trusted",  "role": "Advocate", "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Jessica Ross",    "role": "Advocate", "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Jessica Bissett", "role": "Advocate", "teamNum": "", "isLeader": false, "visible": true },
+        { "name": "Julie Goward",    "role": "Advocate", "teamNum": "", "isLeader": false, "visible": true }
+      ]
+    }
+  ]
+}
