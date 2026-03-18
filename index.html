@@ -194,6 +194,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
     <div class="btn-row">
       <button class="btn btn-primary" onclick="goToAI()">Next — Generate User Story →</button>
+      <button class="btn btn-ghost" onclick="skipAI()">Skip — Submit without Jira story</button>
     </div>
   </div>
 
@@ -234,6 +235,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     </div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-ghost" onclick="skipAI()">Skip this step</button>
       <button class="btn btn-primary" id="next-to-review-btn" onclick="goTo(3)" disabled>Review & Submit →</button>
     </div>
   </div>
@@ -300,6 +302,19 @@ function goToAI() {
     alert('Please fill in all required fields before continuing.'); return;
   }
   goTo(2);
+  setTimeout(() => generateStory(), 100);
+}
+
+function skipAI() {
+  if (!selectedType || !selectedPriority || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-channel').value) {
+    alert('Please fill in all required fields before continuing.'); return;
+  }
+  // Clear AI fields and go straight to review
+  document.getElementById('ai-jira-title').value = '';
+  document.getElementById('ai-user-story').value = '';
+  document.getElementById('ai-acceptance').value = '';
+  document.getElementById('next-to-review-btn').disabled = false;
+  goTo(3);
 }
 
 async function generateStory() {
