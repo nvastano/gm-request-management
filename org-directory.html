@@ -71,6 +71,9 @@ main { padding: 24px 32px; }
 .t-btn.hide-team { border-color: #fad090; color: #a07000; }
 .t-btn.hide-team:hover { background: #fff3cc; }
 .team-hidden-badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 99px; background: #f5f0e0; color: #a07000; border: 1px solid #f0d880; }
+/* reorder arrows */
+.t-btn.reorder { padding: 4px 7px; font-size: 11px; line-height: 1; }
+.t-btn.reorder:disabled { opacity: .25; cursor: default; background: transparent; }
 
 /* CARDS */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; overflow: visible; margin-bottom: 8px; }
@@ -254,6 +257,18 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
   </div>
 </div>
 
+<!-- Rename Team Modal -->
+<div class="modal-overlay" id="renameTeamModal">
+  <div class="modal">
+    <h3>Rename Team</h3>
+    <div class="field"><label>Team Name</label><input type="text" id="rt-name"></div>
+    <div class="modal-actions">
+      <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
+      <button class="m-btn save" onclick="saveRenameTeam()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const COLOR_MAP = {
   blue:   { dot:"#378ADD", badgeBg:"#E6F1FB", badgeText:"#185FA5" },
@@ -336,7 +351,7 @@ function render() {
   const container = document.getElementById('main');
   let totalShown = 0, html = '';
 
-  roster.teams.forEach(team => {
+  roster.teams.forEach((team, teamIdx) => {
     if (f && team.id !== f) return;
     if (!adminMode && !team.visible) return;
 
@@ -366,6 +381,9 @@ function render() {
         ${hiddenBadge}
         <span class="team-badge" style="background:${team.badgeBg};color:${team.badgeText};">${members.filter(m=>m.visible).length}</span>
         <div class="team-admin-btns">
+          <button class="t-btn reorder" onclick="moveTeam('${team.id}',-1)" ${teamIdx===0?'disabled':''} title="Move up">▲</button>
+          <button class="t-btn reorder" onclick="moveTeam('${team.id}',1)" ${teamIdx===roster.teams.length-1?'disabled':''} title="Move down">▼</button>
+          <button class="t-btn" onclick="openRenameTeam('${team.id}')">Rename</button>
           <button class="t-btn hide-team" onclick="toggleTeamVisibility('${team.id}')">${team.visible ? 'Hide' : 'Show'}</button>
           <button class="t-btn" onclick="openAddMember('${team.id}')">+ Add</button>
           <button class="t-btn danger" onclick="deleteTeam('${team.id}')">Delete</button>
@@ -414,7 +432,30 @@ function render() {
 }
 
 // ── TEAM ACTIONS ──────────────────────────────────────────────
-function toggleTeamVisibility(teamId) {
+function moveTeam(teamId, dir) {
+  const idx = roster.teams.findIndex(t => t.id === teamId);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= roster.teams.length) return;
+  const [team] = roster.teams.splice(idx, 1);
+  roster.teams.splice(newIdx, 0, team);
+  buildFilter(); render();
+}
+
+let renamingTeamId = null;
+function openRenameTeam(teamId) {
+  renamingTeamId = teamId;
+  const t = roster.teams.find(t => t.id === teamId);
+  document.getElementById('rt-name').value = t.label;
+  document.getElementById('renameTeamModal').classList.add('open');
+  setTimeout(() => document.getElementById('rt-name').select(), 50);
+}
+function saveRenameTeam() {
+  const name = document.getElementById('rt-name').value.trim();
+  if (!name) return;
+  const t = roster.teams.find(t => t.id === renamingTeamId);
+  t.label = name;
+  buildFilter(); closeModal(); render();
+}
   const t = roster.teams.find(t => t.id === teamId);
   if (t) { t.visible = !t.visible; render(); }
 }
@@ -505,11 +546,15 @@ function saveNewMember() {
 
 function closeModal() {
   document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
-  editingTeamId = editingMemberIdx = addingToTeamId = null;
+  editingTeamId = editingMemberIdx = addingToTeamId = renamingTeamId = null;
 }
 document.querySelectorAll('.modal-overlay').forEach(o =>
   o.addEventListener('click', e => { if (e.target === o) closeModal(); })
 );
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter' && document.getElementById('renameTeamModal').classList.contains('open')) saveRenameTeam();
+});
 
 // ── EXPORT ────────────────────────────────────────────────────
 function exportJSON() {
