@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Squad Request Intake</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --border: #d6d3cc;
+  --border-dark: #b0aca2;
+  --accent: #1a1a2e;
+  --accent2: #c84b31;
+  --text: #1a1917;
+  --muted: #7a7570;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+html, body { min-height: 100vh; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  padding: 0;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+/* Header */
+.header {
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.header-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 12px;
+}
+
+.header-title {
+  font-size: 36px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.header-title strong { font-weight: 600; }
+
+.header-sub {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Section label */
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section { margin-bottom: 36px; }
+
+/* Fields */
+.field { margin-bottom: 20px; }
+
+label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+label .req { color: var(--accent2); margin-left: 2px; }
+
+input[type=text], input[type=date], input[type=url], select, textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 3px 3px 0 var(--accent);
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7570' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+select option { background: #fff; }
+
+textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Priority selector */
+.priority-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+.p-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.12s;
+  line-height: 1.3;
+}
+
+.p-btn:hover { border-color: var(--accent); color: var(--accent); }
+.p-btn .p-label { font-size: 10px; font-weight: 400; display: block; margin-top: 2px; }
+
+.p-btn.active-p1 { background: #fef2f2; border-color: #dc2626; color: #dc2626; box-shadow: 3px 3px 0 #dc2626; }
+.p-btn.active-p2 { background: #fffbeb; border-color: #d97706; color: #d97706; box-shadow: 3px 3px 0 #d97706; }
+.p-btn.active-p3 { background: #eff6ff; border-color: #2563eb; color: #2563eb; box-shadow: 3px 3px 0 #2563eb; }
+.p-btn.active-p4 { background: #f0fdf4; border-color: #16a34a; color: #16a34a; box-shadow: 3px 3px 0 #16a34a; }
+
+/* Type buttons */
+.type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+.t-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 14px 16px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  transition: all 0.12s;
+  text-align: left;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.t-btn:hover { border-color: var(--accent); color: var(--accent); }
+.t-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 3px 3px 0 var(--border-dark); }
+.t-btn .t-icon { font-size: 16px; }
+.t-btn .t-text { font-weight: 500; }
+.t-btn .t-sub { font-size: 10px; font-weight: 400; color: inherit; opacity: 0.7; display: block; margin-top: 2px; }
+
+/* Submit */
+.submit-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-submit {
+  background: var(--accent);
+  color: #fff;
+  border: 2px solid var(--accent);
+  padding: 14px 32px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-transform: uppercase;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: 4px 4px 0 var(--accent);
+}
+
+.btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.submit-note {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Status */
+.status {
+  display: none;
+  margin-top: 20px;
+  padding: 16px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  border-left: 3px solid;
+}
+.status.show { display: block; }
+.status.loading { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
+.status.success { border-color: #16a34a; background: #f0fdf4; color: #15803d; }
+.status.error { border-color: #dc2626; background: #fef2f2; color: #b91c1c; }
+
+/* Footer */
+.footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--border-dark);
+  letter-spacing: 0.08em;
+  display: flex; justify-content: space-between;
+}
+
+@media (max-width: 560px) {
+  .two-col { grid-template-columns: 1fr; }
+  .type-grid { grid-template-columns: 1fr 1fr; }
+  .priority-grid { grid-template-columns: repeat(4,1fr); }
+  .header-title { font-size: 28px; }
+}
+
+/* Fade in */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.wrap { animation: fadeUp 0.4s ease; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-tag">Salesforce Admin Squad · Request Intake</div>
+    <h1 class="header-title">Submit a <strong>Request</strong></h1>
+    <p class="header-sub">
+      Use this form to log incoming requests — bugs, enhancements, new builds, or projects.<br/>
+      Submissions go directly into the squad's Notion tracker.
+    </p>
+  </header>
+
+  <!-- REQUEST TYPE -->
+  <div class="section">
+    <div class="section-label">01 — Request Type</div>
+    <div class="field">
+      <label>What kind of request is this? <span class="req">*</span></label>
+      <div class="type-grid">
+        <button class="t-btn" onclick="setType('Bug / Issue', this)">
+          <span class="t-icon">🐛</span>
+          <span><span class="t-text">Bug / Issue</span><span class="t-sub">Something is broken or wrong</span></span>
+        </button>
+        <button class="t-btn" onclick="setType('Enhancement', this)">
+          <span class="t-icon">✨</span>
+          <span><span class="t-text">Enhancement</span><span class="t-sub">Improve something existing</span></span>
+        </button>
+        <button class="t-btn" onclick="setType('New Build', this)">
+          <span class="t-icon">🔨</span>
+          <span><span class="t-text">New Build</span><span class="t-sub">Build something new</span></span>
+        </button>
+        <button class="t-btn" onclick="setType('Project / Epic', this)">
+          <span class="t-icon">🗂️</span>
+          <span><span class="t-text">Project / Epic</span><span class="t-sub">Multi-ticket initiative</span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIORITY -->
+  <div class="section">
+    <div class="section-label">02 — Priority</div>
+    <div class="field">
+      <label>How urgent is this? <span class="req">*</span></label>
+      <div class="priority-grid">
+        <button class="p-btn" onclick="setPriority('P1', this)">P1<span class="p-label">Critical</span></button>
+        <button class="p-btn" onclick="setPriority('P2', this)">P2<span class="p-label">High</span></button>
+        <button class="p-btn" onclick="setPriority('P3', this)">P3<span class="p-label">Medium</span></button>
+        <button class="p-btn" onclick="setPriority('P4', this)">P4<span class="p-label">Low</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="section">
+    <div class="section-label">03 — Request Details</div>
+
+    <div class="field">
+      <label>Request Summary <span class="req">*</span></label>
+      <input type="text" id="f-summary" placeholder="One-line description of what you need" maxlength="200"/>
+    </div>
+
+    <div class="field">
+      <label>Problem Statement / Details <span class="req">*</span></label>
+      <textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>Requestor Name <span class="req">*</span></label>
+        <input type="text" id="f-requestor" placeholder="Your name"/>
+      </div>
+      <div class="field">
+        <label>Team / Department <span class="req">*</span></label>
+        <input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>How did you send this? <span class="req">*</span></label>
+        <select id="f-channel">
+          <option value="">— Select channel —</option>
+          <option>Jira Service Request</option>
+          <option>Email</option>
+          <option>Teams Message</option>
+          <option>Slack</option>
+          <option>Meeting / Verbal</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Needed By (optional)</label>
+        <input type="date" id="f-due"/>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Jira Ticket Link (if already created)</label>
+      <input type="url" id="f-jira" placeholder="https://your-org.atlassian.net/browse/..."/>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-row">
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit Request →</button>
+    <span class="submit-note">Goes directly to<br/>the squad's Notion tracker</span>
+  </div>
+  <div class="status" id="status"></div>
+
+  <footer class="footer">
+    <span>SQUAD OPS · REQUEST INTAKE</span>
+    <span id="date-footer"></span>
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById('date-footer').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'}).toUpperCase();
+
+  // ── REPLACE THIS with your deployed Cloudflare Worker URL ──
+  const WORKER_URL = 'YOUR_CLOUDFLARE_WORKER_URL';
+
+  let selectedType = '';
+  let selectedPriority = '';
+
+  function setType(val, el) {
+    selectedType = val;
+    document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function setPriority(val, el) {
+    selectedPriority = val;
+    document.querySelectorAll('.p-btn').forEach(b => {
+      b.className = 'p-btn';
+    });
+    el.classList.add('active-' + val.toLowerCase());
+  }
+
+  function showStatus(type, msg) {
+    const el = document.getElementById('status');
+    el.className = 'status show ' + type;
+    el.innerHTML = msg;
+  }
+
+  async function submitForm() {
+    const summary = document.getElementById('f-summary').value.trim();
+    const details = document.getElementById('f-details').value.trim();
+    const requestor = document.getElementById('f-requestor').value.trim();
+    const team = document.getElementById('f-team').value.trim();
+    const channel = document.getElementById('f-channel').value;
+    const due = document.getElementById('f-due').value;
+    const jira = document.getElementById('f-jira').value.trim();
+
+    if (!selectedType || !selectedPriority || !summary || !requestor || !team || !channel) {
+      showStatus('error', '⚠ Please complete all required fields (marked with *) before submitting.');
+      return;
+    }
+
+    if (WORKER_URL === 'YOUR_CLOUDFLARE_WORKER_URL') {
+      showStatus('error', '⚙ Worker URL not configured yet. See setup instructions.');
+      return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    showStatus('loading', '⟳ Submitting to Notion...');
+
+    try {
+      const res = await fetch(WORKER_URL + '/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          summary, details, requestor, team, channel,
+          type: selectedType,
+          priority: selectedPriority,
+          due: due || null,
+          jira: jira || null,
+          date: new Date().toISOString().split('T')[0]
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        showStatus('success', '✓ Request submitted successfully.<br/>The squad has been notified and your request is in the tracker.');
+        // Reset form
+        document.getElementById('f-summary').value = '';
+        document.getElementById('f-details').value = '';
+        document.getElementById('f-requestor').value = '';
+        document.getElementById('f-team').value = '';
+        document.getElementById('f-channel').value = '';
+        document.getElementById('f-due').value = '';
+        document.getElementById('f-jira').value = '';
+        selectedType = ''; selectedPriority = '';
+        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.p-btn').forEach(b => b.className = 'p-btn');
+      } else {
+        showStatus('error', '✗ Submission failed: ' + (data.error || 'Unknown error. Check worker logs.'));
+      }
+    } catch(e) {
+      showStatus('error', '✗ Could not reach the server. Check your Worker URL or try again.<br/><small>' + e.message + '</small>');
+    }
+
+    btn.disabled = false;
+  }
+</script>
+</body>
+</html>
