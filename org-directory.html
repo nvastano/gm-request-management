@@ -456,6 +456,8 @@ function saveRenameTeam() {
   t.label = name;
   buildFilter(); closeModal(); render();
 }
+
+function toggleTeamVisibility(teamId) {
   const t = roster.teams.find(t => t.id === teamId);
   if (t) { t.visible = !t.visible; render(); }
 }
