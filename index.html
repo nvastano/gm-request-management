@@ -334,6 +334,9 @@ async function generateStory() {
       })
     });
     const parsed = await res.json();
+    if (!res.ok || parsed.error) {
+      throw new Error(parsed.error || 'Worker returned error: ' + res.status);
+    }
     document.getElementById('ai-jira-title').value = parsed.jiraTitle || '';
     document.getElementById('ai-user-story').value = parsed.userStory || '';
     document.getElementById('ai-acceptance').value = parsed.acceptanceCriteria || '';
@@ -343,6 +346,11 @@ async function generateStory() {
   } catch(e) {
     document.getElementById('generating').classList.remove('show');
     document.getElementById('generate-btn-wrap').style.display = 'block';
+    document.getElementById('ai-output').classList.add('show');
+    document.getElementById('next-to-review-btn').disabled = false;
+    // Show error inline instead of alert
+    document.getElementById('ai-jira-title').value = '';
+    document.getElementById('ai-jira-title').placeholder = 'Generation failed: ' + e.message + ' — type manually or skip';
     alert('AI generation failed. You can type the fields manually.\n' + e.message);
     document.getElementById('ai-output').classList.add('show');
     document.getElementById('next-to-review-btn').disabled = false;
