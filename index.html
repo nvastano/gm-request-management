@@ -4,484 +4,384 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Squad Request Intake</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg: #f5f4f0;
-  --surface: #ffffff;
-  --border: #d6d3cc;
-  --border-dark: #b0aca2;
-  --accent: #1a1a2e;
-  --accent2: #c84b31;
-  --text: #1a1917;
-  --muted: #7a7570;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'IBM Plex Sans', sans-serif;
+  --bg: #1e2330; --bg2: #252b3b; --surface: #2d3448; --surface2: #343c52;
+  --border: #3d4760; --border-light: #4a5570;
+  --sky: #38bdf8; --sky-dim: #0ea5e9; --sky-glow: rgba(56,189,248,0.15); --sky-glow2: rgba(56,189,248,0.08);
+  --text: #e2e8f4; --text-dim: #94a3b8; --muted: #64748b;
+  --green: #34d399; --red: #f87171; --yellow: #fbbf24;
+  --sans: 'Plus Jakarta Sans', sans-serif; --mono: 'JetBrains Mono', monospace;
 }
-
 html, body { min-height: 100vh; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  padding: 0;
-}
-
-/* Grain overlay */
+body { background: var(--bg); color: var(--text); font-family: var(--sans); padding: 0; }
 body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  opacity: 0.5;
+  content: ''; position: fixed; inset: 0; z-index: 0;
+  background-image: linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none;
 }
-
-.wrap {
-  position: relative; z-index: 1;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 60px 24px 80px;
-}
-
-/* Header */
-.header {
-  margin-bottom: 48px;
-  padding-bottom: 28px;
-  border-bottom: 2px solid var(--accent);
-}
-
-.header-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent2);
-  margin-bottom: 12px;
-}
-
-.header-title {
-  font-size: 36px;
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  color: var(--accent);
-  line-height: 1.1;
-}
-
-.header-title strong { font-weight: 600; }
-
-.header-sub {
-  margin-top: 10px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-/* Section label */
-.section-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.section { margin-bottom: 36px; }
-
-/* Fields */
-.field { margin-bottom: 20px; }
-
-label {
-  display: block;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-label .req { color: var(--accent2); margin-left: 2px; }
-
-input[type=text], input[type=date], input[type=url], select, textarea {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0;
-  padding: 12px 14px;
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.15s;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 3px 3px 0 var(--accent);
-}
-
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7570' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  cursor: pointer;
-}
-
-select option { background: #fff; }
-
-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
-
+.wrap { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 52px 24px 80px; }
+.header { margin-bottom: 44px; }
+.header-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.eyebrow-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 8px var(--sky); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.eyebrow-text { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sky); }
+.header-title { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; margin-bottom: 10px; }
+.header-title span { color: var(--sky); }
+.header-sub { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+.steps-indicator { display: flex; align-items: center; margin-bottom: 36px; }
+.step-ind { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--muted); transition: color 0.3s; white-space: nowrap; }
+.step-ind.active { color: var(--sky); }
+.step-ind.done { color: var(--green); }
+.step-ind-num { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; transition: all 0.3s; }
+.step-ind.active .step-ind-num { border-color: var(--sky); background: var(--sky-glow); color: var(--sky); box-shadow: 0 0 12px rgba(56,189,248,0.3); }
+.step-ind.done .step-ind-num { border-color: var(--green); background: rgba(52,211,153,0.1); color: var(--green); }
+.step-connector { flex: 1; height: 1px; background: var(--border); margin: 0 12px; transition: background 0.3s; }
+.step-connector.done { background: var(--green); }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px; margin-bottom: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+.panel-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+.panel-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.field { margin-bottom: 18px; }
+label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+label .req { color: var(--sky); margin-left: 2px; }
+input[type=text], input[type=date], input[type=url], select, textarea { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; font-family: var(--sans); font-size: 14px; color: var(--text); outline: none; transition: border-color 0.15s, box-shadow 0.15s; -webkit-appearance: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--sky-dim); box-shadow: 0 0 0 3px var(--sky-glow); }
+input::placeholder, textarea::placeholder { color: var(--muted); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+select option { background: var(--surface2); }
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-/* Priority selector */
-.priority-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-
-.p-btn {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  padding: 12px 8px;
-  text-align: center;
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  transition: all 0.12s;
-  line-height: 1.3;
-}
-
-.p-btn:hover { border-color: var(--accent); color: var(--accent); }
-.p-btn .p-label { font-size: 10px; font-weight: 400; display: block; margin-top: 2px; }
-
-.p-btn.active-p1 { background: #fef2f2; border-color: #dc2626; color: #dc2626; box-shadow: 3px 3px 0 #dc2626; }
-.p-btn.active-p2 { background: #fffbeb; border-color: #d97706; color: #d97706; box-shadow: 3px 3px 0 #d97706; }
-.p-btn.active-p3 { background: #eff6ff; border-color: #2563eb; color: #2563eb; box-shadow: 3px 3px 0 #2563eb; }
-.p-btn.active-p4 { background: #f0fdf4; border-color: #16a34a; color: #16a34a; box-shadow: 3px 3px 0 #16a34a; }
-
-/* Type buttons */
-.type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-
-.t-btn {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  padding: 14px 16px;
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
-  transition: all 0.12s;
-  text-align: left;
-  display: flex; align-items: center; gap: 10px;
-}
-
-.t-btn:hover { border-color: var(--accent); color: var(--accent); }
-.t-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 3px 3px 0 var(--border-dark); }
-.t-btn .t-icon { font-size: 16px; }
-.t-btn .t-text { font-weight: 500; }
-.t-btn .t-sub { font-size: 10px; font-weight: 400; color: inherit; opacity: 0.7; display: block; margin-top: 2px; }
-
-/* Submit */
-.submit-row {
-  display: flex; align-items: center; gap: 16px;
-  margin-top: 40px;
-  padding-top: 28px;
-  border-top: 1px solid var(--border);
-}
-
-.btn-submit {
-  background: var(--accent);
-  color: #fff;
-  border: 2px solid var(--accent);
-  padding: 14px 32px;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: all 0.12s;
-  text-transform: uppercase;
-}
-
-.btn-submit:hover:not(:disabled) {
-  background: transparent;
-  color: var(--accent);
-  box-shadow: 4px 4px 0 var(--accent);
-}
-
-.btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
-
-.submit-note {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* Status */
-.status {
-  display: none;
-  margin-top: 20px;
-  padding: 16px 18px;
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.7;
-  border-left: 3px solid;
-}
+.type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.t-btn { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.15s; text-align: left; }
+.t-btn:hover { border-color: var(--border-light); background: var(--surface2); }
+.t-btn.active { background: var(--sky-glow); border-color: var(--sky); box-shadow: 0 0 0 1px var(--sky); }
+.t-icon { font-size: 20px; }
+.t-text { font-size: 13px; font-weight: 600; color: var(--text); display: block; }
+.t-sub { font-size: 11px; color: var(--text-dim); display: block; margin-top: 2px; }
+.t-btn.active .t-text { color: var(--sky); }
+.priority-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.p-btn { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 8px; cursor: pointer; text-align: center; font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--muted); transition: all 0.15s; }
+.p-btn:hover { border-color: var(--border-light); color: var(--text); }
+.p-label { font-size: 10px; font-weight: 400; display: block; margin-top: 3px; font-family: var(--sans); }
+.p-btn.active-p1 { background: rgba(248,113,113,0.1); border-color: var(--red); color: var(--red); box-shadow: 0 0 0 1px var(--red); }
+.p-btn.active-p2 { background: rgba(251,191,36,0.1); border-color: var(--yellow); color: var(--yellow); box-shadow: 0 0 0 1px var(--yellow); }
+.p-btn.active-p3 { background: var(--sky-glow); border-color: var(--sky); color: var(--sky); box-shadow: 0 0 0 1px var(--sky); }
+.p-btn.active-p4 { background: rgba(52,211,153,0.1); border-color: var(--green); color: var(--green); box-shadow: 0 0 0 1px var(--green); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-family: var(--sans); font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--sky); color: #0f172a; box-shadow: 0 0 20px rgba(56,189,248,0.3); }
+.btn-primary:hover:not(:disabled) { background: #7dd3fc; box-shadow: 0 0 28px rgba(56,189,248,0.5); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
+.btn-green { background: var(--green); color: #0f172a; box-shadow: 0 0 20px rgba(52,211,153,0.25); }
+.btn-green:hover:not(:disabled) { background: #6ee7b7; transform: translateY(-1px); }
+.btn-green:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-row { display: flex; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.ai-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+.ai-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 1px solid var(--border); padding: 20px 28px; display: flex; align-items: center; gap: 14px; }
+.ai-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--sky-glow); border: 1px solid rgba(56,189,248,0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 16px rgba(56,189,248,0.2); }
+.ai-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.ai-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.ai-body { padding: 28px; }
+.generate-btn-wrap { text-align: center; padding: 12px 0 4px; }
+.ai-output { display: none; }
+.ai-output.show { display: block; }
+.ai-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+.ai-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sky); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.ai-section-label::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 6px var(--sky); }
+.ai-section textarea { background: transparent; border: none; padding: 0; font-size: 13px; line-height: 1.7; color: var(--text); min-height: 60px; font-family: var(--sans); box-shadow: none !important; }
+.ai-section textarea:focus { border: none; box-shadow: none !important; }
+.ai-section input[type=text] { background: transparent; border: none; padding: 0; font-size: 14px; font-weight: 600; color: var(--text); box-shadow: none !important; }
+.ai-section input[type=text]:focus { border: none; box-shadow: none !important; }
+.generating { display: none; text-align: center; padding: 32px 20px; }
+.generating.show { display: block; }
+.gen-dots { display: inline-flex; gap: 6px; margin-bottom: 12px; }
+.gen-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sky); animation: bounce 1.2s infinite; }
+.gen-dot:nth-child(2) { animation-delay: 0.2s; }
+.gen-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-8px);opacity:1} }
+.gen-text { font-size: 13px; color: var(--text-dim); font-family: var(--mono); }
+.status { display: none; padding: 14px 18px; border-radius: 8px; font-size: 13px; line-height: 1.6; margin-top: 16px; }
 .status.show { display: block; }
-.status.loading { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
-.status.success { border-color: #16a34a; background: #f0fdf4; color: #15803d; }
-.status.error { border-color: #dc2626; background: #fef2f2; color: #b91c1c; }
-
-/* Footer */
-.footer {
-  margin-top: 60px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--border-dark);
-  letter-spacing: 0.08em;
-  display: flex; justify-content: space-between;
-}
-
-@media (max-width: 560px) {
-  .two-col { grid-template-columns: 1fr; }
-  .type-grid { grid-template-columns: 1fr 1fr; }
-  .priority-grid { grid-template-columns: repeat(4,1fr); }
-  .header-title { font-size: 28px; }
-}
-
-/* Fade in */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.wrap { animation: fadeUp 0.4s ease; }
+.status.loading { background: var(--sky-glow); border: 1px solid rgba(56,189,248,0.3); color: var(--sky); }
+.status.success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); }
+.status.error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
+.review-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
+.review-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.review-value { font-size: 14px; color: var(--text); line-height: 1.5; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: var(--mono); }
+.badge-p1 { background: rgba(248,113,113,0.15); color: var(--red); }
+.badge-p2 { background: rgba(251,191,36,0.15); color: var(--yellow); }
+.badge-p3 { background: var(--sky-glow); color: var(--sky); }
+.badge-p4 { background: rgba(52,211,153,0.15); color: var(--green); }
+.badge-type { background: var(--surface2); color: var(--text-dim); }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.footer { margin-top: 48px; text-align: center; font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+@media(max-width:560px) { .two-col{grid-template-columns:1fr} .panel{padding:20px} .ai-body{padding:20px} .header-title{font-size:26px} }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="header">
+    <div class="header-eyebrow">
+      <div class="eyebrow-dot"></div>
+      <span class="eyebrow-text">Salesforce Admin Squad · Request Intake</span>
+    </div>
+    <h1 class="header-title">Submit a <span>Request</span></h1>
+    <p class="header-sub">Log incoming requests — bugs, enhancements, new builds, or projects. AI will help generate your Jira user story before submitting to Notion.</p>
+  </div>
 
-  <header class="header">
-    <div class="header-tag">Salesforce Admin Squad · Request Intake</div>
-    <h1 class="header-title">Submit a <strong>Request</strong></h1>
-    <p class="header-sub">
-      Use this form to log incoming requests — bugs, enhancements, new builds, or projects.<br/>
-      Submissions go directly into the squad's Notion tracker.
-    </p>
-  </header>
+  <div class="steps-indicator">
+    <div class="step-ind active" id="ind-1"><div class="step-ind-num">1</div><span>Request Details</span></div>
+    <div class="step-connector" id="conn-1"></div>
+    <div class="step-ind" id="ind-2"><div class="step-ind-num">2</div><span>AI Story</span></div>
+    <div class="step-connector" id="conn-2"></div>
+    <div class="step-ind" id="ind-3"><div class="step-ind-num">3</div><span>Submit</span></div>
+  </div>
 
-  <!-- REQUEST TYPE -->
-  <div class="section">
-    <div class="section-label">01 — Request Type</div>
-    <div class="field">
-      <label>What kind of request is this? <span class="req">*</span></label>
-      <div class="type-grid">
-        <button class="t-btn" onclick="setType('Bug / Issue', this)">
-          <span class="t-icon">🐛</span>
-          <span><span class="t-text">Bug / Issue</span><span class="t-sub">Something is broken or wrong</span></span>
-        </button>
-        <button class="t-btn" onclick="setType('Enhancement', this)">
-          <span class="t-icon">✨</span>
-          <span><span class="t-text">Enhancement</span><span class="t-sub">Improve something existing</span></span>
-        </button>
-        <button class="t-btn" onclick="setType('New Build', this)">
-          <span class="t-icon">🔨</span>
-          <span><span class="t-text">New Build</span><span class="t-sub">Build something new</span></span>
-        </button>
-        <button class="t-btn" onclick="setType('Project / Epic', this)">
-          <span class="t-icon">🗂️</span>
-          <span><span class="t-text">Project / Epic</span><span class="t-sub">Multi-ticket initiative</span></span>
-        </button>
+  <!-- STEP 1 -->
+  <div class="page active" id="page-1">
+    <div class="panel">
+      <div class="panel-title">Request Type</div>
+      <div class="field">
+        <label>What kind of request is this? <span class="req">*</span></label>
+        <div class="type-grid">
+          <button class="t-btn" onclick="setType('Bug / Issue',this)"><span class="t-icon">🐛</span><span><span class="t-text">Bug / Issue</span><span class="t-sub">Something is broken</span></span></button>
+          <button class="t-btn" onclick="setType('Enhancement',this)"><span class="t-icon">✨</span><span><span class="t-text">Enhancement</span><span class="t-sub">Improve something existing</span></span></button>
+          <button class="t-btn" onclick="setType('New Build',this)"><span class="t-icon">🔨</span><span><span class="t-text">New Build</span><span class="t-sub">Build something new</span></span></button>
+          <button class="t-btn" onclick="setType('Project / Epic',this)"><span class="t-icon">🗂️</span><span><span class="t-text">Project / Epic</span><span class="t-sub">Multi-ticket initiative</span></span></button>
+        </div>
       </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Priority</div>
+      <div class="field">
+        <label>How urgent? <span class="req">*</span></label>
+        <div class="priority-grid">
+          <button class="p-btn" onclick="setPriority('P1',this)">P1<span class="p-label">Critical</span></button>
+          <button class="p-btn" onclick="setPriority('P2',this)">P2<span class="p-label">High</span></button>
+          <button class="p-btn" onclick="setPriority('P3',this)">P3<span class="p-label">Medium</span></button>
+          <button class="p-btn" onclick="setPriority('P4',this)">P4<span class="p-label">Low</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Details</div>
+      <div class="field"><label>Request Summary <span class="req">*</span></label><input type="text" id="f-summary" placeholder="One-line description of what you need" maxlength="200"/></div>
+      <div class="field"><label>Problem Statement / Details <span class="req">*</span></label><textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea></div>
+      <div class="two-col">
+        <div class="field"><label>Requestor Name <span class="req">*</span></label><input type="text" id="f-requestor" placeholder="Your name"/></div>
+        <div class="field"><label>Team / Department <span class="req">*</span></label><input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Channel Received <span class="req">*</span></label>
+          <select id="f-channel">
+            <option value="">— How did this come in? —</option>
+            <option>Jira Service Request</option><option>Email</option><option>Teams Message</option>
+            <option>Slack</option><option>Meeting / Verbal</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Needed By (optional)</label><input type="date" id="f-due"/></div>
+      </div>
+      <div class="field"><label>Jira Ticket Link (if already created)</label><input type="url" id="f-jira" placeholder="https://your-org.atlassian.net/browse/..."/></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goToAI()">Next — Generate User Story →</button>
     </div>
   </div>
 
-  <!-- PRIORITY -->
-  <div class="section">
-    <div class="section-label">02 — Priority</div>
-    <div class="field">
-      <label>How urgent is this? <span class="req">*</span></label>
-      <div class="priority-grid">
-        <button class="p-btn" onclick="setPriority('P1', this)">P1<span class="p-label">Critical</span></button>
-        <button class="p-btn" onclick="setPriority('P2', this)">P2<span class="p-label">High</span></button>
-        <button class="p-btn" onclick="setPriority('P3', this)">P3<span class="p-label">Medium</span></button>
-        <button class="p-btn" onclick="setPriority('P4', this)">P4<span class="p-label">Low</span></button>
+  <!-- STEP 2 -->
+  <div class="page" id="page-2">
+    <div class="ai-panel">
+      <div class="ai-header">
+        <div class="ai-icon">🤖</div>
+        <div>
+          <div class="ai-title">AI Story Generator</div>
+          <div class="ai-subtitle">Generates your Jira user story, acceptance criteria, and ticket title</div>
+        </div>
       </div>
+      <div class="ai-body">
+        <div class="generating" id="generating">
+          <div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div>
+          <div class="gen-text">Analyzing request and generating story...</div>
+        </div>
+        <div class="generate-btn-wrap" id="generate-btn-wrap">
+          <button class="btn btn-primary" onclick="generateStory()">✦ Generate with AI</button>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Based on your request details — you can edit before submitting</p>
+        </div>
+        <div class="ai-output" id="ai-output">
+          <div class="ai-section">
+            <div class="ai-section-label">Suggested Jira Ticket Title</div>
+            <input type="text" id="ai-jira-title" placeholder="Generated ticket title..."/>
+          </div>
+          <div class="ai-section">
+            <div class="ai-section-label">User Story</div>
+            <textarea id="ai-user-story" rows="4" placeholder="As a... I want... So that..."></textarea>
+          </div>
+          <div class="ai-section">
+            <div class="ai-section-label">Acceptance Criteria</div>
+            <textarea id="ai-acceptance" rows="6" placeholder="Generated acceptance criteria..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" id="next-to-review-btn" onclick="goTo(3)" disabled>Review & Submit →</button>
     </div>
   </div>
 
-  <!-- DETAILS -->
-  <div class="section">
-    <div class="section-label">03 — Request Details</div>
-
-    <div class="field">
-      <label>Request Summary <span class="req">*</span></label>
-      <input type="text" id="f-summary" placeholder="One-line description of what you need" maxlength="200"/>
-    </div>
-
-    <div class="field">
-      <label>Problem Statement / Details <span class="req">*</span></label>
-      <textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea>
-    </div>
-
-    <div class="two-col">
-      <div class="field">
-        <label>Requestor Name <span class="req">*</span></label>
-        <input type="text" id="f-requestor" placeholder="Your name"/>
+  <!-- STEP 3 -->
+  <div class="page" id="page-3">
+    <div class="panel">
+      <div class="panel-title">Review & Confirm</div>
+      <div class="review-card"><div class="review-label">Summary</div><div class="review-value" id="r-summary"></div></div>
+      <div class="two-col">
+        <div class="review-card"><div class="review-label">Type</div><div class="review-value" id="r-type"></div></div>
+        <div class="review-card"><div class="review-label">Priority</div><div class="review-value" id="r-priority"></div></div>
       </div>
-      <div class="field">
-        <label>Team / Department <span class="req">*</span></label>
-        <input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/>
+      <div class="two-col">
+        <div class="review-card"><div class="review-label">Requestor</div><div class="review-value" id="r-requestor"></div></div>
+        <div class="review-card"><div class="review-label">Team</div><div class="review-value" id="r-team"></div></div>
       </div>
+      <div class="review-card"><div class="review-label">Suggested Jira Title</div><div class="review-value" id="r-jira-title" style="color:var(--sky)"></div></div>
+      <div class="review-card"><div class="review-label">User Story</div><div class="review-value" id="r-user-story" style="font-size:13px;white-space:pre-wrap"></div></div>
+      <div class="review-card"><div class="review-label">Acceptance Criteria</div><div class="review-value" id="r-acceptance" style="font-size:13px;white-space:pre-wrap"></div></div>
     </div>
-
-    <div class="two-col">
-      <div class="field">
-        <label>How did you send this? <span class="req">*</span></label>
-        <select id="f-channel">
-          <option value="">— Select channel —</option>
-          <option>Jira Service Request</option>
-          <option>Email</option>
-          <option>Teams Message</option>
-          <option>Slack</option>
-          <option>Meeting / Verbal</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Needed By (optional)</label>
-        <input type="date" id="f-due"/>
-      </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-green" id="submit-btn" onclick="submitRequest()">✓ Submit to Notion</button>
     </div>
-
-    <div class="field">
-      <label>Jira Ticket Link (if already created)</label>
-      <input type="url" id="f-jira" placeholder="https://your-org.atlassian.net/browse/..."/>
-    </div>
+    <div class="status" id="status"></div>
   </div>
 
-  <!-- SUBMIT -->
-  <div class="submit-row">
-    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit Request →</button>
-    <span class="submit-note">Goes directly to<br/>the squad's Notion tracker</span>
-  </div>
-  <div class="status" id="status"></div>
-
-  <footer class="footer">
-    <span>SQUAD OPS · REQUEST INTAKE</span>
-    <span id="date-footer"></span>
-  </footer>
-
+  <footer class="footer">SQUAD OPS · GREASE MONKEYS · SALESFORCE ADMIN</footer>
 </div>
 
 <script>
-  document.getElementById('date-footer').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'}).toUpperCase();
+const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
+let selectedType = '', selectedPriority = '';
 
-  // ── REPLACE THIS with your deployed Cloudflare Worker URL ──
-  const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
+function setType(val, el) { selectedType = val; document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+function setPriority(val, el) { selectedPriority = val; document.querySelectorAll('.p-btn').forEach(b => b.className = 'p-btn'); el.classList.add('active-' + val.toLowerCase()); }
 
-  let selectedType = '';
-  let selectedPriority = '';
-
-  function setType(val, el) {
-    selectedType = val;
-    document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
+function goTo(step) {
+  if (step === 3) {
+    document.getElementById('r-summary').textContent = document.getElementById('f-summary').value;
+    document.getElementById('r-type').innerHTML = `<span class="badge badge-type">${selectedType}</span>`;
+    document.getElementById('r-priority').innerHTML = `<span class="badge badge-${selectedPriority.toLowerCase()}">${selectedPriority}</span>`;
+    document.getElementById('r-requestor').textContent = document.getElementById('f-requestor').value;
+    document.getElementById('r-team').textContent = document.getElementById('f-team').value;
+    document.getElementById('r-jira-title').textContent = document.getElementById('ai-jira-title').value;
+    document.getElementById('r-user-story').textContent = document.getElementById('ai-user-story').value;
+    document.getElementById('r-acceptance').textContent = document.getElementById('ai-acceptance').value;
   }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + step).classList.add('active');
+  for (let i = 1; i <= 3; i++) {
+    const ind = document.getElementById('ind-' + i);
+    ind.classList.remove('active','done');
+    if (i < step) ind.classList.add('done');
+    else if (i === step) ind.classList.add('active');
+  }
+  for (let i = 1; i <= 2; i++) document.getElementById('conn-' + i).classList.toggle('done', i < step);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-  function setPriority(val, el) {
-    selectedPriority = val;
-    document.querySelectorAll('.p-btn').forEach(b => {
-      b.className = 'p-btn';
+function goToAI() {
+  if (!selectedType || !selectedPriority || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-channel').value) {
+    alert('Please fill in all required fields before continuing.'); return;
+  }
+  goTo(2);
+}
+
+async function generateStory() {
+  document.getElementById('generate-btn-wrap').style.display = 'none';
+  document.getElementById('generating').classList.add('show');
+  document.getElementById('ai-output').classList.remove('show');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        messages: [{role:'user', content:`You are a Salesforce admin team request manager. Generate Jira ticket artifacts for this request.
+Request Type: ${selectedType}
+Priority: ${selectedPriority}
+Team: ${document.getElementById('f-team').value}
+Summary: ${document.getElementById('f-summary').value}
+Details: ${document.getElementById('f-details').value}
+
+Respond ONLY with a JSON object (no markdown, no backticks) with exactly these keys:
+{"jiraTitle":"concise action-oriented ticket title max 80 chars","userStory":"As a [user type], I want [goal] so that [benefit]. 2-3 sentences.","acceptanceCriteria":"numbered list of 3-5 specific testable criteria each on its own line starting with number and period"}`}]
+      })
     });
-    el.classList.add('active-' + val.toLowerCase());
+    const data = await res.json();
+    const parsed = JSON.parse(data.content?.[0]?.text?.replace(/```json|```/g,'').trim() || '{}');
+    document.getElementById('ai-jira-title').value = parsed.jiraTitle || '';
+    document.getElementById('ai-user-story').value = parsed.userStory || '';
+    document.getElementById('ai-acceptance').value = parsed.acceptanceCriteria || '';
+    document.getElementById('generating').classList.remove('show');
+    document.getElementById('ai-output').classList.add('show');
+    document.getElementById('next-to-review-btn').disabled = false;
+  } catch(e) {
+    document.getElementById('generating').classList.remove('show');
+    document.getElementById('generate-btn-wrap').style.display = 'block';
+    alert('AI generation failed. You can type the fields manually.\n' + e.message);
+    document.getElementById('ai-output').classList.add('show');
+    document.getElementById('next-to-review-btn').disabled = false;
   }
+}
 
-  function showStatus(type, msg) {
-    const el = document.getElementById('status');
-    el.className = 'status show ' + type;
-    el.innerHTML = msg;
-  }
-
-  async function submitForm() {
-    const summary = document.getElementById('f-summary').value.trim();
-    const details = document.getElementById('f-details').value.trim();
-    const requestor = document.getElementById('f-requestor').value.trim();
-    const team = document.getElementById('f-team').value.trim();
-    const channel = document.getElementById('f-channel').value;
-    const due = document.getElementById('f-due').value;
-    const jira = document.getElementById('f-jira').value.trim();
-
-    if (!selectedType || !selectedPriority || !summary || !requestor || !team || !channel) {
-      showStatus('error', '⚠ Please complete all required fields (marked with *) before submitting.');
-      return;
+async function submitRequest() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  showStatus('loading','⟳ Submitting to Notion...');
+  try {
+    const res = await fetch(WORKER_URL + '/intake', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        summary: document.getElementById('f-summary').value.trim(),
+        details: document.getElementById('f-details').value.trim(),
+        requestor: document.getElementById('f-requestor').value.trim(),
+        team: document.getElementById('f-team').value.trim(),
+        channel: document.getElementById('f-channel').value,
+        type: selectedType, priority: selectedPriority,
+        due: document.getElementById('f-due').value || null,
+        jira: document.getElementById('f-jira').value.trim() || null,
+        date: new Date().toISOString().split('T')[0],
+        jiraTitle: document.getElementById('ai-jira-title').value.trim(),
+        userStory: document.getElementById('ai-user-story').value.trim(),
+        acceptanceCriteria: document.getElementById('ai-acceptance').value.trim()
+      })
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      showStatus('success','✓ Request submitted to Notion. User story and acceptance criteria saved to the row.');
+      btn.textContent = '✓ Submitted';
+    } else {
+      showStatus('error','✗ Submission failed: ' + (data.error || 'Unknown error'));
+      btn.disabled = false;
     }
-
-    if (WORKER_URL === 'YOUR_CLOUDFLARE_WORKER_URL') {
-      showStatus('error', '⚙ Worker URL not configured yet. See setup instructions.');
-      return;
-    }
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    showStatus('loading', '⟳ Submitting to Notion...');
-
-    try {
-      const res = await fetch(WORKER_URL + '/intake', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          summary, details, requestor, team, channel,
-          type: selectedType,
-          priority: selectedPriority,
-          due: due || null,
-          jira: jira || null,
-          date: new Date().toISOString().split('T')[0]
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok && data.ok) {
-        showStatus('success', '✓ Request submitted successfully.<br/>The squad has been notified and your request is in the tracker.');
-        // Reset form
-        document.getElementById('f-summary').value = '';
-        document.getElementById('f-details').value = '';
-        document.getElementById('f-requestor').value = '';
-        document.getElementById('f-team').value = '';
-        document.getElementById('f-channel').value = '';
-        document.getElementById('f-due').value = '';
-        document.getElementById('f-jira').value = '';
-        selectedType = ''; selectedPriority = '';
-        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.p-btn').forEach(b => b.className = 'p-btn');
-      } else {
-        showStatus('error', '✗ Submission failed: ' + (data.error || 'Unknown error. Check worker logs.'));
-      }
-    } catch(e) {
-      showStatus('error', '✗ Could not reach the server. Check your Worker URL or try again.<br/><small>' + e.message + '</small>');
-    }
-
+  } catch(e) {
+    showStatus('error','✗ Could not reach server: ' + e.message);
     btn.disabled = false;
   }
+}
+
+function showStatus(type, msg) {
+  const el = document.getElementById('status');
+  el.className = 'status show ' + type;
+  el.innerHTML = msg;
+}
 </script>
 </body>
 </html>
