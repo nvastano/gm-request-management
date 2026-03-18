@@ -307,24 +307,18 @@ async function generateStory() {
   document.getElementById('generating').classList.add('show');
   document.getElementById('ai-output').classList.remove('show');
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(WORKER_URL + '/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-        messages: [{role:'user', content:`You are a Salesforce admin team request manager. Generate Jira ticket artifacts for this request.
-Request Type: ${selectedType}
-Priority: ${selectedPriority}
-Team: ${document.getElementById('f-team').value}
-Summary: ${document.getElementById('f-summary').value}
-Details: ${document.getElementById('f-details').value}
-
-Respond ONLY with a JSON object (no markdown, no backticks) with exactly these keys:
-{"jiraTitle":"concise action-oriented ticket title max 80 chars","userStory":"As a [user type], I want [goal] so that [benefit]. 2-3 sentences.","acceptanceCriteria":"numbered list of 3-5 specific testable criteria each on its own line starting with number and period"}`}]
+        summary: document.getElementById('f-summary').value,
+        details: document.getElementById('f-details').value,
+        type: selectedType,
+        priority: selectedPriority,
+        team: document.getElementById('f-team').value
       })
     });
-    const data = await res.json();
-    const parsed = JSON.parse(data.content?.[0]?.text?.replace(/```json|```/g,'').trim() || '{}');
+    const parsed = await res.json();
     document.getElementById('ai-jira-title').value = parsed.jiraTitle || '';
     document.getElementById('ai-user-story').value = parsed.userStory || '';
     document.getElementById('ai-acceptance').value = parsed.acceptanceCriteria || '';
