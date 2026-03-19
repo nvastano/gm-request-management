@@ -111,58 +111,6 @@
       ]
     },
     {
-      "id": "smartvestor---sales-1773861064334",
-      "label": "SmartVestor - Sales",
-      "visible": true,
-      "dot": "#378ADD",
-      "badgeBg": "#E6F1FB",
-      "badgeText": "#185FA5",
-      "members": [
-        {
-          "name": "John Markie",
-          "visible": true,
-          "role": "AD",
-          "teamNum": "",
-          "isLeader": true
-        },
-        {
-          "name": "Hayes Holland",
-          "visible": true,
-          "role": "AE",
-          "teamNum": "",
-          "isLeader": false
-        },
-        {
-          "name": "Kristin Pope",
-          "visible": true,
-          "role": "AE",
-          "teamNum": "",
-          "isLeader": false
-        },
-        {
-          "name": "Brian Ward",
-          "visible": true,
-          "role": "MRR",
-          "teamNum": "",
-          "isLeader": false
-        },
-        {
-          "name": "Conor Wiley",
-          "visible": true,
-          "role": "SDR",
-          "teamNum": "",
-          "isLeader": false
-        },
-        {
-          "name": "Jacob Stone",
-          "visible": true,
-          "role": "SDR",
-          "teamNum": "",
-          "isLeader": false
-        }
-      ]
-    },
-    {
       "id": "sales---real-estate-1773931728237",
       "label": "Sales - Real Estate",
       "visible": true,
