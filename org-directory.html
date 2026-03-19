@@ -50,6 +50,11 @@ input[type="text"]::placeholder { color: var(--faint); }
 select { padding: 8px 30px 8px 11px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6860' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
 .clear-btn { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
 .clear-btn:hover { background: var(--border); color: var(--text); }
+.team-pills { padding: 8px 32px 0; display: flex; gap: 6px; flex-wrap: wrap; background: var(--surface); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.team-pill { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+.team-pill:hover { border-color: var(--border-strong); color: var(--text); }
+.team-pill.active { font-weight: 500; }
+.team-pill .pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .filter-leaders { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
 .filter-leaders:hover { border-color: #f0c860; color: #a07000; background: #fffbf0; }
 .filter-leaders.active { border-color: #f0c860; background: #fff8e0; color: #a07000; font-weight: 500; }
@@ -187,10 +192,10 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
     </svg>
     <input type="text" id="search" placeholder="Search name or role..." oninput="render()">
   </div>
-  <select id="filter" onchange="render()"></select>
   <button class="filter-leaders" id="leadersBtn" onclick="toggleLeadersFilter()">★ Leaders</button>
   <button class="clear-btn" onclick="clearFilters()">Clear</button>
 </div>
+<div class="team-pills" id="teamPills"></div>
 
 <main id="main"></main>
 
@@ -320,6 +325,7 @@ let editingMemberIdx = null;
 let addingToTeamId = null;
 let renamingTeamId = null;
 let leadersOnly = false;
+let selectedTeams = new Set();
 
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
@@ -406,13 +412,28 @@ function resetToDefault() {
 
 // ── FILTER ────────────────────────────────────────────────────
 function buildFilter() {
-  const sel = document.getElementById('filter');
-  sel.innerHTML = '<option value="">All teams</option>';
-  roster.teams.forEach(t => {
-    const o = document.createElement('option');
-    o.value = t.id; o.textContent = t.label;
-    sel.appendChild(o);
-  });
+  const container = document.getElementById('teamPills');
+  if (!container) return;
+  container.innerHTML = roster.teams
+    .filter(t => t.visible)
+    .map(t => {
+      const active = selectedTeams.has(t.id);
+      return `<button class="team-pill ${active ? 'active' : ''}"
+        style="${active ? `border-color:${t.dot};background:${t.badgeBg};color:${t.badgeText};` : ''}"
+        onclick="toggleTeamPill('${t.id}')">
+        <span class="pill-dot" style="background:${t.dot};"></span>${t.label}
+      </button>`;
+    }).join('');
+}
+
+function toggleTeamPill(teamId) {
+  if (selectedTeams.has(teamId)) {
+    selectedTeams.delete(teamId);
+  } else {
+    selectedTeams.add(teamId);
+  }
+  buildFilter();
+  render();
 }
 
 function toggleLeadersFilter() {
@@ -423,9 +444,10 @@ function toggleLeadersFilter() {
 
 function clearFilters() {
   document.getElementById('search').value = '';
-  document.getElementById('filter').value = '';
+  selectedTeams.clear();
   leadersOnly = false;
   document.getElementById('leadersBtn').classList.remove('active');
+  buildFilter();
   render();
 }
 
@@ -459,12 +481,11 @@ function toggleCollapse(id) { collapsed[id] = !collapsed[id]; render(); }
 // ── RENDER ────────────────────────────────────────────────────
 function render() {
   const q = document.getElementById('search').value.trim().toLowerCase();
-  const f = document.getElementById('filter').value;
   const container = document.getElementById('main');
   let totalShown = 0, html = '';
 
   roster.teams.forEach((team, teamIdx) => {
-    if (f && team.id !== f) return;
+    if (selectedTeams.size > 0 && !selectedTeams.has(team.id)) return;
     if (!adminMode && !team.visible) return;
 
     const members = team.members.filter(m => {
@@ -542,8 +563,7 @@ function render() {
 
   const total = roster.teams.reduce((a,t) => a + t.members.filter(m=>m.visible).length, 0);
   const q2 = document.getElementById('search').value.trim();
-  const f2 = document.getElementById('filter').value;
-  document.getElementById('total-count').textContent = (q2||f2)
+  document.getElementById('total-count').textContent = (q2 || selectedTeams.size > 0 || leadersOnly)
     ? `${totalShown} of ${total} people` : `${total} people · ${roster.teams.filter(t=>t.visible).length} teams`;
 }
 
