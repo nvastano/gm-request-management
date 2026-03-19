@@ -30,9 +30,9 @@ header { background: var(--accent); padding: 20px 32px; display: flex; align-ite
 #admin-bar { display: none; background: #fffbf0; border-bottom: 2px solid var(--admin); padding: 10px 32px; gap: 10px; align-items: center; flex-wrap: wrap; }
 #admin-bar.visible { display: flex; }
 .bar-label { font-family: var(--mono); font-size: 11px; color: #a07000; flex: 1; }
-.save-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3B6D11; margin-right: 5px; opacity: 0; transition: opacity .3s; vertical-align: middle; }
-.save-dot.show { opacity: 1; }
 .bar-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border-radius: 4px; border: 1px solid; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.bar-btn.export { border-color: #2a2825; background: #2a2825; color: #fff; }
+.bar-btn.export:hover { background: #1a1917; }
 .bar-btn.add-team { border-color: var(--border-strong); background: transparent; color: var(--muted); }
 .bar-btn.add-team:hover { background: var(--border); color: var(--text); }
 .bar-btn.lock { border-color: var(--border-strong); background: transparent; color: var(--muted); }
@@ -163,11 +163,9 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
 </header>
 
 <div id="admin-bar">
-  <span class="bar-label">
-    <span class="save-dot" id="saveDot"></span>
-    edit mode — click any card to edit
-  </span>
+  <span class="bar-label">✦ edit mode — click any card to edit</span>
   <button class="bar-btn add-team" onclick="openAddTeam()">+ Add Team</button>
+  <button class="bar-btn export" onclick="exportJSON()">↓ Export roster.json</button>
   <button class="bar-btn lock" onclick="lockAdmin()">Lock</button>
   <button class="bar-btn reset-data" onclick="resetToDefault()">Reset to Default</button>
 </div>
@@ -294,9 +292,43 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
 <script>
 // ── CONFIG — change password here ────────────────────────────
 const ADMIN_PASSWORD = 'greasemonkeys';
-const STORAGE_KEY = 'gm-directory-roster';
 
-// ── COLOR MAP ─────────────────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────────────
+let roster = { teams: [] };
+let adminMode = false;
+let collapsed = {};
+let editingTeamId = null;
+let editingMemberIdx = null;
+let addingToTeamId = null;
+let renamingTeamId = null;
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch('roster.json?v=' + Date.now());
+    if (!res.ok) throw new Error();
+    roster = await res.json();
+  } catch {
+    roster = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
+  }
+  buildFilter();
+  render();
+  document.getElementById('footer-date').textContent =
+    'updated ' + new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+// ── EXPORT ────────────────────────────────────────────────────
+function exportJSON() {
+  const json = JSON.stringify(roster, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'roster.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── NO-OP save (kept so all action functions still call it harmlessly) ──
+function save() {}
 const COLOR_MAP = {
   blue:   { dot:"#378ADD", badgeBg:"#E6F1FB", badgeText:"#185FA5" },
   green:  { dot:"#639922", badgeBg:"#EAF3DE", badgeText:"#3B6D11" },
@@ -308,37 +340,7 @@ const COLOR_MAP = {
   red:    { dot:"#E24B4A", badgeBg:"#FCEBEB", badgeText:"#A32D2D" },
 };
 
-// ── DEFAULT ROSTER (source of truth if localStorage is empty) ─
-const DEFAULT_ROSTER = {"teams":[{"id":"marketing","label":"Marketing","visible":true,"dot":"#378ADD","badgeBg":"#E6F1FB","badgeText":"#185FA5","members":[{"name":"Richard Prince","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Tina Teschner","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Matt George","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Chandler Warrick","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Camille Bunch","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Jacob Reinmiller","role":"Marketer","teamNum":"","isLeader":false,"visible":true},{"name":"Sam Curbelo","role":"Marketer","teamNum":"","isLeader":false,"visible":true}]},{"id":"elp","label":"ELP System","visible":false,"dot":"#EF9F27","badgeBg":"#FAEEDA","badgeText":"#854F0B","members":[{"name":"ELP API_User","role":"System","teamNum":"","isLeader":false,"visible":true},{"name":"CRM Fusion","role":"System","teamNum":"","isLeader":false,"visible":true}]},{"id":"financial","label":"Financial Services","visible":true,"dot":"#1D9E75","badgeBg":"#E1F5EE","badgeText":"#0F6E56","members":[{"name":"Danielle Bothe","role":"Finance","teamNum":"","isLeader":true,"visible":true}]},{"id":"operations","label":"Sales Operations","visible":false,"dot":"#D85A30","badgeBg":"#FAECE7","badgeText":"#993C1D","members":[{"name":"Karlee Hildebrand","role":"AD","teamNum":"","isLeader":true,"visible":true},{"name":"Lena Kelly","role":"AD","teamNum":"","isLeader":false,"visible":true}]},{"id":"enablement","label":"Sales Enablement","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Amanda Martin","role":"Enablement","teamNum":"","isLeader":true,"visible":true}]},{"id":"acquisition","label":"Acquisition Sales","visible":true,"dot":"#7F77DD","badgeBg":"#EEEDFE","badgeText":"#534AB7","members":[{"name":"Chandler Gaines","role":"Leader","teamNum":"","isLeader":true,"visible":true},{"name":"Alex Shepherd","role":"Leader","teamNum":"","isLeader":true,"visible":true},{"name":"Zac Karr","role":"AD","teamNum":"1","isLeader":false,"visible":true},{"name":"John Markle","role":"AD","teamNum":"2","isLeader":false,"visible":true},{"name":"Aubrey Blinkley","role":"AD","teamNum":"3","isLeader":false,"visible":true},{"name":"Julie Butcher","role":"AE","teamNum":"1","isLeader":false,"visible":true},{"name":"Halli Smith","role":"MRR","teamNum":"1","isLeader":false,"visible":true},{"name":"Hayes Holland","role":"AE","teamNum":"2","isLeader":false,"visible":true},{"name":"Kristin Pope","role":"AE","teamNum":"2","isLeader":false,"visible":true},{"name":"Brian Ward","role":"MRR","teamNum":"2","isLeader":false,"visible":true},{"name":"Conor Wiley","role":"SDR","teamNum":"2","isLeader":false,"visible":true},{"name":"Jacob Stone","role":"SDR","teamNum":"2","isLeader":false,"visible":true},{"name":"Rylan Wilisford","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Johnny Drennan","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Caitlin Hogan","role":"AE","teamNum":"3","isLeader":false,"visible":true},{"name":"Anna Wood","role":"MRR","teamNum":"3","isLeader":false,"visible":true},{"name":"Jalen Rogers","role":"Leader","teamNum":"3","isLeader":false,"visible":true},{"name":"Dalton Walker","role":"SDR","teamNum":"3","isLeader":false,"visible":true},{"name":"Autumn Hampton","role":"SDR","teamNum":"3","isLeader":false,"visible":true}]},{"id":"coaching","label":"Coaching","visible":true,"dot":"#D4537E","badgeBg":"#FBEAF0","badgeText":"#993556","members":[{"name":"Lacy Bell","role":"AD","teamNum":"1","isLeader":true,"visible":true},{"name":"Daniel McKinnon","role":"AD","teamNum":"1","isLeader":true,"visible":true},{"name":"Scott Lerman","role":"AD","teamNum":"2","isLeader":true,"visible":true},{"name":"Ryan Puhr","role":"AD","teamNum":"3-5","isLeader":true,"visible":true},{"name":"Ashley Cook","role":"Coach","teamNum":"1","isLeader":false,"visible":true},{"name":"Cynthia Navarro","role":"Coach","teamNum":"1","isLeader":false,"visible":true},{"name":"Conner Brooke Binkley","role":"AD","teamNum":"2","isLeader":false,"visible":true},{"name":"Justin Nguyen","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Kevin Dunn","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Sarah Francis","role":"Coach","teamNum":"2","isLeader":false,"visible":true},{"name":"Danae Hall","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Colin Bellios","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Tori Wheeler","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Angelica Dotson","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Katrien Shaw","role":"Coach","teamNum":"3","isLeader":false,"visible":true},{"name":"Emily Cummings","role":"Coach","teamNum":"5","isLeader":false,"visible":true},{"name":"David LaBahn","role":"Coach","teamNum":"5","isLeader":false,"visible":true}]},{"id":"relationship","label":"Relationship Management","visible":true,"dot":"#E24B4A","badgeBg":"#FCEBEB","badgeText":"#A32D2D","members":[{"name":"Jordan Farley","role":"Leader","teamNum":"","isLeader":true,"visible":true}]},{"id":"advocate","label":"Customer Advocate","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Ramsey Trusted","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Jessica Ross","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Jessica Bissett","role":"Advocate","teamNum":"","isLeader":false,"visible":true},{"name":"Julie Goward","role":"Advocate","teamNum":"","isLeader":false,"visible":true}]}]};
-
-// ── STATE ─────────────────────────────────────────────────────
-let roster = { teams: [] };
-let adminMode = false;
-let collapsed = {};
-let editingTeamId = null;
-let editingMemberIdx = null;
-let addingToTeamId = null;
-let renamingTeamId = null;
-let saveDotTimer = null;
-
-// ── INIT ──────────────────────────────────────────────────────
-function init() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  roster = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_ROSTER));
-  buildFilter();
-  render();
-  document.getElementById('footer-date').textContent =
-    'updated ' + new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-}
-
-// ── PERSIST ───────────────────────────────────────────────────
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(roster));
-  const dot = document.getElementById('saveDot');
-  dot.classList.add('show');
-  clearTimeout(saveDotTimer);
-  saveDotTimer = setTimeout(() => dot.classList.remove('show'), 1800);
-}
+const DEFAULT_ROSTER = {"teams":[{"id":"marketing","label":"Marketing","visible":true,"dot":"#378ADD","badgeBg":"#E6F1FB","badgeText":"#185FA5","members":[{"name":"Richard Prince","role":"Marketer","isLeader":false,"visible":true},{"name":"Tina Teschner","role":"Marketer","isLeader":false,"visible":true},{"name":"Matt George","role":"Marketer","isLeader":false,"visible":true},{"name":"Chandler Warrick","role":"Marketer","isLeader":false,"visible":true},{"name":"Camille Bunch","role":"Marketer","isLeader":false,"visible":true},{"name":"Jacob Reinmiller","role":"Marketer","isLeader":false,"visible":true},{"name":"Sam Curbelo","role":"Marketer","isLeader":false,"visible":true}]},{"id":"elp","label":"ELP System","visible":false,"dot":"#EF9F27","badgeBg":"#FAEEDA","badgeText":"#854F0B","members":[{"name":"ELP API_User","role":"System","isLeader":false,"visible":true},{"name":"CRM Fusion","role":"System","isLeader":false,"visible":true}]},{"id":"financial","label":"Financial Services","visible":true,"dot":"#1D9E75","badgeBg":"#E1F5EE","badgeText":"#0F6E56","members":[{"name":"Danielle Bothe","role":"AD","isLeader":true,"visible":true}]},{"id":"operations","label":"Sales Operations","visible":false,"dot":"#D85A30","badgeBg":"#FAECE7","badgeText":"#993C1D","members":[{"name":"Karlee Hildebrand","role":"AD","isLeader":true,"visible":true},{"name":"Lena Kelly","role":"AD","isLeader":false,"visible":true}]},{"id":"enablement","label":"Sales Enablement","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Amanda Martin","role":"Leader","isLeader":true,"visible":true}]},{"id":"acquisition","label":"Acquisition Sales","visible":true,"dot":"#7F77DD","badgeBg":"#EEEDFE","badgeText":"#534AB7","members":[{"name":"Chandler Gaines","role":"Leader","isLeader":true,"visible":true},{"name":"Alex Shepherd","role":"Leader","isLeader":true,"visible":true},{"name":"Zac Karr","role":"AD","isLeader":false,"visible":true},{"name":"John Markle","role":"AD","isLeader":false,"visible":true},{"name":"Aubrey Blinkley","role":"AD","isLeader":false,"visible":true},{"name":"Julie Butcher","role":"AE","isLeader":false,"visible":true},{"name":"Halli Smith","role":"MRR","isLeader":false,"visible":true},{"name":"Hayes Holland","role":"AE","isLeader":false,"visible":true},{"name":"Kristin Pope","role":"AE","isLeader":false,"visible":true},{"name":"Brian Ward","role":"MRR","isLeader":false,"visible":true},{"name":"Conor Wiley","role":"SDR","isLeader":false,"visible":true},{"name":"Jacob Stone","role":"SDR","isLeader":false,"visible":true},{"name":"Rylan Wilisford","role":"AE","isLeader":false,"visible":true},{"name":"Johnny Drennan","role":"AE","isLeader":false,"visible":true},{"name":"Caitlin Hogan","role":"AE","isLeader":false,"visible":true},{"name":"Anna Wood","role":"MRR","isLeader":false,"visible":true},{"name":"Jalen Rogers","role":"Team Lead","isLeader":false,"visible":true},{"name":"Dalton Walker","role":"SDR","isLeader":false,"visible":true},{"name":"Autumn Hampton","role":"SDR","isLeader":false,"visible":true}]},{"id":"coaching","label":"Coaching","visible":true,"dot":"#D4537E","badgeBg":"#FBEAF0","badgeText":"#993556","members":[{"name":"Lacy Bell","role":"AD","isLeader":true,"visible":true},{"name":"Daniel McKinnon","role":"AD","isLeader":true,"visible":true},{"name":"Scott Lerman","role":"AD","isLeader":true,"visible":true},{"name":"Ryan Puhr","role":"AD","isLeader":true,"visible":true},{"name":"Ashley Cook","role":"Coach","isLeader":false,"visible":true},{"name":"Cynthia Navarro","role":"Coach","isLeader":false,"visible":true},{"name":"Conner Brooke Binkley","role":"AD","isLeader":false,"visible":true},{"name":"Justin Nguyen","role":"Coach","isLeader":false,"visible":true},{"name":"Kevin Dunn","role":"Coach","isLeader":false,"visible":true},{"name":"Sarah Francis","role":"Coach","isLeader":false,"visible":true},{"name":"Danae Hall","role":"Coach","isLeader":false,"visible":true},{"name":"Colin Bellios","role":"Coach","isLeader":false,"visible":true},{"name":"Tori Wheeler","role":"Coach","isLeader":false,"visible":true},{"name":"Angelica Dotson","role":"Coach","isLeader":false,"visible":true},{"name":"Katrien Shaw","role":"Coach","isLeader":false,"visible":true},{"name":"Emily Cummings","role":"Coach","isLeader":false,"visible":true},{"name":"David LaBahn","role":"Coach","isLeader":false,"visible":true}]},{"id":"relationship","label":"Relationship Management","visible":true,"dot":"#E24B4A","badgeBg":"#FCEBEB","badgeText":"#A32D2D","members":[{"name":"Jordan Farley","role":"Leader","isLeader":true,"visible":true}]},{"id":"advocate","label":"Customer Advocate","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Ramsey Trusted","role":"Marketer","isLeader":false,"visible":true},{"name":"Jessica Ross","role":"Marketer","isLeader":false,"visible":true},{"name":"Jessica Bissett","role":"Marketer","isLeader":false,"visible":true},{"name":"Julie Goward","role":"Marketer","isLeader":false,"visible":true}]}]};
 
 // ── PASSWORD ──────────────────────────────────────────────────
 function toggleAdmin() {
@@ -378,7 +380,6 @@ function lockAdmin() {
 
 function resetToDefault() {
   if (!confirm('Reset directory to default data? This will clear all your changes.')) return;
-  localStorage.removeItem(STORAGE_KEY);
   roster = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
   buildFilter();
   render();
