@@ -53,6 +53,12 @@ select { padding: 8px 30px 8px 11px; font-family: var(--sans); font-size: 13px; 
 .filter-leaders { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
 .filter-leaders:hover { border-color: #f0c860; color: #a07000; background: #fffbf0; }
 .filter-leaders.active { border-color: #f0c860; background: #fff8e0; color: #a07000; font-weight: 500; }
+.copy-emails-btn { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0; }
+.copy-emails-btn:hover { background: var(--bg); border-color: var(--border-strong); color: var(--text); }
+.copy-confirm { display: none; color: #3B6D11; font-weight: 500; }
+.copy-emails-btn.copied .copy-label { display: none; }
+.copy-emails-btn.copied .copy-confirm { display: inline; }
+.copy-emails-btn.copied { border-color: #C0DD97; background: #EAF3DE; color: #3B6D11; }
 
 /* MAIN */
 main { padding: 24px 32px; }
@@ -427,6 +433,26 @@ function clearFilters() {
 function slug(name) { return name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''); }
 function initials(name) { return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
 function headshotPath(name) { return `headshots/${name.toLowerCase().replace(/\s+/g,'-')}.jpg`; }
+function toEmail(name) {
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0].toLowerCase().replace(/[^a-z]/g,'');
+  const last = parts[parts.length-1].toLowerCase().replace(/[^a-z]/g,'');
+  return `${first}.${last}@ramseysolutions.com`;
+}
+
+function copyEmails(teamId) {
+  const team = roster.teams.find(t => t.id === teamId);
+  const emails = team.members
+    .filter(m => m.visible)
+    .map(m => toEmail(m.name))
+    .join('; ');
+  navigator.clipboard.writeText(emails).then(() => {
+    const btn = document.querySelector(`#copied-${teamId}`)?.closest('.copy-emails-btn');
+    if (!btn) return;
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 2000);
+  });
+}
 
 function toggleCollapse(id) { collapsed[id] = !collapsed[id]; render(); }
 
@@ -466,6 +492,11 @@ function render() {
         </div>
         ${hiddenBadge}
         <span class="team-badge" style="background:${team.badgeBg};color:${team.badgeText};">${members.filter(m=>m.visible).length}</span>
+        <button class="copy-emails-btn" onclick="copyEmails('${team.id}')" title="Copy team emails">
+          <span class="copy-icon">✉</span>
+          <span class="copy-label">Copy Emails</span>
+          <span class="copy-confirm" id="copied-${team.id}">Copied!</span>
+        </button>
         <div class="team-admin-btns">
           <button class="t-btn reorder" onclick="moveTeam('${team.id}',-1)" ${teamIdx===0?'disabled':''} title="Move up">▲</button>
           <button class="t-btn reorder" onclick="moveTeam('${team.id}',1)" ${teamIdx===roster.teams.length-1?'disabled':''} title="Move down">▼</button>
