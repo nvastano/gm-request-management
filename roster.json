@@ -2,7 +2,7 @@
   "teams": [
     {
       "id": "marketing",
-      "label": "Marketing",
+      "label": "B2B Marketing - Real Estate",
       "visible": true,
       "dot": "#378ADD",
       "badgeBg": "#E6F1FB",
@@ -34,44 +34,6 @@
           "role": "Marketer",
           "teamNum": "",
           "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Camille Bunch",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Jacob Reinmiller",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Sam Curbelo",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "financial",
-      "label": "Financial Services",
-      "visible": true,
-      "dot": "#1D9E75",
-      "badgeBg": "#E1F5EE",
-      "badgeText": "#0F6E56",
-      "members": [
-        {
-          "name": "Danielle Bothe",
-          "role": "Finance",
-          "teamNum": "",
-          "isLeader": true,
           "visible": true
         }
       ]
@@ -451,6 +413,154 @@
           "visible": true,
           "role": "SDR",
           "teamNum": "",
+          "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "sales---real-estate-1773931728237",
+      "label": "Sales - Real Estate",
+      "visible": true,
+      "dot": "#378ADD",
+      "badgeBg": "#E6F1FB",
+      "badgeText": "#185FA5",
+      "members": [
+        {
+          "name": "Aubrey Binkley",
+          "visible": true,
+          "role": "AD",
+          "isLeader": true
+        },
+        {
+          "name": "Johnny Drennan",
+          "visible": true,
+          "role": "AE",
+          "isLeader": false
+        },
+        {
+          "name": "Rylan Willaford",
+          "visible": true,
+          "role": "AE",
+          "isLeader": false
+        },
+        {
+          "name": "Caitlin Hogan",
+          "visible": true,
+          "role": "MRR",
+          "isLeader": false
+        },
+        {
+          "name": "Anna Wood",
+          "visible": true,
+          "role": "MRR",
+          "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "sales---protections-1773931750904",
+      "label": "Sales - Protections",
+      "visible": true,
+      "dot": "#378ADD",
+      "badgeBg": "#E6F1FB",
+      "badgeText": "#185FA5",
+      "members": [
+        {
+          "name": "Zac Karr",
+          "visible": true,
+          "role": "AD",
+          "isLeader": true
+        },
+        {
+          "name": "Julie Butcher",
+          "visible": true,
+          "role": "AE",
+          "isLeader": false
+        },
+        {
+          "name": "Halli Smith",
+          "visible": true,
+          "role": "MRR",
+          "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "sales---investing-and-tax-1773931773044",
+      "label": "Sales - Investing and Tax",
+      "visible": true,
+      "dot": "#378ADD",
+      "badgeBg": "#E6F1FB",
+      "badgeText": "#185FA5",
+      "members": [
+        {
+          "name": "John Markie",
+          "visible": true,
+          "role": "AD",
+          "isLeader": true
+        },
+        {
+          "name": "Hayes Holland",
+          "visible": true,
+          "role": "AE",
+          "isLeader": false
+        },
+        {
+          "name": "Kristin Pope",
+          "visible": true,
+          "role": "AE",
+          "isLeader": false
+        },
+        {
+          "name": "Brian Ward",
+          "visible": true,
+          "role": "MRR",
+          "isLeader": false
+        },
+        {
+          "name": "Conor Wiley",
+          "visible": true,
+          "role": "SDR",
+          "isLeader": false
+        },
+        {
+          "name": "Jacob Stone",
+          "visible": true,
+          "role": "SDR",
+          "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "vps-1773931817333",
+      "label": "VPs",
+      "visible": true,
+      "dot": "#378ADD",
+      "badgeBg": "#E6F1FB",
+      "badgeText": "#185FA5",
+      "members": [
+        {
+          "name": "Chandler Gaines",
+          "visible": true,
+          "role": "VP",
+          "isLeader": false
+        },
+        {
+          "name": "Jeff Stephens",
+          "visible": true,
+          "role": "VP",
+          "isLeader": false
+        },
+        {
+          "name": "Travis Engebretsen",
+          "visible": true,
+          "role": "VP",
+          "isLeader": false
+        },
+        {
+          "name": "Darrell Moorre",
+          "visible": true,
+          "role": "VP",
           "isLeader": false
         }
       ]
