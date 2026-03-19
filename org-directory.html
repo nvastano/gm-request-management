@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Team Directory</title>
@@ -489,7 +489,7 @@ function render() {
       html += `<div class="card ${m.visible ? '' : 'hidden-member'}"
           onclick="${adminMode ? `openEditMember('${team.id}', ${realIdx})` : ''}">
         <div class="avatar ${m.isLeader ? 'leader-ring' : ''}" style="background:${team.badgeBg};color:${team.badgeText};">
-          <img src="${headshotPath(m.name)}" alt="${m.name}" loading="lazy"
+          <img src="${headshotPath(m.name)}" alt="${m.name}"
             onload="this.classList.add('loaded')" onerror="this.style.display='none'">
           <span class="initials">${initials(m.name)}</span>
         </div>
