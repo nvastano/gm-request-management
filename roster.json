@@ -4,9 +4,9 @@
       "id": "vps-1773931817333",
       "label": "VPs",
       "visible": true,
-      "dot": "#378ADD",
-      "badgeBg": "#E6F1FB",
-      "badgeText": "#185FA5",
+      "dot": "#1D9E75",
+      "badgeBg": "#E1F5EE",
+      "badgeText": "#0F6E56",
       "members": [
         {
           "name": "Chandler Gaines",
@@ -38,9 +38,9 @@
       "id": "marketing",
       "label": "B2B Marketing - Real Estate",
       "visible": true,
-      "dot": "#378ADD",
-      "badgeBg": "#E6F1FB",
-      "badgeText": "#185FA5",
+      "dot": "#7F77DD",
+      "badgeBg": "#EEEDFE",
+      "badgeText": "#534AB7",
       "members": [
         {
           "name": "Richard Prince",
