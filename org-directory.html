@@ -215,13 +215,10 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
     <div class="field"><label>Full Name</label><input type="text" id="f-name"></div>
     <div class="field"><label>Role Code</label>
       <select id="f-role">
-        <option>Leader</option><option>AD</option><option>AE</option>
-        <option>MRR</option><option>SDR</option><option>Coach</option>
-        <option>Advocate</option><option>Marketer</option><option>Finance</option>
-        <option>Enablement</option><option>System</option>
+        <option>VP</option><option>Leader</option><option>AD</option><option>AE</option>
+        <option>MRR</option><option>SDR</option><option>Coach</option><option>Marketer</option>
       </select>
     </div>
-    <div class="field"><label>Team #</label><input type="text" id="f-teamnum" placeholder="1, 2, 3… or leave blank"></div>
     <div class="field checkbox-field">
       <input type="checkbox" id="f-leader">
       <label for="f-leader">Team leader / primary contact</label>
@@ -247,13 +244,10 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
     <div class="field"><label>Full Name</label><input type="text" id="a-name"></div>
     <div class="field"><label>Role Code</label>
       <select id="a-role">
-        <option>Leader</option><option>AD</option><option>AE</option>
-        <option>MRR</option><option>SDR</option><option>Coach</option>
-        <option>Advocate</option><option>Marketer</option><option>Finance</option>
-        <option>Enablement</option><option>System</option>
+        <option>VP</option><option>Leader</option><option>AD</option><option>AE</option>
+        <option>MRR</option><option>SDR</option><option>Coach</option><option>Marketer</option>
       </select>
     </div>
-    <div class="field"><label>Team #</label><input type="text" id="a-teamnum" placeholder="1, 2, 3… or leave blank"></div>
     <div class="field checkbox-field">
       <input type="checkbox" id="a-leader">
       <label for="a-leader">Team leader / primary contact</label>
@@ -468,7 +462,7 @@ function render() {
     members.forEach(m => {
       const realIdx = team.members.indexOf(m);
       const leaderIcon = m.isLeader ? `<span class="leader-star">★</span>` : '';
-      const metaParts = [m.role, m.teamNum ? `Team ${m.teamNum}` : ''].filter(Boolean);
+      const metaParts = [m.role].filter(Boolean);
       html += `<div class="card ${m.visible ? '' : 'hidden-member'}"
           onclick="${adminMode ? `openEditMember('${team.id}', ${realIdx})` : ''}">
         <div class="avatar ${m.isLeader ? 'leader-ring' : ''}" style="background:${team.badgeBg};color:${team.badgeText};">
@@ -557,7 +551,6 @@ function openEditMember(teamId, memberIdx) {
   document.getElementById('modal-title').textContent = 'Edit — ' + m.name;
   document.getElementById('f-name').value = m.name;
   document.getElementById('f-role').value = m.role;
-  document.getElementById('f-teamnum').value = m.teamNum || '';
   document.getElementById('f-leader').checked = m.isLeader;
   document.getElementById('f-visible').checked = m.visible !== false;
   document.getElementById('editModal').classList.add('open');
@@ -567,7 +560,6 @@ function saveMember() {
   const m = roster.teams.find(t => t.id === editingTeamId).members[editingMemberIdx];
   m.name    = document.getElementById('f-name').value.trim() || m.name;
   m.role    = document.getElementById('f-role').value;
-  m.teamNum = document.getElementById('f-teamnum').value.trim();
   m.isLeader= document.getElementById('f-leader').checked;
   m.visible = document.getElementById('f-visible').checked;
   save(); closeModal(); render();
@@ -596,7 +588,6 @@ function saveNewMember() {
   roster.teams.find(t => t.id === addingToTeamId).members.push({
     name, visible: true,
     role: document.getElementById('a-role').value,
-    teamNum: document.getElementById('a-teamnum').value.trim(),
     isLeader: document.getElementById('a-leader').checked,
   });
   save(); closeModal(); render();
