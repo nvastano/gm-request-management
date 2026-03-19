@@ -50,6 +50,9 @@ input[type="text"]::placeholder { color: var(--faint); }
 select { padding: 8px 30px 8px 11px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6860' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
 .clear-btn { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
 .clear-btn:hover { background: var(--border); color: var(--text); }
+.filter-leaders { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.filter-leaders:hover { border-color: #f0c860; color: #a07000; background: #fffbf0; }
+.filter-leaders.active { border-color: #f0c860; background: #fff8e0; color: #a07000; font-weight: 500; }
 
 /* MAIN */
 main { padding: 24px 32px; }
@@ -179,6 +182,7 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
     <input type="text" id="search" placeholder="Search name or role..." oninput="render()">
   </div>
   <select id="filter" onchange="render()"></select>
+  <button class="filter-leaders" id="leadersBtn" onclick="toggleLeadersFilter()">★ Leaders</button>
   <button class="clear-btn" onclick="clearFilters()">Clear</button>
 </div>
 
@@ -280,8 +284,16 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
 <!-- Rename Team Modal -->
 <div class="modal-overlay" id="renameTeamModal">
   <div class="modal">
-    <h3>Rename Team</h3>
+    <h3>Edit Team</h3>
     <div class="field"><label>Team Name</label><input type="text" id="rt-name"></div>
+    <div class="field"><label>Accent Color</label>
+      <select id="rt-color">
+        <option value="blue">Blue</option><option value="green">Green</option>
+        <option value="purple">Purple</option><option value="coral">Coral</option>
+        <option value="pink">Pink</option><option value="amber">Amber</option>
+        <option value="teal">Teal</option><option value="red">Red</option>
+      </select>
+    </div>
     <div class="modal-actions">
       <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
       <button class="m-btn save" onclick="saveRenameTeam()">Save</button>
@@ -301,6 +313,7 @@ let editingTeamId = null;
 let editingMemberIdx = null;
 let addingToTeamId = null;
 let renamingTeamId = null;
+let leadersOnly = false;
 
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
@@ -396,9 +409,17 @@ function buildFilter() {
   });
 }
 
+function toggleLeadersFilter() {
+  leadersOnly = !leadersOnly;
+  document.getElementById('leadersBtn').classList.toggle('active', leadersOnly);
+  render();
+}
+
 function clearFilters() {
   document.getElementById('search').value = '';
   document.getElementById('filter').value = '';
+  leadersOnly = false;
+  document.getElementById('leadersBtn').classList.remove('active');
   render();
 }
 
@@ -422,6 +443,7 @@ function render() {
 
     const members = team.members.filter(m => {
       if (!adminMode && !m.visible) return false;
+      if (leadersOnly && !m.isLeader) return false;
       return m.name.toLowerCase().includes(q) || m.role.toLowerCase().includes(q);
     });
     if (!adminMode && members.length === 0) return;
@@ -447,7 +469,7 @@ function render() {
         <div class="team-admin-btns">
           <button class="t-btn reorder" onclick="moveTeam('${team.id}',-1)" ${teamIdx===0?'disabled':''} title="Move up">▲</button>
           <button class="t-btn reorder" onclick="moveTeam('${team.id}',1)" ${teamIdx===roster.teams.length-1?'disabled':''} title="Move down">▼</button>
-          <button class="t-btn" onclick="openRenameTeam('${team.id}')">Rename</button>
+          <button class="t-btn" onclick="openRenameTeam('${team.id}')">Edit Team</button>
           <button class="t-btn hide-team" onclick="toggleTeamVisibility('${team.id}')">${team.visible ? 'Hide' : 'Show'}</button>
           <button class="t-btn" onclick="openAddMember('${team.id}')">+ Add</button>
           <button class="t-btn danger" onclick="deleteTeam('${team.id}')">Delete</button>
@@ -533,6 +555,9 @@ function openRenameTeam(teamId) {
   renamingTeamId = teamId;
   const t = roster.teams.find(t => t.id === teamId);
   document.getElementById('rt-name').value = t.label;
+  // pre-select the closest matching color
+  const colorKey = Object.entries(COLOR_MAP).find(([,v]) => v.dot === t.dot)?.[0] || 'blue';
+  document.getElementById('rt-color').value = colorKey;
   document.getElementById('renameTeamModal').classList.add('open');
   setTimeout(() => document.getElementById('rt-name').select(), 50);
 }
@@ -540,7 +565,10 @@ function openRenameTeam(teamId) {
 function saveRenameTeam() {
   const name = document.getElementById('rt-name').value.trim();
   if (!name) return;
-  roster.teams.find(t => t.id === renamingTeamId).label = name;
+  const t = roster.teams.find(t => t.id === renamingTeamId);
+  t.label = name;
+  const c = COLOR_MAP[document.getElementById('rt-color').value];
+  t.dot = c.dot; t.badgeBg = c.badgeBg; t.badgeText = c.badgeText;
   save(); buildFilter(); closeModal(); render();
 }
 
