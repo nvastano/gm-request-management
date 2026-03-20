@@ -640,7 +640,7 @@ function openEditMember(teamId, memberIdx) {
   document.getElementById('modal-title').textContent = 'Edit — ' + m.name;
   document.getElementById('f-name').value = m.name;
   document.getElementById('f-role').value = m.role;
-  document.getElementById('f-email').value = m.emailOverride || '';
+  document.getElementById('f-email').value = m.emailOverride || toEmail(m);
   document.getElementById('f-leader').checked = m.isLeader;
   document.getElementById('f-visible').checked = m.visible !== false;
   document.getElementById('editModal').classList.add('open');
@@ -650,7 +650,8 @@ function saveMember() {
   const m = roster.teams.find(t => t.id === editingTeamId).members[editingMemberIdx];
   m.name    = document.getElementById('f-name').value.trim() || m.name;
   m.role    = document.getElementById('f-role').value;
-  m.emailOverride = document.getElementById('f-email').value.trim() || '';
+  const enteredEmail = document.getElementById('f-email').value.trim();
+  m.emailOverride = (enteredEmail && enteredEmail !== toEmail({name: m.name})) ? enteredEmail : '';
   m.isLeader= document.getElementById('f-leader').checked;
   m.visible = document.getElementById('f-visible').checked;
   save(); closeModal(); render();
