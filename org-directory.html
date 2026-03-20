@@ -232,6 +232,10 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
         <option>MRR</option><option>SDR</option><option>Coach</option><option>Marketer</option>
       </select>
     </div>
+    <div class="field">
+      <label>Email Override <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--faint);">— leave blank to auto-generate</span></label>
+      <input type="text" id="f-email" placeholder="e.g. connerbrooke.binkley@ramseysolutions.com">
+    </div>
     <div class="field checkbox-field">
       <input type="checkbox" id="f-leader">
       <label for="f-leader">Team leader / primary contact</label>
@@ -260,6 +264,10 @@ footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: v
         <option>VP</option><option>Leader</option><option>Team Lead</option><option>AD</option><option>AE</option>
         <option>MRR</option><option>SDR</option><option>Coach</option><option>Marketer</option>
       </select>
+    </div>
+    <div class="field">
+      <label>Email Override <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--faint);">— leave blank to auto-generate</span></label>
+      <input type="text" id="a-email" placeholder="e.g. connerbrooke.binkley@ramseysolutions.com">
     </div>
     <div class="field checkbox-field">
       <input type="checkbox" id="a-leader">
@@ -455,8 +463,9 @@ function clearFilters() {
 function slug(name) { return name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''); }
 function initials(name) { return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
 function headshotPath(name) { return `headshots/${name.toLowerCase().replace(/\s+/g,'-')}.jpg`; }
-function toEmail(name) {
-  const parts = name.trim().split(/\s+/);
+function toEmail(m) {
+  if (m.emailOverride) return m.emailOverride;
+  const parts = m.name.trim().split(/\s+/);
   const first = parts[0].toLowerCase().replace(/[^a-z]/g,'');
   const last = parts[parts.length-1].toLowerCase().replace(/[^a-z]/g,'');
   return `${first}.${last}@ramseysolutions.com`;
@@ -466,7 +475,7 @@ function copyEmails(teamId) {
   const team = roster.teams.find(t => t.id === teamId);
   const emails = team.members
     .filter(m => m.visible)
-    .map(m => toEmail(m.name))
+    .map(m => toEmail(m))
     .join('; ');
   navigator.clipboard.writeText(emails).then(() => {
     const btn = document.querySelector(`#copied-${teamId}`)?.closest('.copy-emails-btn');
@@ -631,6 +640,7 @@ function openEditMember(teamId, memberIdx) {
   document.getElementById('modal-title').textContent = 'Edit — ' + m.name;
   document.getElementById('f-name').value = m.name;
   document.getElementById('f-role').value = m.role;
+  document.getElementById('f-email').value = m.emailOverride || '';
   document.getElementById('f-leader').checked = m.isLeader;
   document.getElementById('f-visible').checked = m.visible !== false;
   document.getElementById('editModal').classList.add('open');
@@ -640,6 +650,7 @@ function saveMember() {
   const m = roster.teams.find(t => t.id === editingTeamId).members[editingMemberIdx];
   m.name    = document.getElementById('f-name').value.trim() || m.name;
   m.role    = document.getElementById('f-role').value;
+  m.emailOverride = document.getElementById('f-email').value.trim() || '';
   m.isLeader= document.getElementById('f-leader').checked;
   m.visible = document.getElementById('f-visible').checked;
   save(); closeModal(); render();
@@ -657,6 +668,7 @@ function openAddMember(teamId) {
   addingToTeamId = teamId;
   document.getElementById('a-name').value = '';
   document.getElementById('a-role').value = 'AE';
+  document.getElementById('a-email').value = '';
   document.getElementById('a-leader').checked = false;
   document.getElementById('addModal').classList.add('open');
 }
@@ -667,6 +679,7 @@ function saveNewMember() {
   roster.teams.find(t => t.id === addingToTeamId).members.push({
     name, visible: true,
     role: document.getElementById('a-role').value,
+    emailOverride: document.getElementById('a-email').value.trim() || '',
     isLeader: document.getElementById('a-leader').checked,
   });
   save(); closeModal(); render();
