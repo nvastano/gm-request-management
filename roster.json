@@ -379,6 +379,103 @@
           "isLeader": false
         }
       ]
+    },
+    {
+      "id": "coaching-leaders-1774026824528",
+      "label": "Coaching Leaders",
+      "visible": true,
+      "dot": "#EF9F27",
+      "badgeBg": "#FAEEDA",
+      "badgeText": "#854F0B",
+      "members": [
+        {
+          "name": "Jordan Farley",
+          "visible": true,
+          "role": "Leader",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Ryan Puhr",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Emily Cummings",
+          "visible": true,
+          "role": "Team Lead",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Lacy Bell",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Daniel Mckinnon",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Scott Lerman",
+          "visible": true,
+          "role": "Team Lead",
+          "emailOverride": "",
+          "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "sales-leaders-1774026834385",
+      "label": "Sales Leaders",
+      "visible": true,
+      "dot": "#EF9F27",
+      "badgeBg": "#FAEEDA",
+      "badgeText": "#854F0B",
+      "members": [
+        {
+          "name": "John Markie",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Aubrey Binkley",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Zac Karr",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Alex Shepherd",
+          "visible": true,
+          "role": "Leader",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Jalen Rogers",
+          "visible": true,
+          "role": "Team Lead",
+          "emailOverride": "",
+          "isLeader": false
+        }
+      ]
     }
   ]
 }
