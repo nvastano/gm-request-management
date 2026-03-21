@@ -120,6 +120,11 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .page { display: none; }
 .page.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.followup-btn { flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--muted); font-family:var(--sans); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.followup-btn:hover { border-color:var(--border-light); color:var(--text); }
+.followup-btn.active-yes { background:rgba(52,211,153,0.1); border-color:var(--green); color:var(--green); box-shadow:0 0 0 1px var(--green); }
+.followup-btn.active-no { background:rgba(248,113,113,0.1); border-color:var(--red); color:var(--red); box-shadow:0 0 0 1px var(--red); }
+.followup-btn.active-maybe { background:rgba(251,191,36,0.1); border-color:var(--yellow); color:var(--yellow); box-shadow:0 0 0 1px var(--yellow); }
 .footer { margin-top: 48px; text-align: center; font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
 @media(max-width:560px) { .two-col{grid-template-columns:1fr} .panel{padding:20px} .ai-body{padding:20px} .header-title{font-size:26px} }
 </style>
@@ -183,11 +188,19 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
         <div class="field"><label>Channel Received <span class="req">*</span></label>
           <select id="f-channel">
             <option value="">— How did this come in? —</option>
-            <option>Jira Service Request</option><option>Email</option><option>Teams Message</option>
-            <option>Slack</option><option>Meeting / Verbal</option><option>Other</option>
+            <option>Email</option><option>Teams Message</option>
+            <option>Meeting / Verbal</option><option>Other</option>
           </select>
         </div>
         <div class="field"><label>Needed By (optional)</label><input type="date" id="f-due"/></div>
+      </div>
+      <div class="field">
+        <label>Follow-up Needed?</label>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="followup-btn" onclick="setFollowup('Yes',this)" id="fu-yes">Yes</button>
+          <button type="button" class="followup-btn" onclick="setFollowup('No',this)" id="fu-no">No</button>
+          <button type="button" class="followup-btn" onclick="setFollowup('Maybe',this)" id="fu-maybe">Maybe</button>
+        </div>
       </div>
       <div class="field"><label>Jira Ticket Link (if already created)</label><input type="url" id="f-jira" placeholder="https://your-org.atlassian.net/browse/..."/></div>
     </div>
@@ -269,10 +282,11 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <script>
 const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
-let selectedType = '', selectedPriority = '';
+let selectedType = '', selectedPriority = '', selectedFollowup = '';
 
 function setType(val, el) { selectedType = val; document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
 function setPriority(val, el) { selectedPriority = val; document.querySelectorAll('.p-btn').forEach(b => b.className = 'p-btn'); el.classList.add('active-' + val.toLowerCase()); }
+function setFollowup(val, el) { selectedFollowup = val; document.querySelectorAll('.followup-btn').forEach(b => { b.className = 'followup-btn'; }); el.classList.add('active-' + val.toLowerCase()); }
 
 function goTo(step) {
   if (step === 3) {
@@ -375,6 +389,7 @@ async function submitRequest() {
         due: document.getElementById('f-due').value || null,
         jira: document.getElementById('f-jira').value.trim() || null,
         date: new Date().toISOString().split('T')[0],
+        followUp: selectedFollowup || 'Not specified',
         jiraTitle: document.getElementById('ai-jira-title').value.trim(),
         userStory: document.getElementById('ai-user-story').value.trim(),
         acceptanceCriteria: document.getElementById('ai-acceptance').value.trim()
