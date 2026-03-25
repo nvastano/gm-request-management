@@ -303,6 +303,13 @@
           "visible": true,
           "role": "Coach",
           "isLeader": false
+        },
+        {
+          "name": "Lily Lee",
+          "visible": true,
+          "role": "Coach",
+          "emailOverride": "lily.lee@ramseysolutions.com",
+          "isLeader": false
         }
       ]
     },
