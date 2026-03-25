@@ -1,6 +1,86 @@
 {
   "teams": [
     {
+      "id": "b2b-l10-1774453987100",
+      "label": "B2B L10",
+      "visible": true,
+      "dot": "#639922",
+      "badgeBg": "#EAF3DE",
+      "badgeText": "#3B6D11",
+      "members": [
+        {
+          "name": "Darrell Moore",
+          "visible": true,
+          "role": "VP",
+          "emailOverride": "",
+          "isLeader": true
+        },
+        {
+          "name": "Alex Shepherd",
+          "visible": true,
+          "role": "Leader",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Jordan Farley",
+          "visible": true,
+          "role": "Leader",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "John Markie",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Aubrey Binkley",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Zac Karr",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Daniel Mckinnon",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Nick Vastano",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Lacy Bell",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Ryan Puhr",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        }
+      ]
+    },
+    {
       "id": "vps-1773931817333",
       "label": "VPs",
       "visible": true,
@@ -31,82 +111,6 @@
           "visible": true,
           "role": "VP",
           "isLeader": false
-        }
-      ]
-    },
-    {
-      "id": "marketing",
-      "label": "B2B Marketing - Real Estate",
-      "visible": true,
-      "dot": "#7F77DD",
-      "badgeBg": "#EEEDFE",
-      "badgeText": "#534AB7",
-      "members": [
-        {
-          "name": "Richard Prince",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": true,
-          "visible": true
-        },
-        {
-          "name": "Tina Teschner",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Matt George",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Chandler Warrick",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        }
-      ]
-    },
-    {
-      "id": "advocate",
-      "label": "Customer Success",
-      "visible": true,
-      "dot": "#639922",
-      "badgeBg": "#EAF3DE",
-      "badgeText": "#3B6D11",
-      "members": [
-        {
-          "name": "Matthew Barnett",
-          "role": "",
-          "teamNum": "",
-          "isLeader": true,
-          "visible": true
-        },
-        {
-          "name": "Jessica Ross",
-          "role": "Advocate",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Jessica Bissett",
-          "role": "Advocate",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Julie Goward",
-          "role": "Advocate",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
         }
       ]
     },
@@ -481,6 +485,82 @@
           "role": "Team Lead",
           "emailOverride": "",
           "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "label": "B2B Marketing - Real Estate",
+      "visible": true,
+      "dot": "#7F77DD",
+      "badgeBg": "#EEEDFE",
+      "badgeText": "#534AB7",
+      "members": [
+        {
+          "name": "Richard Prince",
+          "role": "Marketer",
+          "teamNum": "",
+          "isLeader": true,
+          "visible": true
+        },
+        {
+          "name": "Tina Teschner",
+          "role": "Marketer",
+          "teamNum": "",
+          "isLeader": false,
+          "visible": true
+        },
+        {
+          "name": "Matt George",
+          "role": "Marketer",
+          "teamNum": "",
+          "isLeader": false,
+          "visible": true
+        },
+        {
+          "name": "Chandler Warrick",
+          "role": "Marketer",
+          "teamNum": "",
+          "isLeader": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "advocate",
+      "label": "Customer Success",
+      "visible": true,
+      "dot": "#639922",
+      "badgeBg": "#EAF3DE",
+      "badgeText": "#3B6D11",
+      "members": [
+        {
+          "name": "Matthew Barnett",
+          "role": "",
+          "teamNum": "",
+          "isLeader": true,
+          "visible": true
+        },
+        {
+          "name": "Jessica Ross",
+          "role": "Advocate",
+          "teamNum": "",
+          "isLeader": false,
+          "visible": true
+        },
+        {
+          "name": "Jessica Bissett",
+          "role": "Advocate",
+          "teamNum": "",
+          "isLeader": false,
+          "visible": true
+        },
+        {
+          "name": "Julie Goward",
+          "role": "Advocate",
+          "teamNum": "",
+          "isLeader": false,
+          "visible": true
         }
       ]
     }
