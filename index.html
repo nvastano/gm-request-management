@@ -185,7 +185,8 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     <div class="panel">
       <div class="panel-title">Details</div>
       <div class="field"><label>Request Summary <span class="req">*</span></label><input type="text" id="f-summary" placeholder="One-line description of what you need" maxlength="200"/></div>
-      <div class="field"><label>Problem Statement / Details <span class="req">*</span></label><textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea></div>
+      <div class="field"><label>Details <span class="req">*</span></label><textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea></div>
+      <div class="field"><label>Business Problem</label><textarea id="f-business-problem" placeholder="What is the underlying business problem this request solves? What's the impact if not addressed?"></textarea></div>
       <div class="two-col">
         <div class="field"><label>Requestor Name <span class="req">*</span></label><input type="text" id="f-requestor" placeholder="Your name"/></div>
         <div class="field"><label>Team / Department <span class="req">*</span></label><input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/></div>
@@ -401,6 +402,7 @@ async function submitRequest() {
         jira: document.getElementById('f-jira').value.trim() || null,
         date: new Date().toISOString().split('T')[0],
         followUp: selectedFollowup || 'Not specified',
+        businessProblem: document.getElementById('f-business-problem').value.trim(),
         jiraTitle: document.getElementById('ai-jira-title').value.trim(),
         userStory: document.getElementById('ai-user-story').value.trim(),
         acceptanceCriteria: document.getElementById('ai-acceptance').value.trim()
