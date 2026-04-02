@@ -143,6 +143,32 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .standup-item-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.3}
 .standup-meta-row{display:flex;align-items:flex-start;gap:5px;font-size:10px;font-family:var(--mono);color:var(--text-dim);line-height:1.5;margin-top:2px}
 .standup-empty{font-size:11px;font-family:var(--mono);color:var(--muted);text-align:center;padding:20px 8px}
+
+/* Retro Modal */
+.retro-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
+.retro-modal-overlay.show{display:flex}
+.retro-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:440px}
+.retro-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.retro-modal-icon{font-size:24px}
+.retro-modal-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+.retro-modal-sub{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-top:2px}
+.retro-field{margin-bottom:16px}
+.retro-label{display:block;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;font-family:var(--mono)}
+.retro-label .req{color:var(--orange)}
+.retro-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:11px 14px;font-family:var(--sans);font-size:14px;color:var(--text);outline:none;transition:border-color 0.15s}
+.retro-input:focus{border-color:var(--orange-dim);box-shadow:0 0 0 3px var(--orange-glow)}
+.retro-input::placeholder{color:var(--muted)}
+.retro-btn-row{display:flex;gap:10px;margin-top:20px}
+.retro-submit{flex:1;padding:11px;background:var(--orange);color:#0f172a;border:none;border-radius:6px;font-family:var(--display);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s}
+.retro-submit:hover:not(:disabled){background:var(--orange-dim);transform:translateY(-1px)}
+.retro-submit:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.retro-cancel{padding:11px 18px;background:transparent;color:var(--text-dim);border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.retro-cancel:hover{border-color:var(--border-light);color:var(--text)}
+.retro-status{display:none;padding:12px 14px;border-radius:6px;font-size:12px;font-family:var(--mono);line-height:1.6;margin-top:12px}
+.retro-status.show{display:block}
+.retro-status.success{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--green)}
+.retro-status.error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:var(--red)}
+.retro-status.loading{background:var(--orange-glow);border:1px solid rgba(249,115,22,0.3);color:var(--orange)}
 </style>
 </head>
 <body>
@@ -172,6 +198,10 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
       <a href="https://ramseysolutions.atlassian.net/jira/software/c/projects/TRUSTED/boards/7537?quickFilter=24451" target="_blank" class="quick-link">
         <span class="quick-link-icon">🎫</span> Jira Board
       </a>
+      <button onclick="openRetroModal()" class="quick-link" style="background:var(--orange-glow);border-color:var(--orange);color:var(--orange);cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px">
+        <span class="quick-link-icon">🔄</span> Submit Retro Topic
+      </button>
+
     </div>
   </div>
 
@@ -500,6 +530,97 @@ document.getElementById('modal').addEventListener('click', function(e) {
 
 initCal();
 renderStandups();
+
+// Retro Topics
+const RETRO_DB = '336dc3ec98d78006b779e5dcf39ab60d';
+const RETRO_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/retro';
+
+function openRetroModal() {
+  document.getElementById('retro-modal').classList.add('show');
+  document.getElementById('retro-topic').focus();
+}
+
+function closeRetroModal() {
+  document.getElementById('retro-modal').classList.remove('show');
+  document.getElementById('retro-topic').value = '';
+  document.getElementById('retro-suggested-by').value = '';
+  document.getElementById('retro-status').className = 'retro-status';
+  document.getElementById('retro-submit-btn').disabled = false;
+}
+
+async function submitRetroTopic() {
+  const topic = document.getElementById('retro-topic').value.trim();
+  const suggestedBy = document.getElementById('retro-suggested-by').value.trim();
+  const statusEl = document.getElementById('retro-status');
+  const btn = document.getElementById('retro-submit-btn');
+
+  if (!topic || !suggestedBy) {
+    statusEl.className = 'retro-status show error';
+    statusEl.textContent = '⚠ Please fill in both fields.';
+    return;
+  }
+
+  btn.disabled = true;
+  statusEl.className = 'retro-status show loading';
+  statusEl.textContent = '⟳ Submitting...';
+
+  try {
+    const res = await fetch(RETRO_WORKER, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        topic,
+        suggestedBy,
+        date: new Date().toISOString().split('T')[0]
+      })
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      statusEl.className = 'retro-status show success';
+      statusEl.textContent = '✓ Topic submitted! Thanks ' + suggestedBy + '.';
+      document.getElementById('retro-topic').value = '';
+      document.getElementById('retro-suggested-by').value = '';
+      btn.disabled = false;
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    statusEl.className = 'retro-status show error';
+    statusEl.textContent = '✗ Submission failed: ' + e.message;
+    btn.disabled = false;
+  }
+}
+
+// Close on overlay click
+document.getElementById('retro-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeRetroModal();
+});
 </script>
+
+<!-- Retro Topic Modal -->
+<div class="retro-modal-overlay" id="retro-modal">
+  <div class="retro-modal">
+    <div class="retro-modal-header">
+      <span class="retro-modal-icon">🔄</span>
+      <div>
+        <div class="retro-modal-title">Retro Topic</div>
+        <div class="retro-modal-sub">Submit a topic for the next retrospective</div>
+      </div>
+    </div>
+    <div class="retro-field">
+      <label class="retro-label">Topic <span class="req">*</span></label>
+      <textarea id="retro-topic" class="retro-input" rows="3" placeholder="What would you like to discuss in the retro?"></textarea>
+    </div>
+    <div class="retro-field">
+      <label class="retro-label">Suggested By <span class="req">*</span></label>
+      <input type="text" id="retro-suggested-by" class="retro-input" placeholder="Your name"/>
+    </div>
+    <div class="retro-btn-row">
+      <button class="retro-cancel" onclick="closeRetroModal()">Cancel</button>
+      <button class="retro-submit" id="retro-submit-btn" onclick="submitRetroTopic()">Submit Topic</button>
+    </div>
+    <div class="retro-status" id="retro-status"></div>
+  </div>
+</div>
 </body>
 </html>
