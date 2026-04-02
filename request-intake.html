@@ -157,14 +157,6 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     </div>
   </div>
 
-  <div class="steps-indicator">
-    <div class="step-ind active" id="ind-1"><div class="step-ind-num">1</div><span>Request Details</span></div>
-    <div class="step-connector" id="conn-1"></div>
-    <div class="step-ind" id="ind-2"><div class="step-ind-num">2</div><span>AI Story</span></div>
-    <div class="step-connector" id="conn-2"></div>
-    <div class="step-ind" id="ind-3"><div class="step-ind-num">3</div><span>Submit</span></div>
-  </div>
-
   <!-- STEP 1 -->
   <div class="page active" id="page-1">
     <div class="panel">
@@ -215,71 +207,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="goToAI()">Next — Generate User Story →</button>
-      <button class="btn btn-ghost" onclick="skipAI()">Skip — Submit without Jira story</button>
-    </div>
-  </div>
-
-  <!-- STEP 2 -->
-  <div class="page" id="page-2">
-    <div class="ai-panel">
-      <div class="ai-header">
-        <div class="ai-icon">🤖</div>
-        <div>
-          <div class="ai-title">AI Story Generator</div>
-          <div class="ai-subtitle">Generates your Jira user story, acceptance criteria, and ticket title</div>
-        </div>
-      </div>
-      <div class="ai-body">
-        <div class="generating" id="generating">
-          <div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div>
-          <div class="gen-text">Analyzing request and generating story...</div>
-        </div>
-        <div class="generate-btn-wrap" id="generate-btn-wrap">
-          <button class="btn btn-primary" onclick="generateStory()">✦ Generate with AI</button>
-          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Based on your request details — you can edit before submitting</p>
-        </div>
-        <div class="ai-output" id="ai-output">
-          <div class="ai-section">
-            <div class="ai-section-label">Suggested Jira Ticket Title</div>
-            <input type="text" id="ai-jira-title" placeholder="Generated ticket title..."/>
-          </div>
-          <div class="ai-section">
-            <div class="ai-section-label">User Story</div>
-            <textarea id="ai-user-story" rows="4" placeholder="As a... I want... So that..."></textarea>
-          </div>
-          <div class="ai-section">
-            <div class="ai-section-label">Acceptance Criteria</div>
-            <textarea id="ai-acceptance" rows="6" placeholder="Generated acceptance criteria..."></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
-      <button class="btn btn-ghost" onclick="skipAI()">Skip this step</button>
-      <button class="btn btn-primary" id="next-to-review-btn" onclick="goTo(3)" disabled>Review & Submit →</button>
-    </div>
-  </div>
-
-  <!-- STEP 3 -->
-  <div class="page" id="page-3">
-    <div class="panel">
-      <div class="panel-title">Review & Confirm</div>
-      <div class="review-card"><div class="review-label">Summary</div><div class="review-value" id="r-summary"></div></div>
-      <div class="review-card"><div class="review-label">Value</div><div class="review-value" id="r-priority"></div></div>
-      <div class="two-col">
-        <div class="review-card"><div class="review-label">Requestor</div><div class="review-value" id="r-requestor"></div></div>
-        <div class="review-card"><div class="review-label">Team</div><div class="review-value" id="r-team"></div></div>
-      </div>
-      <div class="review-card"><div class="review-label">Suggested Jira Title</div><div class="review-value" id="r-jira-title" style="color:var(--orange)"></div></div>
-      <div class="review-card"><div class="review-label">User Story</div><div class="review-value" id="r-user-story" style="font-size:13px;white-space:pre-wrap"></div></div>
-      <div class="review-card"><div class="review-label">Acceptance Criteria</div><div class="review-value" id="r-acceptance" style="font-size:13px;white-space:pre-wrap"></div></div>
-      <div class="review-card" id="r-prelim-wrap" style="display:none"><div class="review-label">Preliminary Recommendation</div><div class="review-value" id="r-prelim" style="font-size:13px;white-space:pre-wrap"></div></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
-      <button class="btn btn-green" id="submit-btn" onclick="submitRequest()">✓ Submit to Notion + Create Jira Ticket</button>
+      <button class="btn btn-green" id="submit-btn" onclick="submitRequest()">✓ Submit Request</button>
     </div>
     <div class="status" id="status"></div>
   </div>
@@ -298,13 +226,10 @@ let selectedValue = 0;
 function setValue(n) {
   selectedValue = n;
   [1,2,3].forEach(i => {
-    const btn = document.getElementById('v'+i);
-    btn.classList.toggle('active', i === n);
+    document.getElementById('v'+i).classList.toggle('active', i === n);
   });
-  const crit = document.getElementById('v-crit');
-  if (crit) crit.classList.remove('active-critical');
-  const alert = document.getElementById('critical-alert');
-  if (alert) alert.style.display = 'none';
+  document.getElementById('v-crit').classList.remove('active-critical');
+  document.getElementById('critical-alert').style.display = 'none';
 }
 
 function setCritical() {
@@ -314,98 +239,22 @@ function setCritical() {
   document.getElementById('critical-alert').style.display = 'block';
 }
 
-function goTo(step) {
-  if (step === 3) {
-    document.getElementById('r-summary').textContent = document.getElementById('f-summary').value;
-    const starLabels = {1:'★☆☆ Unassigned Value', 2:'★★☆ Technical Objective Value', 3:'★★★ Business & Technical Objective Value'};
-    document.getElementById('r-priority').textContent = starLabels[selectedValue] || '';
-    document.getElementById('r-requestor').textContent = document.getElementById('f-requestor').value;
-    document.getElementById('r-team').textContent = document.getElementById('f-team').value;
-    document.getElementById('r-jira-title').textContent = document.getElementById('ai-jira-title').value;
-    const prelimVal = document.getElementById('f-prelim-rec').value.trim();
-    if (prelimVal) {
-      document.getElementById('r-prelim').textContent = prelimVal;
-      document.getElementById('r-prelim-wrap').style.display = 'block';
-    }
-    document.getElementById('r-user-story').textContent = document.getElementById('ai-user-story').value;
-    document.getElementById('r-acceptance').textContent = document.getElementById('ai-acceptance').value;
-  }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + step).classList.add('active');
-  for (let i = 1; i <= 3; i++) {
-    const ind = document.getElementById('ind-' + i);
-    ind.classList.remove('active','done');
-    if (i < step) ind.classList.add('done');
-    else if (i === step) ind.classList.add('active');
-  }
-  for (let i = 1; i <= 2; i++) document.getElementById('conn-' + i).classList.toggle('done', i < step);
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function goToAI() {
-  if (document.getElementById('v-crit') && document.getElementById('v-crit').classList.contains('active-critical')) {
+async function submitRequest() {
+  if (document.getElementById('v-crit').classList.contains('active-critical')) {
     alert('Critical issues must be submitted via the Jira service form. Please use the link shown above.');
     return;
   }
-  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-business-problem').value.trim()) {
-    alert('Please fill in all required fields before continuing.'); return;
-  }
-  goTo(2);
-  setTimeout(() => generateStory(), 100);
-}
+  if (!selectedValue) { alert('Please select a value rating before submitting.'); return; }
+  if (!document.getElementById('f-summary').value.trim()) { alert('Please enter a request summary.'); return; }
+  if (!document.getElementById('f-details').value.trim()) { alert('Please enter a request description.'); return; }
+  if (!document.getElementById('f-business-problem').value.trim()) { alert('Please enter a business problem description.'); return; }
+  if (!document.getElementById('f-requestor').value.trim()) { alert('Please enter your name.'); return; }
+  if (!document.getElementById('f-team').value.trim()) { alert('Please enter your team.'); return; }
 
-function skipAI() {
-  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-business-problem').value.trim()) {
-    alert('Please fill in all required fields before continuing.'); return;
-  }
-  document.getElementById('ai-jira-title').value = '';
-  document.getElementById('ai-user-story').value = '';
-  document.getElementById('ai-acceptance').value = '';
-  document.getElementById('next-to-review-btn').disabled = false;
-  goTo(3);
-}
-
-async function generateStory() {
-  document.getElementById('generate-btn-wrap').style.display = 'none';
-  document.getElementById('generating').classList.add('show');
-  document.getElementById('ai-output').classList.remove('show');
-  try {
-    const res = await fetch(WORKER_URL + '/generate', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        summary: document.getElementById('f-summary').value,
-        details: document.getElementById('f-details').value,
-        team: document.getElementById('f-team').value
-      })
-    });
-    const parsed = await res.json();
-    if (!res.ok || parsed.error) {
-      throw new Error(parsed.error || 'Worker returned error: ' + res.status);
-    }
-    document.getElementById('ai-jira-title').value = parsed.jiraTitle || '';
-    document.getElementById('ai-user-story').value = parsed.userStory || '';
-    document.getElementById('ai-acceptance').value = parsed.acceptanceCriteria || '';
-    document.getElementById('generating').classList.remove('show');
-    document.getElementById('ai-output').classList.add('show');
-    document.getElementById('next-to-review-btn').disabled = false;
-  } catch(e) {
-    document.getElementById('generating').classList.remove('show');
-    document.getElementById('generate-btn-wrap').style.display = 'block';
-    document.getElementById('ai-output').classList.add('show');
-    document.getElementById('next-to-review-btn').disabled = false;
-    document.getElementById('ai-jira-title').value = '';
-    document.getElementById('ai-jira-title').placeholder = 'Generation failed: ' + e.message + ' — type manually or skip';
-    alert('AI generation failed. You can type the fields manually.\n' + e.message);
-    document.getElementById('ai-output').classList.add('show');
-    document.getElementById('next-to-review-btn').disabled = false;
-  }
-}
-
-async function submitRequest() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  showStatus('loading', '⟳ Submitting to Notion and creating Jira ticket...');
+  showStatus('loading', '⟳ Submitting request, generating Jira ticket with AI...');
+
   try {
     const res = await fetch(WORKER_URL + '/intake', {
       method: 'POST',
@@ -418,10 +267,7 @@ async function submitRequest() {
         value: selectedValue,
         date: new Date().toISOString().split('T')[0],
         businessProblem: document.getElementById('f-business-problem').value.trim(),
-        prelimRec: document.getElementById('f-prelim-rec').value.trim(),
-        jiraTitle: document.getElementById('ai-jira-title').value.trim(),
-        userStory: document.getElementById('ai-user-story').value.trim(),
-        acceptanceCriteria: document.getElementById('ai-acceptance').value.trim()
+        prelimRec: document.getElementById('f-prelim-rec').value.trim()
       })
     });
     const data = await res.json();
