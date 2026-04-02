@@ -121,7 +121,6 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .gen-dot:nth-child(2) { animation-delay: 0.2s; }
 .gen-dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-8px);opacity:1} }
-.gen-text { font-size: 13px; color: var(--text-dim); font-family: var(--mono); }
 .status { display: none; padding: 14px 18px; border-radius: 8px; font-size: 13px; line-height: 1.6; margin-top: 16px; }
 .status.show { display: block; }
 .status.loading { background: var(--orange-glow); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
@@ -139,7 +138,6 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .page { display: none; }
 .page.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-
 .footer { margin-top: 48px; text-align: center; font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
 @media(max-width:560px) { .two-col{grid-template-columns:1fr} .panel{padding:20px} .ai-body{padding:20px} .header-title{font-size:26px} }
 </style>
@@ -157,7 +155,6 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
         <h1 class="header-title">Submit a <span>Request</span></h1>
       </div>
     </div>
-    
   </div>
 
   <div class="steps-indicator">
@@ -170,8 +167,6 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <!-- STEP 1 -->
   <div class="page active" id="page-1">
-
-
     <div class="panel">
       <div class="panel-title">Value</div>
       <div class="field">
@@ -217,9 +212,6 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
         <div class="field"><label>Requestor Name <span class="req">*</span></label><input type="text" id="f-requestor" placeholder="Your name"/></div>
         <div class="field"><label>Team / Department <span class="req">*</span></label><input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/></div>
       </div>
-
-
-
     </div>
 
     <div class="btn-row">
@@ -287,27 +279,21 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     </div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
-      <button class="btn btn-green" id="submit-btn" onclick="submitRequest()">✓ Submit to Notion</button>
+      <button class="btn btn-green" id="submit-btn" onclick="submitRequest()">✓ Submit to Notion + Create Jira Ticket</button>
     </div>
     <div class="status" id="status"></div>
   </div>
 
-  <div style="text-align:center;margin-top:32px;">
-  <a href="https://nvastano.github.io/gm-request-management/org-directory.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'">
-    👥 Team Directory
-  </a>
-</div>
-<div style="text-align:center;margin-top:32px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-  <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-family:var(--mono);font-size:12px;text-decoration:none;" onmouseover="this.style.color='var(--orange)';this.style.borderColor='var(--orange)'" onmouseout="this.style.color='var(--text-dim)';this.style.borderColor='var(--border)'">🏠 Squad Hub</a>
-  <a href="org-directory.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-family:var(--mono);font-size:12px;text-decoration:none;" onmouseover="this.style.color='var(--orange)';this.style.borderColor='var(--orange)'" onmouseout="this.style.color='var(--text-dim)';this.style.borderColor='var(--border)'">👥 Team Directory</a>
-</div>
-<footer class="footer">GREASE MONKEYS · KEEPING BUSINESS MOVING</footer>
+  <div style="text-align:center;margin-top:32px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-family:var(--mono);font-size:12px;text-decoration:none;" onmouseover="this.style.color='var(--orange)';this.style.borderColor='var(--orange)'" onmouseout="this.style.color='var(--text-dim)';this.style.borderColor='var(--border)'">🏠 Squad Hub</a>
+    <a href="org-directory.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-family:var(--mono);font-size:12px;text-decoration:none;" onmouseover="this.style.color='var(--orange)';this.style.borderColor='var(--orange)'" onmouseout="this.style.color='var(--text-dim)';this.style.borderColor='var(--border)'">👥 Team Directory</a>
+  </div>
+  <footer class="footer">GREASE MONKEYS · KEEPING BUSINESS MOVING</footer>
 </div>
 
 <script>
 const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
 let selectedValue = 0;
-
 
 function setValue(n) {
   selectedValue = n;
@@ -331,7 +317,6 @@ function setCritical() {
 function goTo(step) {
   if (step === 3) {
     document.getElementById('r-summary').textContent = document.getElementById('f-summary').value;
-
     const starLabels = {1:'★☆☆ Unassigned Value', 2:'★★☆ Technical Objective Value', 3:'★★★ Business & Technical Objective Value'};
     document.getElementById('r-priority').textContent = starLabels[selectedValue] || '';
     document.getElementById('r-requestor').textContent = document.getElementById('f-requestor').value;
@@ -373,7 +358,6 @@ function skipAI() {
   if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-business-problem').value.trim()) {
     alert('Please fill in all required fields before continuing.'); return;
   }
-  // Clear AI fields and go straight to review
   document.getElementById('ai-jira-title').value = '';
   document.getElementById('ai-user-story').value = '';
   document.getElementById('ai-acceptance').value = '';
@@ -410,7 +394,6 @@ async function generateStory() {
     document.getElementById('generate-btn-wrap').style.display = 'block';
     document.getElementById('ai-output').classList.add('show');
     document.getElementById('next-to-review-btn').disabled = false;
-    // Show error inline instead of alert
     document.getElementById('ai-jira-title').value = '';
     document.getElementById('ai-jira-title').placeholder = 'Generation failed: ' + e.message + ' — type manually or skip';
     alert('AI generation failed. You can type the fields manually.\n' + e.message);
@@ -422,11 +405,11 @@ async function generateStory() {
 async function submitRequest() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  showStatus('loading','⟳ Submitting to Notion...');
+  showStatus('loading', '⟳ Submitting to Notion and creating Jira ticket...');
   try {
     const res = await fetch(WORKER_URL + '/intake', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         summary: document.getElementById('f-summary').value.trim(),
         details: document.getElementById('f-details').value.trim(),
@@ -443,14 +426,20 @@ async function submitRequest() {
     });
     const data = await res.json();
     if (res.ok && data.ok) {
-      showStatus('success','✓ Request submitted to Notion. User story and acceptance criteria saved to the row.');
+      let msg = '✓ Request submitted to Notion.';
+      if (data.jiraKey && data.jiraUrl) {
+        msg += ` <a href="${data.jiraUrl}" target="_blank" style="color:var(--green);text-decoration:underline;">Jira ticket ${data.jiraKey} created →</a>`;
+      } else {
+        msg += ' (Jira ticket could not be created — check worker env vars.)';
+      }
+      showStatus('success', msg);
       btn.textContent = '✓ Submitted';
     } else {
-      showStatus('error','✗ Submission failed: ' + (data.error || 'Unknown error'));
+      showStatus('error', '✗ Submission failed: ' + (data.error || 'Unknown error'));
       btn.disabled = false;
     }
   } catch(e) {
-    showStatus('error','✗ Could not reach server: ' + e.message);
+    showStatus('error', '✗ Could not reach server: ' + e.message);
     btn.disabled = false;
   }
 }
