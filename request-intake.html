@@ -211,8 +211,8 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
       <div class="panel-title">Details</div>
       <div class="field"><label>Request Summary <span class="req">*</span></label><input type="text" id="f-summary" placeholder="One-line description of what you need" maxlength="200"/></div>
       <div class="field"><label>Request Description <span class="req">*</span></label><textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea></div>
-      <div class="field"><label>Business Problem Description</label><textarea id="f-business-problem" placeholder="What is the underlying business problem this request solves? What's the impact if not addressed?"></textarea></div>
-      <div class="field"><label>Preliminary Recommendation</label><textarea id="f-prelim-rec" placeholder="What is your initial recommendation or proposed solution?"></textarea></div>
+      <div class="field"><label>Business Problem Description <span class="req">*</span></label><textarea id="f-business-problem" placeholder="What is the underlying business problem this request solves? What's the impact if not addressed?"></textarea></div>
+      <div class="field"><label>Preliminary Recommendation <span style="font-size:10px;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(optional)</span></label><textarea id="f-prelim-rec" placeholder="What is your initial recommendation or proposed solution?"></textarea></div>
       <div class="two-col">
         <div class="field"><label>Requestor Name <span class="req">*</span></label><input type="text" id="f-requestor" placeholder="Your name"/></div>
         <div class="field"><label>Team / Department <span class="req">*</span></label><input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/></div>
@@ -362,7 +362,7 @@ function goToAI() {
     alert('Critical issues must be submitted via the Jira service form. Please use the link shown above.');
     return;
   }
-  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim()) {
+  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-business-problem').value.trim()) {
     alert('Please fill in all required fields before continuing.'); return;
   }
   goTo(2);
@@ -370,7 +370,7 @@ function goToAI() {
 }
 
 function skipAI() {
-  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim()) {
+  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-business-problem').value.trim()) {
     alert('Please fill in all required fields before continuing.'); return;
   }
   // Clear AI fields and go straight to review
