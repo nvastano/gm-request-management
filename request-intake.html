@@ -79,6 +79,24 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .btn-green { background: var(--green); color: #0f172a; box-shadow: 0 0 20px rgba(52,211,153,0.25); }
 .btn-green:hover:not(:disabled) { background: #6ee7b7; transform: translateY(-1px); }
 .btn-green:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.value-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.v-btn { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 12px; cursor: pointer; text-align: center; transition: all 0.15s; }
+.v-btn:hover { border-color: var(--border-light); background: var(--surface2); }
+.v-btn.active { background: var(--orange-glow); border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange); }
+.v-stars { font-size: 20px; color: var(--muted); margin-bottom: 8px; letter-spacing: 2px; }
+.v-btn.active .v-stars { color: var(--orange); }
+.v-label { font-size: 11px; font-weight: 600; color: var(--text-dim); line-height: 1.4; }
+.v-btn.active .v-label { color: var(--text); }
+.v-critical { border-color: rgba(248,113,113,0.4) !important; }
+.v-critical .v-label { color: var(--red); }
+.v-btn.active-critical { background: rgba(248,113,113,0.1); border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
+.critical-alert { margin-top: 14px; }
+.critical-alert-inner { display: flex; gap: 14px; align-items: flex-start; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.4); border-left: 3px solid var(--red); border-radius: 8px; padding: 16px 18px; }
+.critical-icon { font-size: 22px; flex-shrink: 0; }
+.critical-title { font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
+.critical-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; font-family: var(--mono); }
+.critical-link { display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--red); text-decoration: none; font-family: var(--mono); border-bottom: 1px solid rgba(248,113,113,0.4); padding-bottom: 1px; }
+.critical-link:hover { color: #fff; border-color: #fff; }
 .btn-row { display: flex; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
 .ai-panel { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--orange); border-radius: 4px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
 .ai-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 1px solid var(--border); padding: 20px 28px; display: flex; align-items: center; gap: 14px; }
@@ -121,11 +139,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .page { display: none; }
 .page.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.followup-btn { flex:1; padding:10px 8px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--muted); font-family:var(--sans); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
-.followup-btn:hover { border-color:var(--border-light); color:var(--text); }
-.followup-btn.active-yes { background:rgba(52,211,153,0.1); border-color:var(--green); color:var(--green); box-shadow:0 0 0 1px var(--green); }
-.followup-btn.active-no { background:rgba(248,113,113,0.1); border-color:var(--red); color:var(--red); box-shadow:0 0 0 1px var(--red); }
-.followup-btn.active-maybe { background:rgba(251,191,36,0.1); border-color:var(--yellow); color:var(--yellow); box-shadow:0 0 0 1px var(--yellow); }
+
 .footer { margin-top: 48px; text-align: center; font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
 @media(max-width:560px) { .two-col{grid-template-columns:1fr} .panel{padding:20px} .ai-body{padding:20px} .header-title{font-size:26px} }
 </style>
@@ -143,7 +157,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
         <h1 class="header-title">Submit a <span>Request</span></h1>
       </div>
     </div>
-    <p class="header-sub">Log incoming requests — bugs, enhancements, new builds, or projects. AI will help generate your Jira user story before submitting to Notion.</p>
+    
   </div>
 
   <div class="steps-indicator">
@@ -156,28 +170,39 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <!-- STEP 1 -->
   <div class="page active" id="page-1">
-    <div class="panel">
-      <div class="panel-title">Request Type</div>
-      <div class="field">
-        <label>What kind of request is this? <span class="req">*</span></label>
-        <div class="type-grid">
-          <button class="t-btn" onclick="setType('Bug / Issue',this)"><span class="t-icon">🐛</span><span><span class="t-text">Bug / Issue</span><span class="t-sub">Something is broken</span></span></button>
-          <button class="t-btn" onclick="setType('Enhancement',this)"><span class="t-icon">✨</span><span><span class="t-text">Enhancement</span><span class="t-sub">Improve something existing</span></span></button>
-          <button class="t-btn" onclick="setType('New Build',this)"><span class="t-icon">🔨</span><span><span class="t-text">New Build</span><span class="t-sub">Build something new</span></span></button>
-          <button class="t-btn" onclick="setType('Project / Epic',this)"><span class="t-icon">🗂️</span><span><span class="t-text">Project / Epic</span><span class="t-sub">Multi-ticket initiative</span></span></button>
-        </div>
-      </div>
-    </div>
+
 
     <div class="panel">
-      <div class="panel-title">Priority</div>
+      <div class="panel-title">Value</div>
       <div class="field">
-        <label>How urgent? <span class="req">*</span></label>
-        <div class="priority-grid">
-          <button class="p-btn" onclick="setPriority('P1',this)">P1<span class="p-label">Critical</span></button>
-          <button class="p-btn" onclick="setPriority('P2',this)">P2<span class="p-label">High</span></button>
-          <button class="p-btn" onclick="setPriority('P3',this)">P3<span class="p-label">Medium</span></button>
-          <button class="p-btn" onclick="setPriority('P4',this)">P4<span class="p-label">Low</span></button>
+        <label>What is the value of this request? <span class="req">*</span></label>
+        <div class="value-grid">
+          <button class="v-btn" id="v1" onclick="setValue(1)">
+            <div class="v-stars">★☆☆</div>
+            <div class="v-label">Unassigned Value</div>
+          </button>
+          <button class="v-btn" id="v2" onclick="setValue(2)">
+            <div class="v-stars">★★☆</div>
+            <div class="v-label">Technical Objective Value</div>
+          </button>
+          <button class="v-btn" id="v3" onclick="setValue(3)">
+            <div class="v-stars">★★★</div>
+            <div class="v-label">Business & Technical Objective Value</div>
+          </button>
+          <button class="v-btn v-critical" id="v-crit" onclick="setCritical()">
+            <div class="v-stars" style="font-size:18px;">🚨</div>
+            <div class="v-label">Critical</div>
+          </button>
+        </div>
+        <div class="critical-alert" id="critical-alert" style="display:none;">
+          <div class="critical-alert-inner">
+            <div class="critical-icon">🚨</div>
+            <div class="critical-text">
+              <div class="critical-title">Critical Issue? Use the Jira Service Form</div>
+              <div class="critical-desc">Critical requests should be submitted directly through the Jira service form — not through this intake tool.</div>
+              <a href="https://ramseysolutions.atlassian.net/jira/software/c/projects/TRUSTED/forms/form/direct/8/13028" target="_blank" class="critical-link">Go to Jira Critical Request Form →</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -185,31 +210,16 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     <div class="panel">
       <div class="panel-title">Details</div>
       <div class="field"><label>Request Summary <span class="req">*</span></label><input type="text" id="f-summary" placeholder="One-line description of what you need" maxlength="200"/></div>
-      <div class="field"><label>Details <span class="req">*</span></label><textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea></div>
-      <div class="field"><label>Business Problem</label><textarea id="f-business-problem" placeholder="What is the underlying business problem this request solves? What's the impact if not addressed?"></textarea></div>
+      <div class="field"><label>Request Description <span class="req">*</span></label><textarea id="f-details" placeholder="Describe the problem or request. What's broken? What outcome do you need? What's the impact?"></textarea></div>
+      <div class="field"><label>Business Problem Description</label><textarea id="f-business-problem" placeholder="What is the underlying business problem this request solves? What's the impact if not addressed?"></textarea></div>
+      <div class="field"><label>Preliminary Recommendation</label><textarea id="f-prelim-rec" placeholder="What is your initial recommendation or proposed solution?"></textarea></div>
       <div class="two-col">
         <div class="field"><label>Requestor Name <span class="req">*</span></label><input type="text" id="f-requestor" placeholder="Your name"/></div>
         <div class="field"><label>Team / Department <span class="req">*</span></label><input type="text" id="f-team" placeholder="e.g. Sales Ops, Finance"/></div>
       </div>
-      <div class="two-col">
-        <div class="field"><label>Channel Received <span class="req">*</span></label>
-          <select id="f-channel">
-            <option value="">— How did this come in? —</option>
-            <option>Email</option><option>Teams Message</option>
-            <option>Meeting / Verbal</option><option>Other</option>
-          </select>
-        </div>
-        <div class="field"><label>Needed By (optional)</label><input type="date" id="f-due"/></div>
-      </div>
-      <div class="field">
-        <label>Follow-up Needed?</label>
-        <div style="display:flex;gap:10px;">
-          <button type="button" class="followup-btn" onclick="setFollowup('Yes',this)" id="fu-yes">Yes</button>
-          <button type="button" class="followup-btn" onclick="setFollowup('No',this)" id="fu-no">No</button>
-          <button type="button" class="followup-btn" onclick="setFollowup('Maybe',this)" id="fu-maybe">Maybe</button>
-        </div>
-      </div>
-      <div class="field"><label>Jira Ticket Link (if already created)</label><input type="url" id="f-jira" placeholder="https://your-org.atlassian.net/browse/..."/></div>
+
+
+
     </div>
 
     <div class="btn-row">
@@ -265,10 +275,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     <div class="panel">
       <div class="panel-title">Review & Confirm</div>
       <div class="review-card"><div class="review-label">Summary</div><div class="review-value" id="r-summary"></div></div>
-      <div class="two-col">
-        <div class="review-card"><div class="review-label">Type</div><div class="review-value" id="r-type"></div></div>
-        <div class="review-card"><div class="review-label">Priority</div><div class="review-value" id="r-priority"></div></div>
-      </div>
+      <div class="review-card"><div class="review-label">Value</div><div class="review-value" id="r-priority"></div></div>
       <div class="two-col">
         <div class="review-card"><div class="review-label">Requestor</div><div class="review-value" id="r-requestor"></div></div>
         <div class="review-card"><div class="review-label">Team</div><div class="review-value" id="r-team"></div></div>
@@ -276,6 +283,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
       <div class="review-card"><div class="review-label">Suggested Jira Title</div><div class="review-value" id="r-jira-title" style="color:var(--orange)"></div></div>
       <div class="review-card"><div class="review-label">User Story</div><div class="review-value" id="r-user-story" style="font-size:13px;white-space:pre-wrap"></div></div>
       <div class="review-card"><div class="review-label">Acceptance Criteria</div><div class="review-value" id="r-acceptance" style="font-size:13px;white-space:pre-wrap"></div></div>
+      <div class="review-card" id="r-prelim-wrap" style="display:none"><div class="review-label">Preliminary Recommendation</div><div class="review-value" id="r-prelim" style="font-size:13px;white-space:pre-wrap"></div></div>
     </div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
@@ -298,20 +306,42 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <script>
 const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
-let selectedType = '', selectedPriority = '', selectedFollowup = '';
+let selectedValue = 0;
 
-function setType(val, el) { selectedType = val; document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
-function setPriority(val, el) { selectedPriority = val; document.querySelectorAll('.p-btn').forEach(b => b.className = 'p-btn'); el.classList.add('active-' + val.toLowerCase()); }
-function setFollowup(val, el) { selectedFollowup = val; document.querySelectorAll('.followup-btn').forEach(b => { b.className = 'followup-btn'; }); el.classList.add('active-' + val.toLowerCase()); }
+
+function setValue(n) {
+  selectedValue = n;
+  [1,2,3].forEach(i => {
+    const btn = document.getElementById('v'+i);
+    btn.classList.toggle('active', i === n);
+  });
+  const crit = document.getElementById('v-crit');
+  if (crit) crit.classList.remove('active-critical');
+  const alert = document.getElementById('critical-alert');
+  if (alert) alert.style.display = 'none';
+}
+
+function setCritical() {
+  selectedValue = 0;
+  [1,2,3].forEach(i => document.getElementById('v'+i).classList.remove('active'));
+  document.getElementById('v-crit').classList.add('active-critical');
+  document.getElementById('critical-alert').style.display = 'block';
+}
 
 function goTo(step) {
   if (step === 3) {
     document.getElementById('r-summary').textContent = document.getElementById('f-summary').value;
-    document.getElementById('r-type').innerHTML = `<span class="badge badge-type">${selectedType}</span>`;
-    document.getElementById('r-priority').innerHTML = `<span class="badge badge-${selectedPriority.toLowerCase()}">${selectedPriority}</span>`;
+
+    const starLabels = {1:'★☆☆ Unassigned Value', 2:'★★☆ Technical Objective Value', 3:'★★★ Business & Technical Objective Value'};
+    document.getElementById('r-priority').textContent = starLabels[selectedValue] || '';
     document.getElementById('r-requestor').textContent = document.getElementById('f-requestor').value;
     document.getElementById('r-team').textContent = document.getElementById('f-team').value;
     document.getElementById('r-jira-title').textContent = document.getElementById('ai-jira-title').value;
+    const prelimVal = document.getElementById('f-prelim-rec').value.trim();
+    if (prelimVal) {
+      document.getElementById('r-prelim').textContent = prelimVal;
+      document.getElementById('r-prelim-wrap').style.display = 'block';
+    }
     document.getElementById('r-user-story').textContent = document.getElementById('ai-user-story').value;
     document.getElementById('r-acceptance').textContent = document.getElementById('ai-acceptance').value;
   }
@@ -328,7 +358,11 @@ function goTo(step) {
 }
 
 function goToAI() {
-  if (!selectedType || !selectedPriority || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-channel').value) {
+  if (document.getElementById('v-crit') && document.getElementById('v-crit').classList.contains('active-critical')) {
+    alert('Critical issues must be submitted via the Jira service form. Please use the link shown above.');
+    return;
+  }
+  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim()) {
     alert('Please fill in all required fields before continuing.'); return;
   }
   goTo(2);
@@ -336,7 +370,7 @@ function goToAI() {
 }
 
 function skipAI() {
-  if (!selectedType || !selectedPriority || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim() || !document.getElementById('f-channel').value) {
+  if (!selectedValue || !document.getElementById('f-summary').value.trim() || !document.getElementById('f-requestor').value.trim() || !document.getElementById('f-team').value.trim()) {
     alert('Please fill in all required fields before continuing.'); return;
   }
   // Clear AI fields and go straight to review
@@ -358,8 +392,6 @@ async function generateStory() {
       body: JSON.stringify({
         summary: document.getElementById('f-summary').value,
         details: document.getElementById('f-details').value,
-        type: selectedType,
-        priority: selectedPriority,
         team: document.getElementById('f-team').value
       })
     });
@@ -400,13 +432,10 @@ async function submitRequest() {
         details: document.getElementById('f-details').value.trim(),
         requestor: document.getElementById('f-requestor').value.trim(),
         team: document.getElementById('f-team').value.trim(),
-        channel: document.getElementById('f-channel').value,
-        type: selectedType, priority: selectedPriority,
-        due: document.getElementById('f-due').value || null,
-        jira: document.getElementById('f-jira').value.trim() || null,
+        value: selectedValue,
         date: new Date().toISOString().split('T')[0],
-        followUp: selectedFollowup || 'Not specified',
         businessProblem: document.getElementById('f-business-problem').value.trim(),
+        prelimRec: document.getElementById('f-prelim-rec').value.trim(),
         jiraTitle: document.getElementById('ai-jira-title').value.trim(),
         userStory: document.getElementById('ai-user-story').value.trim(),
         acceptanceCriteria: document.getElementById('ai-acceptance').value.trim()
