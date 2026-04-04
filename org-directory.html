@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Directory · Grease Monkeys</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👥</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #111111; --bg2: #1a1a1a; --surface: #222222; --surface2: #2a2a2a;
+  --border: #333333; --border-light: #444444; --border-strong: #555555;
+  --orange: #f97316; --orange-dim: #ea6c0a; --orange-glow: rgba(249,115,22,0.15); --orange-glow2: rgba(249,115,22,0.08);
+  --text: #f0ede8; --text-dim: #a09890; --muted: #666666; --faint: #444444;
+  --green: #34d399; --red: #f87171; --yellow: #fbbf24;
+  --sans: 'Plus Jakarta Sans', sans-serif; --mono: 'JetBrains Mono', monospace;
+  --admin: #f97316;
+}
+html, body { min-height: 100vh; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0;
+  background-image: linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none;
+}
+
+/* HEADER */
+header { background: #0d0d0d; border-bottom: 2px solid var(--orange); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.hdr-left { display: flex; align-items: center; gap: 18px; }
+.hdr-logo { width: 52px; height: 52px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(249,115,22,0.5)); }
+.hdr-text .eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 8px var(--orange); animation: pulse 2s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.eyebrow-text { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+.hdr-text h1 { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text); line-height: 1; }
+.hdr-text h1 span { color: var(--orange); }
+.hdr-right { display: flex; align-items: center; gap: 10px; }
+#total-count { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.admin-toggle { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; padding: 7px 14px; border-radius: 4px; border: 1px solid var(--border-light); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+.admin-toggle:hover { border-color: var(--orange); color: var(--orange); }
+.admin-toggle.active { border-color: var(--orange); color: #0f172a; background: var(--orange); font-weight: 600; box-shadow: 0 0 16px rgba(249,115,22,0.4); }
+
+/* ADMIN BAR */
+#admin-bar { display: none; background: rgba(249,115,22,0.08); border-bottom: 1px solid rgba(249,115,22,0.25); padding: 10px 32px; gap: 10px; align-items: center; flex-wrap: wrap; }
+#admin-bar.visible { display: flex; }
+.bar-label { font-family: var(--mono); font-size: 11px; color: var(--orange); flex: 1; }
+.bar-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border-radius: 4px; border: 1px solid; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.bar-btn.export { border-color: var(--orange); background: var(--orange); color: #0f172a; font-weight: 600; }
+.bar-btn.export:hover { background: #fb923c; box-shadow: 0 0 12px rgba(249,115,22,0.4); }
+.bar-btn.add-team { border-color: var(--border-light); background: transparent; color: var(--text-dim); }
+.bar-btn.add-team:hover { border-color: var(--border-strong); color: var(--text); background: var(--surface2); }
+.bar-btn.lock { border-color: var(--border-light); background: transparent; color: var(--text-dim); }
+.bar-btn.lock:hover { border-color: var(--border-strong); color: var(--text); background: var(--surface2); }
+.bar-btn.reset-data { border-color: rgba(248,113,113,0.4); background: transparent; color: var(--red); }
+.bar-btn.reset-data:hover { background: rgba(248,113,113,0.1); }
+
+/* CONTROLS */
+.controls { padding: 12px 32px; display: flex; gap: 8px; flex-wrap: wrap; background: var(--bg2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 9; }
+.search-wrap { position: relative; flex: 1; min-width: 180px; }
+.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+input[type="text"] { width: 100%; padding: 8px 12px 8px 32px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
+input[type="text"]:focus { border-color: var(--orange-dim); box-shadow: 0 0 0 3px var(--orange-glow); }
+input[type="text"]::placeholder { color: var(--muted); }
+select { padding: 8px 30px 8px 11px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+select option { background: var(--surface2); }
+.clear-btn { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+.clear-btn:hover { border-color: var(--border-light); color: var(--text); background: var(--surface2); }
+.team-pills { padding: 8px 32px 10px; display: flex; gap: 6px; flex-wrap: wrap; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.team-pill { font-family: var(--mono); font-size: 11px; padding: 4px 12px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+.team-pill:hover { border-color: var(--border-light); color: var(--text); background: var(--surface2); }
+.team-pill.active { font-weight: 500; }
+.team-pill .pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.filter-leaders { padding: 8px 13px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.filter-leaders:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-glow2); }
+.filter-leaders.active { border-color: var(--orange); background: var(--orange-glow); color: var(--orange); font-weight: 600; }
+.copy-emails-btn { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0; }
+.copy-emails-btn:hover { background: var(--surface2); border-color: var(--border-light); color: var(--text); }
+.copy-confirm { display: none; color: var(--green); font-weight: 500; }
+.copy-emails-btn.copied .copy-label { display: none; }
+.copy-emails-btn.copied .copy-confirm { display: inline; }
+.copy-emails-btn.copied { border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.1); color: var(--green); }
+
+/* MAIN */
+main { padding: 24px 32px; }
+.team-section { margin-bottom: 6px; }
+
+/* TEAM HEADER */
+.team-header { display: flex; align-items: center; gap: 11px; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border); border-radius: 6px; user-select: none; transition: border-left-color .15s; }
+.team-header.open { border-radius: 6px 6px 0 0; border-bottom-color: transparent; }
+.team-header:hover { border-left-color: var(--orange); }
+.team-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.team-label-wrap { flex: 1; cursor: pointer; }
+.team-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.team-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.team-badge { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; }
+.chevron { font-size: 10px; color: var(--muted); transition: transform .2s; flex-shrink: 0; cursor: pointer; }
+.chevron.open { transform: rotate(90deg); }
+.team-admin-btns { display: none; align-items: center; gap: 6px; }
+.admin-mode .team-admin-btns { display: flex; }
+.t-btn { font-family: var(--mono); font-size: 10px; padding: 4px 9px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; transition: all .15s; }
+.t-btn:hover { background: var(--surface2); border-color: var(--border-light); color: var(--text); }
+.t-btn.danger { border-color: rgba(248,113,113,0.3); color: var(--red); }
+.t-btn.danger:hover { background: rgba(248,113,113,0.1); }
+.t-btn.hide-team { border-color: rgba(249,115,22,0.4); color: var(--orange); }
+.t-btn.hide-team:hover { background: var(--orange-glow); }
+.team-hidden-badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 99px; background: var(--orange-glow); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); }
+.t-btn.reorder { padding: 4px 7px; font-size: 11px; line-height: 1; }
+.t-btn.reorder:disabled { opacity: .25; cursor: default; background: transparent; }
+
+/* CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; overflow: visible; margin-bottom: 8px; }
+.cards.hidden { display: none; }
+.card { background: var(--surface); padding: 12px 14px; display: flex; align-items: center; gap: 11px; position: relative; transition: background .1s; }
+.card:hover { background: var(--surface2); }
+.admin-mode .card { cursor: default; }
+.admin-mode .card:hover { background: rgba(249,115,22,0.06); outline: 1px dashed rgba(249,115,22,0.4); }
+.card.hidden-member { opacity: .4; }
+.admin-mode .card.hidden-member { opacity: .6; background: var(--surface2); }
+/* drag and drop */
+.drag-handle { display: none; cursor: grab; color: var(--faint); font-size: 13px; padding: 0 4px 0 0; flex-shrink: 0; user-select: none; line-height: 1; }
+.admin-mode .drag-handle { display: flex; align-items: center; }
+.card.dragging { opacity: .35; outline: 1px dashed rgba(249,115,22,0.4) !important; }
+.card.drag-over { outline: 2px solid var(--orange) !important; background: rgba(249,115,22,0.08) !important; }
+.drop-indicator { height: 3px; background: var(--orange); border-radius: 2px; margin: 0; display: none; }
+.drop-indicator.active { display: block; }
+
+/* AVATAR */
+.avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; position: relative; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 500; overflow: hidden; }
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; border-radius: 50%; display: none; }
+.avatar img.loaded { display: block; }
+.avatar img.loaded + .initials { display: none; }
+.avatar .initials { position: relative; z-index: 1; }
+.leader-ring { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* CARD INFO */
+.card-info { flex: 1; min-width: 0; }
+.card-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.card-meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.leader-star { color: var(--orange); margin-right: 3px; font-size: 10px; }
+.card-edit-hint { display: none; position: absolute; top: 6px; right: 8px; font-family: var(--mono); font-size: 9px; color: var(--orange); opacity: .6; }
+.admin-mode .card:hover .card-edit-hint { display: block; }
+
+/* ADD MEMBER ROW */
+.add-member-row { display: none; background: var(--surface); border-top: 1px dashed var(--border); padding: 10px 14px; }
+.admin-mode .add-member-row { display: flex; }
+.add-member-row button { font-family: var(--mono); font-size: 11px; padding: 5px 12px; border-radius: 3px; border: 1px dashed var(--border-strong); background: transparent; color: var(--muted); cursor: pointer; }
+.add-member-row button:hover { background: var(--bg); color: var(--text); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 40px 24px; color: var(--faint); font-size: 13px; font-family: var(--mono); }
+
+/* FOOTER */
+footer { padding: 18px 32px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 10px; color: var(--faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+/* MODALS */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border-radius: 4px; border: 1px solid var(--border); border-top: 2px solid var(--orange); padding: 24px; width: 360px; max-width: 90vw; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+.modal h3 { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 18px; color: var(--text); }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
+.field input[type="text"], .field input[type="password"], .field select { width: 100%; padding: 8px 10px; font-family: var(--sans); font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); outline: none; }
+.field input[type="password"] { font-family: var(--mono); letter-spacing: .1em; }
+.field input:focus, .field select:focus { border-color: var(--orange-dim); box-shadow: 0 0 0 3px var(--orange-glow); }
+.field.checkbox-field { display: flex; align-items: center; gap: 8px; }
+.field.checkbox-field label { margin: 0; font-size: 12px; text-transform: none; letter-spacing: 0; cursor: pointer; }
+.field.checkbox-field input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--orange); }
+.field-error { font-family: var(--mono); font-size: 11px; color: var(--red); margin-top: 5px; min-height: 14px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: space-between; }
+.modal-actions .left { display: flex; gap: 8px; }
+.m-btn { font-family: var(--mono); font-size: 11px; padding: 8px 16px; border-radius: 4px; border: 1px solid; cursor: pointer; }
+.m-btn.save { border-color: var(--orange); background: var(--orange); color: #0f172a; font-weight: 600; }
+.m-btn.save:hover { background: #fb923c; box-shadow: 0 0 12px rgba(249,115,22,0.4); }
+.m-btn.cancel { border-color: var(--border-light); background: transparent; color: var(--text-dim); }
+.m-btn.cancel:hover { background: var(--surface2); color: var(--text); }
+.m-btn.delete { border-color: rgba(248,113,113,0.4); color: var(--red); background: transparent; }
+.m-btn.delete:hover { background: rgba(248,113,113,0.1); }
+
+/* PASSWORD MODAL specifics */
+#pwModal .modal { width: 300px; }
+#pwModal p { font-size: 12px; color: var(--muted); font-family: var(--mono); margin-top: -10px; margin-bottom: 18px; }
+
+@media (max-width: 600px) {
+  header, .controls, main, footer, #admin-bar { padding-left: 16px; padding-right: 16px; }
+  .team-sub { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="eyebrow">Squad Ops · Grease Monkeys</div>
+    <h1>Team Directory</h1>
+  </div>
+  <div class="hdr-right">
+    <span id="total-count"></span>
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">Edit Mode</button>
+  </div>
+</header>
+
+<div id="admin-bar">
+  <span class="bar-label">✦ edit mode — click any card to edit</span>
+  <button class="bar-btn add-team" onclick="openAddTeam()">+ Add Team</button>
+  <button class="bar-btn export" onclick="exportJSON()">↓ Export roster.json</button>
+  <button class="bar-btn lock" onclick="lockAdmin()">Lock</button>
+  <button class="bar-btn reset-data" onclick="resetToDefault()">Reset to Default</button>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+      <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <input type="text" id="search" placeholder="Search name or role..." oninput="render()">
+  </div>
+  <button class="filter-leaders" id="leadersBtn" onclick="toggleLeadersFilter()">★ Leaders</button>
+  <button class="clear-btn" onclick="clearFilters()">Clear</button>
+</div>
+<div class="team-pills" id="teamPills"></div>
+
+<main id="main"></main>
+
+<div style="text-align:center;padding:0 32px 24px;">
+  <a href="https://nvastano.github.io/gm-request-management/" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'">
+    ← Submit a Request
+  </a>
+</div>
+
+<footer>
+  <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;">GREASE MONKEYS · KEEPING BUSINESS MOVING</span>
+  <span id="footer-date"></span>
+</footer>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="pwModal">
+  <div class="modal">
+    <h3>Edit Mode</h3>
+    <p>Enter password to unlock</p>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="pw-input" onkeydown="if(event.key==='Enter')checkPassword()">
+    </div>
+    <div class="field-error" id="pw-error"></div>
+    <div class="modal-actions">
+      <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
+      <button class="m-btn save" onclick="checkPassword()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Member Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3 id="modal-title">Edit Person</h3>
+    <div class="field"><label>Full Name</label><input type="text" id="f-name"></div>
+    <div class="field"><label>Role Code</label>
+      <select id="f-role">
+        <option>VP</option><option>Leader</option><option>Team Lead</option><option>AD</option><option>AE</option>
+        <option>MRR</option><option>SDR</option><option>Coach</option><option>Marketer</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Email Override <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--faint);">— leave blank to auto-generate</span></label>
+      <input type="text" id="f-email" placeholder="e.g. connerbrooke.binkley@ramseysolutions.com">
+    </div>
+    <div class="field checkbox-field">
+      <input type="checkbox" id="f-leader">
+      <label for="f-leader">Team leader / primary contact</label>
+    </div>
+    <div class="field checkbox-field">
+      <input type="checkbox" id="f-visible" checked>
+      <label for="f-visible">Show in directory</label>
+    </div>
+    <div class="modal-actions">
+      <div class="left">
+        <button class="m-btn cancel" onclick="closeModal()">Cancel</button>
+        <button class="m-btn delete" onclick="deleteMember()">Remove</button>
+      </div>
+      <button class="m-btn save" onclick="saveMember()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h3>Add Person</h3>
+    <div class="field"><label>Full Name</label><input type="text" id="a-name"></div>
+    <div class="field"><label>Role Code</label>
+      <select id="a-role">
+        <option>VP</option><option>Leader</option><option>Team Lead</option><option>AD</option><option>AE</option>
+        <option>MRR</option><option>SDR</option><option>Coach</option><option>Marketer</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Email Override <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--faint);">— leave blank to auto-generate</span></label>
+      <input type="text" id="a-email" placeholder="e.g. connerbrooke.binkley@ramseysolutions.com">
+    </div>
+    <div class="field checkbox-field">
+      <input type="checkbox" id="a-leader">
+      <label for="a-leader">Team leader / primary contact</label>
+    </div>
+    <div class="modal-actions">
+      <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
+      <button class="m-btn save" onclick="saveNewMember()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Team Modal -->
+<div class="modal-overlay" id="addTeamModal">
+  <div class="modal">
+    <h3>Add Team</h3>
+    <div class="field"><label>Team Name</label><input type="text" id="at-name" placeholder="e.g. Revenue Operations"></div>
+    <div class="field"><label>Accent Color</label>
+      <select id="at-color">
+        <option value="blue">Blue</option><option value="green">Green</option>
+        <option value="purple">Purple</option><option value="coral">Coral</option>
+        <option value="pink">Pink</option><option value="amber">Amber</option>
+        <option value="teal">Teal</option><option value="red">Red</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
+      <button class="m-btn save" onclick="saveNewTeam()">Add Team</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Team Modal -->
+<div class="modal-overlay" id="renameTeamModal">
+  <div class="modal">
+    <h3>Edit Team</h3>
+    <div class="field"><label>Team Name</label><input type="text" id="rt-name"></div>
+    <div class="field"><label>Accent Color</label>
+      <select id="rt-color">
+        <option value="blue">Blue</option><option value="green">Green</option>
+        <option value="purple">Purple</option><option value="coral">Coral</option>
+        <option value="pink">Pink</option><option value="amber">Amber</option>
+        <option value="teal">Teal</option><option value="red">Red</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <div class="left"><button class="m-btn cancel" onclick="closeModal()">Cancel</button></div>
+      <button class="m-btn save" onclick="saveRenameTeam()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG — change password here ────────────────────────────
+const ADMIN_PASSWORD = 'greasemonkeys';
+
+// ── STATE ─────────────────────────────────────────────────────
+let roster = { teams: [] };
+let adminMode = false;
+let collapsed = {};
+let editingTeamId = null;
+let editingMemberIdx = null;
+let addingToTeamId = null;
+let renamingTeamId = null;
+let leadersOnly = false;
+let selectedTeams = new Set();
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch('roster.json?v=' + Date.now());
+    if (!res.ok) throw new Error();
+    roster = await res.json();
+  } catch {
+    roster = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
+  }
+  buildFilter();
+  render();
+  document.getElementById('footer-date').textContent =
+    'updated ' + new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+// ── EXPORT ────────────────────────────────────────────────────
+function exportJSON() {
+  const json = JSON.stringify(roster, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'roster.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── NO-OP save (kept so all action functions still call it harmlessly) ──
+function save() {}
+const COLOR_MAP = {
+  blue:   { dot:"#378ADD", badgeBg:"#E6F1FB", badgeText:"#185FA5" },
+  green:  { dot:"#639922", badgeBg:"#EAF3DE", badgeText:"#3B6D11" },
+  purple: { dot:"#7F77DD", badgeBg:"#EEEDFE", badgeText:"#534AB7" },
+  coral:  { dot:"#D85A30", badgeBg:"#FAECE7", badgeText:"#993C1D" },
+  pink:   { dot:"#D4537E", badgeBg:"#FBEAF0", badgeText:"#993556" },
+  amber:  { dot:"#EF9F27", badgeBg:"#FAEEDA", badgeText:"#854F0B" },
+  teal:   { dot:"#1D9E75", badgeBg:"#E1F5EE", badgeText:"#0F6E56" },
+  red:    { dot:"#E24B4A", badgeBg:"#FCEBEB", badgeText:"#A32D2D" },
+};
+
+const DEFAULT_ROSTER = {"teams":[{"id":"marketing","label":"Marketing","visible":true,"dot":"#378ADD","badgeBg":"#E6F1FB","badgeText":"#185FA5","members":[{"name":"Richard Prince","role":"Marketer","isLeader":false,"visible":true},{"name":"Tina Teschner","role":"Marketer","isLeader":false,"visible":true},{"name":"Matt George","role":"Marketer","isLeader":false,"visible":true},{"name":"Chandler Warrick","role":"Marketer","isLeader":false,"visible":true},{"name":"Camille Bunch","role":"Marketer","isLeader":false,"visible":true},{"name":"Jacob Reinmiller","role":"Marketer","isLeader":false,"visible":true},{"name":"Sam Curbelo","role":"Marketer","isLeader":false,"visible":true}]},{"id":"elp","label":"ELP System","visible":false,"dot":"#EF9F27","badgeBg":"#FAEEDA","badgeText":"#854F0B","members":[{"name":"ELP API_User","role":"System","isLeader":false,"visible":true},{"name":"CRM Fusion","role":"System","isLeader":false,"visible":true}]},{"id":"financial","label":"Financial Services","visible":true,"dot":"#1D9E75","badgeBg":"#E1F5EE","badgeText":"#0F6E56","members":[{"name":"Danielle Bothe","role":"AD","isLeader":true,"visible":true}]},{"id":"operations","label":"Sales Operations","visible":false,"dot":"#D85A30","badgeBg":"#FAECE7","badgeText":"#993C1D","members":[{"name":"Karlee Hildebrand","role":"AD","isLeader":true,"visible":true},{"name":"Lena Kelly","role":"AD","isLeader":false,"visible":true}]},{"id":"enablement","label":"Sales Enablement","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Amanda Martin","role":"Leader","isLeader":true,"visible":true}]},{"id":"acquisition","label":"Acquisition Sales","visible":true,"dot":"#7F77DD","badgeBg":"#EEEDFE","badgeText":"#534AB7","members":[{"name":"Chandler Gaines","role":"Leader","isLeader":true,"visible":true},{"name":"Alex Shepherd","role":"Leader","isLeader":true,"visible":true},{"name":"Zac Karr","role":"AD","isLeader":false,"visible":true},{"name":"John Markle","role":"AD","isLeader":false,"visible":true},{"name":"Aubrey Blinkley","role":"AD","isLeader":false,"visible":true},{"name":"Julie Butcher","role":"AE","isLeader":false,"visible":true},{"name":"Halli Smith","role":"MRR","isLeader":false,"visible":true},{"name":"Hayes Holland","role":"AE","isLeader":false,"visible":true},{"name":"Kristin Pope","role":"AE","isLeader":false,"visible":true},{"name":"Brian Ward","role":"MRR","isLeader":false,"visible":true},{"name":"Conor Wiley","role":"SDR","isLeader":false,"visible":true},{"name":"Jacob Stone","role":"SDR","isLeader":false,"visible":true},{"name":"Rylan Wilisford","role":"AE","isLeader":false,"visible":true},{"name":"Johnny Drennan","role":"AE","isLeader":false,"visible":true},{"name":"Caitlin Hogan","role":"AE","isLeader":false,"visible":true},{"name":"Anna Wood","role":"MRR","isLeader":false,"visible":true},{"name":"Jalen Rogers","role":"Team Lead","isLeader":false,"visible":true},{"name":"Dalton Walker","role":"SDR","isLeader":false,"visible":true},{"name":"Autumn Hampton","role":"SDR","isLeader":false,"visible":true}]},{"id":"coaching","label":"Coaching","visible":true,"dot":"#D4537E","badgeBg":"#FBEAF0","badgeText":"#993556","members":[{"name":"Lacy Bell","role":"AD","isLeader":true,"visible":true},{"name":"Daniel McKinnon","role":"AD","isLeader":true,"visible":true},{"name":"Scott Lerman","role":"AD","isLeader":true,"visible":true},{"name":"Ryan Puhr","role":"AD","isLeader":true,"visible":true},{"name":"Ashley Cook","role":"Coach","isLeader":false,"visible":true},{"name":"Cynthia Navarro","role":"Coach","isLeader":false,"visible":true},{"name":"Conner Brooke Binkley","role":"AD","isLeader":false,"visible":true},{"name":"Justin Nguyen","role":"Coach","isLeader":false,"visible":true},{"name":"Kevin Dunn","role":"Coach","isLeader":false,"visible":true},{"name":"Sarah Francis","role":"Coach","isLeader":false,"visible":true},{"name":"Danae Hall","role":"Coach","isLeader":false,"visible":true},{"name":"Colin Bellios","role":"Coach","isLeader":false,"visible":true},{"name":"Tori Wheeler","role":"Coach","isLeader":false,"visible":true},{"name":"Angelica Dotson","role":"Coach","isLeader":false,"visible":true},{"name":"Katrien Shaw","role":"Coach","isLeader":false,"visible":true},{"name":"Emily Cummings","role":"Coach","isLeader":false,"visible":true},{"name":"David LaBahn","role":"Coach","isLeader":false,"visible":true}]},{"id":"relationship","label":"Relationship Management","visible":true,"dot":"#E24B4A","badgeBg":"#FCEBEB","badgeText":"#A32D2D","members":[{"name":"Jordan Farley","role":"Leader","isLeader":true,"visible":true}]},{"id":"advocate","label":"Customer Advocate","visible":true,"dot":"#639922","badgeBg":"#EAF3DE","badgeText":"#3B6D11","members":[{"name":"Ramsey Trusted","role":"Marketer","isLeader":false,"visible":true},{"name":"Jessica Ross","role":"Marketer","isLeader":false,"visible":true},{"name":"Jessica Bissett","role":"Marketer","isLeader":false,"visible":true},{"name":"Julie Goward","role":"Marketer","isLeader":false,"visible":true}]}]};
+
+// ── PASSWORD ──────────────────────────────────────────────────
+function toggleAdmin() {
+  if (adminMode) {
+    lockAdmin();
+  } else {
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-error').textContent = '';
+    document.getElementById('pwModal').classList.add('open');
+    setTimeout(() => document.getElementById('pw-input').focus(), 50);
+  }
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === ADMIN_PASSWORD) {
+    document.getElementById('pwModal').classList.remove('open');
+    adminMode = true;
+    document.getElementById('adminToggle').classList.add('active');
+    document.getElementById('admin-bar').classList.add('visible');
+    document.body.classList.add('admin-mode');
+    render();
+  } else {
+    document.getElementById('pw-error').textContent = 'incorrect password';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function lockAdmin() {
+  adminMode = false;
+  document.getElementById('adminToggle').classList.remove('active');
+  document.getElementById('admin-bar').classList.remove('visible');
+  document.body.classList.remove('admin-mode');
+  render();
+}
+
+function resetToDefault() {
+  if (!confirm('Reset directory to default data? This will clear all your changes.')) return;
+  roster = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
+  buildFilter();
+  render();
+}
+
+// ── FILTER ────────────────────────────────────────────────────
+function buildFilter() {
+  const container = document.getElementById('teamPills');
+  if (!container) return;
+  container.innerHTML = roster.teams
+    .filter(t => t.visible)
+    .map(t => {
+      const active = selectedTeams.has(t.id);
+      return `<button class="team-pill ${active ? 'active' : ''}"
+        style="${active ? `border-color:${t.dot};background:${t.badgeBg};color:${t.badgeText};` : ''}"
+        onclick="toggleTeamPill('${t.id}')">
+        <span class="pill-dot" style="background:${t.dot};"></span>${t.label}
+      </button>`;
+    }).join('');
+}
+
+function toggleTeamPill(teamId) {
+  if (selectedTeams.has(teamId)) {
+    selectedTeams.delete(teamId);
+  } else {
+    selectedTeams.add(teamId);
+  }
+  buildFilter();
+  render();
+}
+
+function toggleLeadersFilter() {
+  leadersOnly = !leadersOnly;
+  document.getElementById('leadersBtn').classList.toggle('active', leadersOnly);
+  render();
+}
+
+function clearFilters() {
+  document.getElementById('search').value = '';
+  selectedTeams.clear();
+  leadersOnly = false;
+  document.getElementById('leadersBtn').classList.remove('active');
+  buildFilter();
+  render();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function slug(name) { return name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''); }
+function initials(name) { return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+function headshotPath(name) { return `headshots/${name.toLowerCase().replace(/\s+/g,'-')}.jpg`; }
+function toEmail(m) {
+  if (m.emailOverride) return m.emailOverride;
+  const parts = m.name.trim().split(/\s+/);
+  const first = parts[0].toLowerCase().replace(/[^a-z]/g,'');
+  const last = parts[parts.length-1].toLowerCase().replace(/[^a-z]/g,'');
+  return `${first}.${last}@ramseysolutions.com`;
+}
+
+function copyEmails(teamId) {
+  const team = roster.teams.find(t => t.id === teamId);
+  const emails = team.members
+    .filter(m => m.visible)
+    .map(m => toEmail(m))
+    .join('; ');
+  navigator.clipboard.writeText(emails).then(() => {
+    const btn = document.querySelector(`#copied-${teamId}`)?.closest('.copy-emails-btn');
+    if (!btn) return;
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 2000);
+  });
+}
+
+function toggleCollapse(id) { collapsed[id] = !collapsed[id]; render(); }
+
+// ── RENDER ────────────────────────────────────────────────────
+function render() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const container = document.getElementById('main');
+  let totalShown = 0, html = '';
+
+  roster.teams.forEach((team, teamIdx) => {
+    if (selectedTeams.size > 0 && !selectedTeams.has(team.id)) return;
+    if (!adminMode && !team.visible) return;
+
+    const members = team.members.filter(m => {
+      if (!adminMode && !m.visible) return false;
+      if (leadersOnly && !m.isLeader) return false;
+      return m.name.toLowerCase().includes(q) || m.role.toLowerCase().includes(q);
+    });
+    if (!adminMode && members.length === 0) return;
+    totalShown += members.filter(m => m.visible).length;
+
+    const isOpen = !collapsed[team.id];
+    const leaders = team.members.filter(m => m.isLeader).map(m => m.name);
+    const leadText = leaders.length
+      ? leaders.slice(0,2).join(', ') + (leaders.length > 2 ? ` +${leaders.length-2} more` : '')
+      : 'No leader set';
+    const hiddenBadge = (!team.visible && adminMode)
+      ? `<span class="team-hidden-badge">hidden</span>` : '';
+
+    html += `<div class="team-section" data-team="${team.id}">
+      <div class="team-header ${isOpen ? 'open' : ''}">
+        <div class="team-dot" style="background:${team.dot};"></div>
+        <div class="team-label-wrap" onclick="toggleCollapse('${team.id}')">
+          <div class="team-label">${team.label}</div>
+          <div class="team-sub">${leadText}</div>
+        </div>
+        ${hiddenBadge}
+        <span class="team-badge" style="background:${team.badgeBg};color:${team.badgeText};">${members.filter(m=>m.visible).length}</span>
+        <button class="copy-emails-btn" onclick="copyEmails('${team.id}')" title="Copy team emails">
+          <span class="copy-icon">✉</span>
+          <span class="copy-label">Copy Emails</span>
+          <span class="copy-confirm" id="copied-${team.id}">Copied!</span>
+        </button>
+        <div class="team-admin-btns">
+          <button class="t-btn reorder" onclick="moveTeam('${team.id}',-1)" ${teamIdx===0?'disabled':''} title="Move up">▲</button>
+          <button class="t-btn reorder" onclick="moveTeam('${team.id}',1)" ${teamIdx===roster.teams.length-1?'disabled':''} title="Move down">▼</button>
+          <button class="t-btn" onclick="openRenameTeam('${team.id}')">Edit Team</button>
+          <button class="t-btn hide-team" onclick="toggleTeamVisibility('${team.id}')">${team.visible ? 'Hide' : 'Show'}</button>
+          <button class="t-btn" onclick="openAddMember('${team.id}')">+ Add</button>
+          <button class="t-btn danger" onclick="deleteTeam('${team.id}')">Delete</button>
+        </div>
+        <span class="chevron ${isOpen ? 'open' : ''}" onclick="toggleCollapse('${team.id}')">▶</span>
+      </div>
+      <div class="cards ${isOpen ? '' : 'hidden'}">`;
+
+    if (members.length === 0 && adminMode) {
+      html += `<div class="card" style="color:var(--faint);font-size:12px;font-family:var(--mono);">No members yet</div>`;
+    }
+
+    members.forEach(m => {
+      const realIdx = team.members.indexOf(m);
+      const leaderIcon = m.isLeader ? `<span class="leader-star">★</span>` : '';
+      const metaParts = [m.role].filter(Boolean);
+      html += `<div class="card ${m.visible ? '' : 'hidden-member'}"
+          draggable="${adminMode ? 'true' : 'false'}"
+          data-team="${team.id}" data-idx="${realIdx}"
+          onclick="${adminMode ? `openEditMember('${team.id}', ${realIdx})` : ''}"
+          ondragstart="onDragStart(event)"
+          ondragover="onDragOver(event)"
+          ondragleave="onDragLeave(event)"
+          ondrop="onDrop(event)"
+          ondragend="onDragEnd(event)">
+        ${adminMode ? `<span class="drag-handle" onclick="event.stopPropagation()">⠿</span>` : ''}
+        <div class="avatar ${m.isLeader ? 'leader-ring' : ''}" style="background:${team.badgeBg};color:${team.badgeText};">
+          <img src="${headshotPath(m.name)}" alt="${m.name}"
+            onload="this.classList.add('loaded')" onerror="this.style.display='none'">
+          <span class="initials">${initials(m.name)}</span>
+        </div>
+        <div class="card-info">
+          <div class="card-name">${leaderIcon}${m.name}</div>
+          <div class="card-meta">${metaParts.join(' · ')}</div>
+        </div>
+        <span class="card-edit-hint">edit</span>
+      </div>`;
+    });
+
+    html += `<div class="add-member-row">
+        <button onclick="openAddMember('${team.id}')">+ Add person to ${team.label}</button>
+      </div></div></div>`;
+  });
+
+  if (!html) html = `<div class="empty">// no results</div>`;
+  container.innerHTML = html;
+
+  const total = roster.teams.reduce((a,t) => a + t.members.filter(m=>m.visible).length, 0);
+  const q2 = document.getElementById('search').value.trim();
+  document.getElementById('total-count').textContent = (q2 || selectedTeams.size > 0 || leadersOnly)
+    ? `${totalShown} of ${total} people` : `${total} people · ${roster.teams.filter(t=>t.visible).length} teams`;
+}
+
+// ── TEAM ACTIONS ──────────────────────────────────────────────
+function moveTeam(teamId, dir) {
+  const idx = roster.teams.findIndex(t => t.id === teamId);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= roster.teams.length) return;
+  const [team] = roster.teams.splice(idx, 1);
+  roster.teams.splice(newIdx, 0, team);
+  save(); buildFilter(); render();
+}
+
+function toggleTeamVisibility(teamId) {
+  const t = roster.teams.find(t => t.id === teamId);
+  if (t) { t.visible = !t.visible; save(); render(); }
+}
+
+function deleteTeam(teamId) {
+  const t = roster.teams.find(t => t.id === teamId);
+  if (!t || !confirm(`Delete "${t.label}" and all its members?`)) return;
+  roster.teams = roster.teams.filter(t => t.id !== teamId);
+  save(); buildFilter(); render();
+}
+
+function openAddTeam() {
+  document.getElementById('at-name').value = '';
+  document.getElementById('addTeamModal').classList.add('open');
+}
+
+function saveNewTeam() {
+  const name = document.getElementById('at-name').value.trim();
+  if (!name) return;
+  const c = COLOR_MAP[document.getElementById('at-color').value];
+  roster.teams.push({ id: slug(name)+'-'+Date.now(), label: name, visible: true, dot: c.dot, badgeBg: c.badgeBg, badgeText: c.badgeText, members: [] });
+  save(); buildFilter(); closeModal(); render();
+}
+
+function openRenameTeam(teamId) {
+  renamingTeamId = teamId;
+  const t = roster.teams.find(t => t.id === teamId);
+  document.getElementById('rt-name').value = t.label;
+  // pre-select the closest matching color
+  const colorKey = Object.entries(COLOR_MAP).find(([,v]) => v.dot === t.dot)?.[0] || 'blue';
+  document.getElementById('rt-color').value = colorKey;
+  document.getElementById('renameTeamModal').classList.add('open');
+  setTimeout(() => document.getElementById('rt-name').select(), 50);
+}
+
+function saveRenameTeam() {
+  const name = document.getElementById('rt-name').value.trim();
+  if (!name) return;
+  const t = roster.teams.find(t => t.id === renamingTeamId);
+  t.label = name;
+  const c = COLOR_MAP[document.getElementById('rt-color').value];
+  t.dot = c.dot; t.badgeBg = c.badgeBg; t.badgeText = c.badgeText;
+  save(); buildFilter(); closeModal(); render();
+}
+
+// ── MEMBER ACTIONS ────────────────────────────────────────────
+function openEditMember(teamId, memberIdx) {
+  if (!adminMode) return;
+  editingTeamId = teamId; editingMemberIdx = memberIdx;
+  const m = roster.teams.find(t => t.id === teamId).members[memberIdx];
+  document.getElementById('modal-title').textContent = 'Edit — ' + m.name;
+  document.getElementById('f-name').value = m.name;
+  document.getElementById('f-role').value = m.role;
+  document.getElementById('f-email').value = m.emailOverride || toEmail(m);
+  document.getElementById('f-leader').checked = m.isLeader;
+  document.getElementById('f-visible').checked = m.visible !== false;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function saveMember() {
+  const m = roster.teams.find(t => t.id === editingTeamId).members[editingMemberIdx];
+  m.name    = document.getElementById('f-name').value.trim() || m.name;
+  m.role    = document.getElementById('f-role').value;
+  const enteredEmail = document.getElementById('f-email').value.trim();
+  m.emailOverride = (enteredEmail && enteredEmail !== toEmail({name: m.name})) ? enteredEmail : '';
+  m.isLeader= document.getElementById('f-leader').checked;
+  m.visible = document.getElementById('f-visible').checked;
+  save(); closeModal(); render();
+}
+
+function deleteMember() {
+  const team = roster.teams.find(t => t.id === editingTeamId);
+  const m = team.members[editingMemberIdx];
+  if (!confirm(`Remove ${m.name} from ${team.label}?`)) return;
+  team.members.splice(editingMemberIdx, 1);
+  save(); closeModal(); render();
+}
+
+function openAddMember(teamId) {
+  addingToTeamId = teamId;
+  document.getElementById('a-name').value = '';
+  document.getElementById('a-role').value = 'AE';
+  document.getElementById('a-email').value = '';
+  document.getElementById('a-leader').checked = false;
+  document.getElementById('addModal').classList.add('open');
+}
+
+function saveNewMember() {
+  const name = document.getElementById('a-name').value.trim();
+  if (!name) return;
+  roster.teams.find(t => t.id === addingToTeamId).members.push({
+    name, visible: true,
+    role: document.getElementById('a-role').value,
+    emailOverride: document.getElementById('a-email').value.trim() || '',
+    isLeader: document.getElementById('a-leader').checked,
+  });
+  save(); closeModal(); render();
+}
+
+// ── MODALS ────────────────────────────────────────────────────
+function closeModal() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  editingTeamId = editingMemberIdx = addingToTeamId = renamingTeamId = null;
+}
+document.querySelectorAll('.modal-overlay').forEach(o =>
+  o.addEventListener('click', e => { if (e.target === o) closeModal(); })
+);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter') {
+    if (document.getElementById('renameTeamModal').classList.contains('open')) saveRenameTeam();
+    if (document.getElementById('pwModal').classList.contains('open')) checkPassword();
+  }
+});
+
+// ── DRAG & DROP ───────────────────────────────────────────────
+let dragSrc = null;
+
+function onDragStart(e) {
+  dragSrc = e.currentTarget;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', '');
+  setTimeout(() => dragSrc.classList.add('dragging'), 0);
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const target = e.currentTarget;
+  if (target === dragSrc) return;
+  // only allow within same team
+  if (target.dataset.team !== dragSrc.dataset.team) return;
+  document.querySelectorAll('.card.drag-over').forEach(c => c.classList.remove('drag-over'));
+  target.classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  if (!dragSrc || target === dragSrc) return;
+  if (target.dataset.team !== dragSrc.dataset.team) return;
+
+  const teamId = dragSrc.dataset.team;
+  const team = roster.teams.find(t => t.id === teamId);
+  const fromIdx = parseInt(dragSrc.dataset.idx);
+  const toIdx = parseInt(target.dataset.idx);
+
+  const [moved] = team.members.splice(fromIdx, 1);
+  team.members.splice(toIdx, 0, moved);
+
+  save();
+  render();
+}
+
+function onDragEnd(e) {
+  document.querySelectorAll('.card.dragging, .card.drag-over').forEach(c => {
+    c.classList.remove('dragging', 'drag-over');
+  });
+  dragSrc = null;
+}
+
+init();
+</script>
+</body>
+</html>
