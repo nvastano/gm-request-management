@@ -133,6 +133,10 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 }
 
 /* Standup Schedule */
+.standup-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.s-pill{font-family:var(--mono);font-size:11px;padding:4px 12px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.s-pill:hover{border-color:var(--border-light);color:var(--text);background:var(--surface2)}
+.s-pill.active{border-color:var(--orange);color:var(--orange);background:var(--orange-glow);font-weight:600}
 .standup-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .standup-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;min-width:620px}
 .standup-col{}
@@ -238,6 +242,14 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
       <div class="section-title">Vertical Specific Standup Schedule</div>
       <div class="section-line"></div>
       <div class="section-tag">9:30 – 10:00 AM</div>
+    </div>
+    <div class="standup-filters">
+      <button class="s-pill active" onclick="setStandupFilter('all',this)">All</button>
+      <button class="s-pill" onclick="setStandupFilter('protections',this)">Protections</button>
+      <button class="s-pill" onclick="setStandupFilter('re',this)">Real Estate</button>
+      <button class="s-pill" onclick="setStandupFilter('smartvestor',this)">SmartVestor</button>
+      <button class="s-pill" onclick="setStandupFilter('sales',this)">Sales</button>
+      <button class="s-pill" onclick="setStandupFilter('coaching',this)">Coaching</button>
     </div>
     <div class="standup-wrap">
       <div class="standup-grid" id="standup-grid"></div>
@@ -354,28 +366,37 @@ const EVENTS = [
 // Standup Schedule
 const STANDUPS = {
   Monday: [
-    {name:'Protections Sales & Coaching',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'All Protections Coaching & Sales'},
-    {name:'Real Estate Coaching',time:'9:30 – 10:00 AM',loc:'Spend (A532)',who:'RE Coaches Only'},
-    {name:'SmartVestor',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only'},
+    {name:'Protections Sales & Coaching',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'All Protections Coaching & Sales',vertical:'protections',type:'both'},
+    {name:'Real Estate Coaching',time:'9:30 – 10:00 AM',loc:'Spend (A532)',who:'RE Coaches Only',vertical:'re',type:'coaching'},
+    {name:'SmartVestor',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only',vertical:'smartvestor',type:'sales'},
   ],
   Tuesday: [
-    {name:'CRIBS – RE',time:'9:30 – 10:00 AM',loc:'Intentional (A544)',who:'All RE Coaching & Sales'},
+    {name:'CRIBS – RE',time:'9:30 – 10:00 AM',loc:'Intentional (A544)',who:'All RE Coaching & Sales',vertical:'re',type:'both'},
   ],
   Wednesday: [
-    {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only'},
-    {name:'RT Weekly Coaching Standup',time:'9:30 – 10:00 AM',loc:'Free Spirit (A632)',who:'All Coaching'},
-    {name:'SmartVestor',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only'},
+    {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only',vertical:'protections',type:'sales'},
+    {name:'RT Weekly Coaching Standup',time:'9:30 – 10:00 AM',loc:'Free Spirit (A632)',who:'All Coaching',vertical:'all',type:'coaching'},
+    {name:'SmartVestor',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only',vertical:'smartvestor',type:'sales'},
   ],
   Thursday: [
-    {name:'Protections Coaching',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Coaching Only'},
-    {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only'},
-    {name:'RE Coaching',time:'9:30 – 10:00 AM',loc:'RE Coach Area (near Spend A532)',who:'RE Coaches Only'},
-    {name:'SmartVestor',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only'},
+    {name:'Protections Coaching',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Coaching Only',vertical:'protections',type:'coaching'},
+    {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only',vertical:'protections',type:'sales'},
+    {name:'RE Coaching',time:'9:30 – 10:00 AM',loc:'RE Coach Area (near Spend A532)',who:'RE Coaches Only',vertical:'re',type:'coaching'},
+    {name:'SmartVestor',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only',vertical:'smartvestor',type:'sales'},
   ],
   Friday: [
-    {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only'},
+    {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only',vertical:'protections',type:'sales'},
   ],
 };
+
+let activeStandupFilter = 'all';
+
+function setStandupFilter(filter, el) {
+  activeStandupFilter = filter;
+  document.querySelectorAll('.s-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderStandups();
+}
 
 function renderStandups() {
   const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
@@ -385,7 +406,12 @@ function renderStandups() {
   if (!grid) return;
   grid.innerHTML = days.map(day => {
     const isToday = day === todayName;
-    const items = STANDUPS[day] || [];
+    const items = (STANDUPS[day] || []).filter(s => {
+      if (activeStandupFilter === 'all') return true;
+      if (activeStandupFilter === 'sales') return s.type === 'sales' || s.type === 'both';
+      if (activeStandupFilter === 'coaching') return s.type === 'coaching' || s.type === 'both';
+      return s.vertical === activeStandupFilter || s.vertical === 'all';
+    });
     const cards = items.length
       ? items.map(s => `<div class="standup-item">
           <div class="standup-item-name">${s.name}</div>
