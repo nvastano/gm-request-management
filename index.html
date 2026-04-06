@@ -191,13 +191,6 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .ticket-output-text{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-size:13px;color:var(--text);white-space:pre-wrap;font-family:var(--sans);line-height:1.5}
 .ticket-close-btn{margin-top:20px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
 .ticket-close-btn:hover{border-color:var(--orange);color:var(--orange)}
-.ticket-key-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.ticket-key-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:8px}
-.ticket-key-row{display:flex;gap:8px}
-.ticket-key-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;transition:border-color 0.15s}
-.ticket-key-input:focus{outline:none;border-color:var(--orange)}
-.ticket-key-save-btn{padding:7px 16px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s}
-.ticket-key-save-btn:hover{border-color:var(--orange);color:var(--orange)}
 .retro-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:440px}
 .retro-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .retro-modal-icon{font-size:24px}
@@ -782,33 +775,12 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
       </div>
     </div>
     <button class="ticket-close-btn" onclick="closeTicketModal()">Close</button>
-    <div class="ticket-key-section">
-      <div class="ticket-key-label">🔑 Anthropic API Key <span style="font-weight:400;color:var(--text-dim)">(stored in your browser only)</span></div>
-      <div class="ticket-key-row">
-        <input type="password" id="ticket-api-key-input" class="ticket-key-input" placeholder="sk-ant-api03-..."/>
-        <button onclick="saveApiKey()" class="ticket-key-save-btn">Save</button>
-      </div>
-      <div id="ticket-key-status" style="font-size:11px;font-family:var(--mono);margin-top:4px;min-height:16px"></div>
-    </div>
   </div>
 </div>
 
 <script>
 // ── Draft Jira Ticket ────────────────────────────────────────────
-const CLAUDE_MODEL = 'claude-3-5-haiku-20241022';
-
-// API key is stored in localStorage — never in the source code
-function getApiKey() { return localStorage.getItem('gm_claude_api_key') || ''; }
-function saveApiKey() {
-  const key = document.getElementById('ticket-api-key-input').value.trim();
-  if (!key) return;
-  localStorage.setItem('gm_claude_api_key', key);
-  document.getElementById('ticket-api-key-input').value = '';
-  const s = document.getElementById('ticket-key-status');
-  s.textContent = '✓ Key saved to browser';
-  s.style.color = 'var(--green)';
-  setTimeout(() => { s.textContent = ''; }, 2500);
-}
+const TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/generate-ticket';
 
 function openTicketModal() {
   document.getElementById('ticket-modal').classList.add('show');
@@ -836,60 +808,23 @@ async function generateTicket() {
     return;
   }
 
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    statusEl.className = 'ticket-status error';
-    statusEl.textContent = '⚠ Please save your Anthropic API key using the field below first.';
-    return;
-  }
-
   btn.disabled = true;
   outputEl.classList.remove('show');
   statusEl.className = 'ticket-status loading';
   statusEl.textContent = '⟳ Generating ticket...';
 
-  const prompt = `You are a technical project manager writing Jira tickets for a software development team.
-Given the request below, return ONLY valid JSON (no markdown, no code blocks) with exactly two fields:
-- "title": a concise ticket title (max 80 characters)
-- "description": a full ticket description using this exact format:
-
-## Description
-[2-3 sentence summary of the work to be done]
-
-## Success Criteria
-- [ ] Criteria 1
-- [ ] Criteria 2
-- [ ] Criteria 3
-
-Request: ${input}`;
-
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(TICKET_WORKER, {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description: input })
     });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || `API error ${res.status}`);
-    }
-
     const data = await res.json();
-    const raw = data.content[0].text.trim();
-    const parsed = JSON.parse(raw);
+    if (!res.ok || !data.ok) throw new Error(data.error || `Error ${res.status}`);
 
-    document.getElementById('ticket-title-text').textContent = parsed.title;
-    document.getElementById('ticket-desc-text').textContent = parsed.description;
+    document.getElementById('ticket-title-text').textContent = data.title;
+    document.getElementById('ticket-desc-text').textContent = data.description;
     // Reset copy buttons
     document.getElementById('copy-title-btn').textContent = 'Copy';
     document.getElementById('copy-title-btn').className = 'ticket-copy-btn';
