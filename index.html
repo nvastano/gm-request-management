@@ -151,6 +151,19 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 /* Retro Modal */
 .retro-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
 .retro-modal-overlay.show{display:flex}
+.metrics-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
+.metrics-modal-overlay.show{display:flex}
+.metrics-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:620px}
+.metrics-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.metrics-modal-icon{font-size:24px}
+.metrics-modal-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+.metrics-modal-sub{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-top:2px}
+.metrics-table{width:100%;border-collapse:collapse}
+.metrics-table th{text-align:left;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);border-bottom:1px solid var(--border);padding:8px 12px}
+.metrics-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:top}
+.metrics-table td:first-child{font-weight:700;color:var(--orange);white-space:nowrap;font-family:var(--mono);font-size:12px}
+.metrics-close-btn{margin-top:24px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.metrics-close-btn:hover{border-color:var(--orange);color:var(--orange)}
 .retro-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:440px}
 .retro-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .retro-modal-icon{font-size:24px}
@@ -206,6 +219,11 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
         <button onclick="openRetroModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
           <span class="quick-link-icon">🔄</span> Submit Retro Topic
         </button>
+      </div>
+      <button onclick="openMetricsModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
+        <span class="quick-link-icon">📊</span> Metric Definitions
+      </button>
+      <div style="display:none">
         <a href="https://www.notion.so/nvastano/336dc3ec98d78006b779e5dcf39ab60d?v=336dc3ec98d7809a8782000c4ec773e8" target="_blank" style="font-size:11px;font-family:var(--mono);color:var(--sky);text-decoration:underline;padding-left:2px" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--sky)'">View Retro Topics</a>
       </div>
 
@@ -571,6 +589,16 @@ renderStandups();
 const RETRO_DB = '336dc3ec98d78006b779e5dcf39ab60d';
 const RETRO_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/retro';
 
+function openMetricsModal() {
+  document.getElementById('metrics-modal').classList.add('show');
+}
+function closeMetricsModal() {
+  document.getElementById('metrics-modal').classList.remove('show');
+}
+document.getElementById('metrics-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeMetricsModal();
+});
+
 function openRetroModal() {
   document.getElementById('retro-modal').classList.add('show');
   document.getElementById('retro-topic').focus();
@@ -632,6 +660,35 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
   if (e.target === this) closeRetroModal();
 });
 </script>
+
+<!-- Metric Definitions Modal -->
+<div class="metrics-modal-overlay" id="metrics-modal">
+  <div class="metrics-modal">
+    <div class="metrics-modal-header">
+      <span class="metrics-modal-icon">📊</span>
+      <div>
+        <div class="metrics-modal-title">Metric Definitions</div>
+        <div class="metrics-modal-sub">Flow metrics used by the team</div>
+      </div>
+    </div>
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Definition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Throughput</td><td>The number of cards completed in a given time. (1 week)</td></tr>
+        <tr><td>WIP</td><td>What the team is currently working on</td></tr>
+        <tr><td>Aging WIP</td><td>The amount of time elapsed (age) of current cards that are sitting on the board. (Not done)</td></tr>
+        <tr><td>Flow Efficiency</td><td>The percentage of time we are adding value to work (actually working on it), rather than waiting.</td></tr>
+        <tr><td>Cycle Time</td><td>The time it takes to complete a card once we start working on it in delivery.</td></tr>
+      </tbody>
+    </table>
+    <button class="metrics-close-btn" onclick="closeMetricsModal()">Close</button>
+  </div>
+</div>
 
 <!-- Retro Topic Modal -->
 <div class="retro-modal-overlay" id="retro-modal">
