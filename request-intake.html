@@ -344,6 +344,8 @@ async function submitRequest() {
       let msg = '✓ Request submitted successfully!';
       if (data.jiraKey && data.jiraUrl) {
         msg += ` <a href="${data.jiraUrl}" target="_blank" style="color:var(--green);text-decoration:underline;">Jira ticket ${data.jiraKey} created →</a>`;
+      } else if (data.jiraError) {
+        msg += `<br><span style="color:var(--red);font-size:12px;">Jira error (${data.jiraStatus}): ${data.jiraError}</span>`;
       }
       showStatus('success', msg);
       btn.textContent = '✓ Submitted';
