@@ -81,6 +81,65 @@
       ]
     },
     {
+      "id": "b2b-stakeholders-1775675102850",
+      "label": "B2B Stakeholders",
+      "visible": true,
+      "dot": "#639922",
+      "badgeBg": "#EAF3DE",
+      "badgeText": "#3B6D11",
+      "members": [
+        {
+          "name": "Darrell Moore",
+          "visible": true,
+          "role": "VP",
+          "emailOverride": "",
+          "isLeader": true
+        },
+        {
+          "name": "Zac Karr",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Lacy Bell",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Aubrey Binkley",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Ryan Puhr",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "John Markie",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Daniel Mckinnon",
+          "visible": true,
+          "role": "AD",
+          "emailOverride": "",
+          "isLeader": false
+        }
+      ]
+    },
+    {
       "id": "vps-1773931817333",
       "label": "VPs",
       "visible": true,
