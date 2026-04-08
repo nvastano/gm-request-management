@@ -184,6 +184,9 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 .footer { margin-top: 48px; text-align: center; font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+.value-def { margin-top: 12px; }
+.value-def-inner { display: flex; gap: 12px; align-items: flex-start; background: var(--orange-glow); border: 1px solid rgba(249,115,22,0.25); border-left: 3px solid var(--orange); border-radius: 8px; padding: 12px 16px; }
+.value-def-text { font-size: 13px; color: var(--text); line-height: 1.5; }
 
 @media(max-width:560px) { .two-col{grid-template-columns:1fr} .panel{padding:20px} .value-grid{grid-template-columns:1fr 1fr} }
 </style>
@@ -225,7 +228,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
           </button>
           <button class="v-btn" id="v2" onclick="setValue(2)">
             <div class="v-stars">★★☆</div>
-            <div class="v-label">Technical Objective Value</div>
+            <div class="v-label">Business Objective Value</div>
           </button>
           <button class="v-btn" id="v3" onclick="setValue(3)">
             <div class="v-stars">★★★</div>
@@ -235,6 +238,11 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
             <div class="v-stars" style="font-size:18px;">🚨</div>
             <div class="v-label">Critical</div>
           </button>
+        </div>
+        <div class="value-def" id="value-def" style="display:none;">
+          <div class="value-def-inner">
+            <div class="value-def-text" id="value-def-text"></div>
+          </div>
         </div>
         <div class="critical-alert" id="critical-alert" style="display:none;">
           <div class="critical-alert-inner">
@@ -292,6 +300,12 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
 let selectedValue = 0;
 
+const VALUE_DEFS = {
+  1: 'A business request that you are unclear on value at the moment.',
+  2: 'This request is delivering business value.',
+  3: 'This request is getting rid of old tech and delivering business value.'
+};
+
 function setValue(n) {
   selectedValue = n;
   [1,2,3].forEach(i => {
@@ -299,6 +313,8 @@ function setValue(n) {
   });
   document.getElementById('v-crit').classList.remove('active-critical');
   document.getElementById('critical-alert').style.display = 'none';
+  document.getElementById('value-def-text').textContent = VALUE_DEFS[n];
+  document.getElementById('value-def').style.display = 'block';
 }
 
 function setCritical() {
@@ -306,6 +322,7 @@ function setCritical() {
   [1,2,3].forEach(i => document.getElementById('v'+i).classList.remove('active'));
   document.getElementById('v-crit').classList.add('active-critical');
   document.getElementById('critical-alert').style.display = 'block';
+  document.getElementById('value-def').style.display = 'none';
 }
 
 async function submitRequest() {
