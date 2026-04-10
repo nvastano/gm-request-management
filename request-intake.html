@@ -131,6 +131,32 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .v-critical .v-label { color: var(--red); }
 .v-btn.active-critical { background: rgba(220,38,38,0.06); border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
 
+/* TYPEAHEAD */
+.typeahead-wrap { position: relative; }
+.typeahead-list {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: #fff;
+  border: 1.5px solid var(--orange);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 100;
+  overflow: hidden;
+}
+.typeahead-list.open { display: block; }
+.typeahead-list li {
+  list-style: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.typeahead-list li:hover, .typeahead-list li.active { background: var(--orange-glow); }
+.typeahead-list li strong { color: var(--orange); font-weight: 700; }
+
 /* CRITICAL ALERT */
 .critical-alert { margin-top: 14px; }
 .critical-alert-inner {
@@ -278,17 +304,10 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
       <div class="two-col">
         <div class="field">
           <label>Your Name <span class="req">*</span></label>
-          <input type="text" id="f-requestor" placeholder="First and last name" list="team-members" autocomplete="off"/>
-          <datalist id="team-members">
-            <option value="Aubrey Binkley">
-            <option value="Daniel Mckinnon">
-            <option value="Darrell Moore">
-            <option value="John Markie">
-            <option value="Lacy Bell">
-            <option value="Nick Vastano">
-            <option value="Ryan Puhr">
-            <option value="Zac Karr">
-          </datalist>
+          <div class="typeahead-wrap">
+            <input type="text" id="f-requestor" placeholder="Start typing your name..." autocomplete="off"/>
+            <ul class="typeahead-list" id="requestor-list"></ul>
+          </div>
         </div>
         <div class="field">
           <label>Team / Department <span class="req">*</span></label>
@@ -308,6 +327,69 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <script>
 const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
+
+// ── Typeahead ─────────────────────────────────────────────
+const TEAM_MEMBERS = [
+  'Aubrey Binkley', 'Daniel Mckinnon', 'Darrell Moore',
+  'John Markie', 'Lacy Bell', 'Nick Vastano', 'Ryan Puhr', 'Zac Karr'
+];
+
+(function() {
+  const input = document.getElementById('f-requestor');
+  const list  = document.getElementById('requestor-list');
+  let activeIdx = -1;
+
+  function renderList(query) {
+    const q = query.toLowerCase();
+    const matches = q ? TEAM_MEMBERS.filter(n => n.toLowerCase().includes(q)) : [];
+    if (!matches.length) { list.classList.remove('open'); return; }
+    list.innerHTML = matches.map((name, i) => {
+      // Bold the matching portion
+      const idx = name.toLowerCase().indexOf(q);
+      const highlighted = name.slice(0, idx) + '<strong>' + name.slice(idx, idx + q.length) + '</strong>' + name.slice(idx + q.length);
+      return `<li data-name="${name}">${highlighted}</li>`;
+    }).join('');
+    activeIdx = -1;
+    list.classList.add('open');
+  }
+
+  function selectName(name) {
+    input.value = name;
+    list.classList.remove('open');
+    activeIdx = -1;
+  }
+
+  input.addEventListener('input', () => renderList(input.value.trim()));
+
+  input.addEventListener('keydown', e => {
+    const items = list.querySelectorAll('li');
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, items.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+    } else if (e.key === 'Enter' && activeIdx >= 0) {
+      e.preventDefault();
+      selectName(items[activeIdx].dataset.name);
+      return;
+    } else if (e.key === 'Escape') {
+      list.classList.remove('open');
+      return;
+    }
+    items.forEach((li, i) => li.classList.toggle('active', i === activeIdx));
+  });
+
+  list.addEventListener('mousedown', e => {
+    const li = e.target.closest('li');
+    if (li) selectName(li.dataset.name);
+  });
+
+  document.addEventListener('click', e => {
+    if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('open');
+  });
+})();
 let selectedValue = 0;
 
 const VALUE_DEFS = {
