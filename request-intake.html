@@ -278,7 +278,17 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
       <div class="two-col">
         <div class="field">
           <label>Your Name <span class="req">*</span></label>
-          <input type="text" id="f-requestor" placeholder="First and last name"/>
+          <input type="text" id="f-requestor" placeholder="First and last name" list="team-members" autocomplete="off"/>
+          <datalist id="team-members">
+            <option value="Aubrey Binkley">
+            <option value="Daniel Mckinnon">
+            <option value="Darrell Moore">
+            <option value="John Markie">
+            <option value="Lacy Bell">
+            <option value="Nick Vastano">
+            <option value="Ryan Puhr">
+            <option value="Zac Karr">
+          </datalist>
         </div>
         <div class="field">
           <label>Team / Department <span class="req">*</span></label>
