@@ -624,6 +624,11 @@ const RETRO_DB = '336dc3ec98d78006b779e5dcf39ab60d';
 const RETRO_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/retro';
 
 function openMetricsModal() {
+  // Shuffle cards into a random order
+  const grid = document.querySelector('.jeopardy-grid');
+  const cards = [...grid.querySelectorAll('.jeopardy-card')];
+  cards.sort(() => Math.random() - 0.5).forEach(c => grid.appendChild(c));
+
   // Reset all cards to unrevealed state
   document.querySelectorAll('.jeopardy-answer').forEach(a => a.classList.remove('show'));
   document.querySelectorAll('.jeopardy-card').forEach(c => c.classList.remove('revealed'));
