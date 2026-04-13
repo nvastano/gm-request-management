@@ -158,11 +158,17 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .metrics-modal-icon{font-size:24px}
 .metrics-modal-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
 .metrics-modal-sub{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-top:2px}
-.metrics-table{width:100%;border-collapse:collapse}
-.metrics-table th{text-align:left;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);border-bottom:1px solid var(--border);padding:8px 12px}
-.metrics-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:top}
-.metrics-table td:first-child{font-weight:700;color:var(--orange);white-space:nowrap;font-family:var(--mono);font-size:12px}
-.metrics-close-btn{margin-top:24px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.jeopardy-grid{display:flex;flex-direction:column;gap:10px}
+.jeopardy-card{background:#0f1e45;border:2px solid #1e3470;border-radius:8px;padding:20px 24px;text-align:center;transition:border-color 0.2s}
+.jeopardy-card.revealed{border-color:var(--orange)}
+.jeopardy-definition{font-size:14px;color:#e8eaf0;line-height:1.65;margin-bottom:16px}
+.jeopardy-reveal-btn{background:var(--orange);color:#fff;border:none;border-radius:6px;padding:8px 22px;font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.15s}
+.jeopardy-reveal-btn:hover:not(:disabled){background:var(--orange-dim);transform:translateY(-1px)}
+.jeopardy-reveal-btn:disabled{opacity:0.5;cursor:default;transform:none}
+.jeopardy-answer{display:none;font-family:var(--display);font-size:24px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.08em;margin-top:14px;animation:jeopardyReveal 0.35s ease}
+.jeopardy-answer.show{display:block}
+@keyframes jeopardyReveal{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+.metrics-close-btn{margin-top:20px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
 .metrics-close-btn:hover{border-color:var(--orange);color:var(--orange)}
 .ticket-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
 .ticket-modal-overlay.show{display:flex}
@@ -618,10 +624,25 @@ const RETRO_DB = '336dc3ec98d78006b779e5dcf39ab60d';
 const RETRO_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/retro';
 
 function openMetricsModal() {
+  // Reset all cards to unrevealed state
+  document.querySelectorAll('.jeopardy-answer').forEach(a => a.classList.remove('show'));
+  document.querySelectorAll('.jeopardy-card').forEach(c => c.classList.remove('revealed'));
+  document.querySelectorAll('.jeopardy-reveal-btn').forEach(b => {
+    b.disabled = false;
+    b.textContent = 'What is it?';
+  });
   document.getElementById('metrics-modal').classList.add('show');
 }
 function closeMetricsModal() {
   document.getElementById('metrics-modal').classList.remove('show');
+}
+function revealMetric(btn) {
+  const card = btn.closest('.jeopardy-card');
+  const answer = card.querySelector('.jeopardy-answer');
+  answer.classList.add('show');
+  card.classList.add('revealed');
+  btn.disabled = true;
+  btn.textContent = '✓ Revealed';
 }
 document.getElementById('metrics-modal').addEventListener('click', function(e) {
   if (e.target === this) closeMetricsModal();
@@ -699,21 +720,33 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
         <div class="metrics-modal-sub">Flow metrics used by the team</div>
       </div>
     </div>
-    <table class="metrics-table">
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th>Definition</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Throughput</td><td>The number of cards completed in a given time. (1 week)</td></tr>
-        <tr><td>WIP</td><td>What the team is currently working on</td></tr>
-        <tr><td>Aging WIP</td><td>The amount of time elapsed (age) of current cards that are sitting on the board. (Not done)</td></tr>
-        <tr><td>Flow Efficiency</td><td>The percentage of time we are adding value to work (actually working on it), rather than waiting.</td></tr>
-        <tr><td>Cycle Time</td><td>The time it takes to complete a card once we start working on it in delivery.</td></tr>
-      </tbody>
-    </table>
+    <div class="jeopardy-grid">
+      <div class="jeopardy-card">
+        <div class="jeopardy-definition">The number of cards completed in a given time. (1 week)</div>
+        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
+        <div class="jeopardy-answer">Throughput</div>
+      </div>
+      <div class="jeopardy-card">
+        <div class="jeopardy-definition">What the team is currently working on.</div>
+        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
+        <div class="jeopardy-answer">WIP</div>
+      </div>
+      <div class="jeopardy-card">
+        <div class="jeopardy-definition">The amount of time elapsed (age) of current cards that are sitting on the board. (Not done)</div>
+        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
+        <div class="jeopardy-answer">Aging WIP</div>
+      </div>
+      <div class="jeopardy-card">
+        <div class="jeopardy-definition">The percentage of time we are adding value to work (actually working on it), rather than waiting.</div>
+        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
+        <div class="jeopardy-answer">Flow Efficiency</div>
+      </div>
+      <div class="jeopardy-card">
+        <div class="jeopardy-definition">The time it takes to complete a card once we start working on it in delivery.</div>
+        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
+        <div class="jeopardy-answer">Cycle Time</div>
+      </div>
+    </div>
     <button class="metrics-close-btn" onclick="closeMetricsModal()">Close</button>
   </div>
 </div>
