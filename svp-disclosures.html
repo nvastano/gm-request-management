@@ -143,6 +143,13 @@ td.recent-cell{font-family:var(--mono);font-size:14px;text-align:center;font-wei
 }
 .expand-btn:hover{border-color:var(--orange);color:var(--orange)}
 .expand-btn.active{border-color:var(--orange);color:var(--orange);background:var(--orange-glow)}
+.bc-btn{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:4px;border:1px solid var(--sky);background:transparent;
+  color:var(--sky);font-family:var(--mono);font-size:11px;cursor:pointer;
+  text-decoration:none;transition:all 0.15s;white-space:nowrap;letter-spacing:0.04em;
+}
+.bc-btn:hover{background:rgba(56,189,248,0.1);border-color:var(--sky)}
 
 /* Disclosure detail rows */
 .detail-row td{
@@ -299,6 +306,7 @@ td.recent-cell{font-family:var(--mono);font-size:14px;text-align:center;font-wei
           <th onclick="sortBy('totalCount')" data-col="totalCount">Total <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('recentCount')" data-col="recentCount">Last 6 Mo <span class="sort-arrow">↕</span></th>
           <th>Status</th>
+          <th>BrokerCheck</th>
           <th>Details</th>
         </tr>
       </thead>
@@ -453,11 +461,12 @@ function renderTable(rows) {
     html += `<td class="count-cell">${p.totalCount === 0 ? '<span style="color:var(--muted)">0</span>' : `<span style="color:var(--red)">${p.totalCount}</span>`}</td>`;
     html += `<td class="recent-cell">${p.recentCount === 0 ? '<span style="color:var(--muted)">0</span>' : `<span style="color:var(--yellow)">${p.recentCount}</span>`}</td>`;
     html += `<td>${badgeHTML(status)}</td>`;
+    html += `<td><a class="bc-btn" href="${bcUrl}" target="_blank" rel="noopener">↗ BrokerCheck</a></td>`;
     html += `<td>${hasDiscs ? `<button class="expand-btn ${isExp ? 'active' : ''}" onclick="toggleExpand(${p.crd})">${isExp ? '▲ Hide' : '▼ Show'}</button>` : '<span style="color:var(--muted);font-size:12px;font-family:var(--mono)">—</span>'}</td>`;
     html += `</tr>`;
 
     if (isExp) {
-      html += `<tr class="detail-row"><td colspan="7">${disclosureRows(p)}</td></tr>`;
+      html += `<tr class="detail-row"><td colspan="8">${disclosureRows(p)}</td></tr>`;
     }
   }
   tbody.innerHTML = html;
