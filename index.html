@@ -217,13 +217,6 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
 .ticket-created-success.show{display:block}
 .ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
-.ticket-create-section{margin-top:20px;border-top:1px solid var(--border);padding-top:20px}
-.ticket-create-heading{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--orange);margin-bottom:12px}
-.ticket-requestor-wrap{position:relative;margin-bottom:12px}
-.ticket-requestor-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;box-sizing:border-box;outline:none;transition:border-color 0.15s}
-.ticket-requestor-input:focus{border-color:var(--orange)}
-.ticket-requestor-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1e1e1e;border:1.5px solid var(--orange);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:300;overflow:hidden}
-.ticket-requestor-list.open{display:block}
 .ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
 .ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
 .ticket-requestor-list li strong{color:var(--orange);font-weight:700}
@@ -856,15 +849,6 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
         </div>
         <div class="ticket-output-text" id="ticket-desc-text"></div>
       </div>
-    </div>
-    <div class="ticket-create-section">
-      <div class="ticket-create-heading">Step 2 — Create in Jira</div>
-      <div class="ticket-requestor-wrap">
-        <input type="text" class="ticket-requestor-input" id="ticket-requestor" placeholder="Your name..." autocomplete="off"/>
-        <ul class="ticket-requestor-list" id="ticket-requestor-list"></ul>
-      </div>
-      <button class="ticket-create-btn" id="ticket-create-btn" onclick="createTicketFromDraft()">🎫 Create Jira Ticket</button>
-      <div class="ticket-created-success" id="ticket-created-success"></div>
     </div>
     <div class="ticket-create-section">
       <div class="ticket-create-heading">Step 2 — Create in Jira</div>
