@@ -197,6 +197,42 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .ticket-output-text{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-size:13px;color:var(--text);white-space:pre-wrap;font-family:var(--sans);line-height:1.5}
 .ticket-close-btn{margin-top:20px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
 .ticket-close-btn:hover{border-color:var(--orange);color:var(--orange)}
+.ticket-create-section{margin-top:20px;border-top:1px solid var(--border);padding-top:20px}
+.ticket-create-heading{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--orange);margin-bottom:12px}
+.ticket-create-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ticket-create-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);display:block;margin-bottom:5px}
+.ticket-type-select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;cursor:pointer;transition:border-color 0.15s}
+.ticket-type-select:focus{border-color:var(--orange)}
+.ticket-requestor-wrap{position:relative}
+.ticket-requestor-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;box-sizing:border-box;outline:none;transition:border-color 0.15s}
+.ticket-requestor-input:focus{border-color:var(--orange)}
+.ticket-requestor-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1e1e1e;border:1.5px solid var(--orange);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:300;overflow:hidden}
+.ticket-requestor-list.open{display:block}
+.ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
+.ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
+.ticket-requestor-list li strong{color:var(--orange);font-weight:700}
+.ticket-create-btn{padding:10px 24px;background:#16a34a;border:none;border-radius:4px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
+.ticket-create-btn:hover:not(:disabled){background:#15803d}
+.ticket-create-btn:disabled{opacity:0.5;cursor:not-allowed}
+.ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
+.ticket-created-success.show{display:block}
+.ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
+.ticket-create-section{margin-top:20px;border-top:1px solid var(--border);padding-top:20px}
+.ticket-create-heading{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--orange);margin-bottom:12px}
+.ticket-requestor-wrap{position:relative;margin-bottom:12px}
+.ticket-requestor-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;box-sizing:border-box;outline:none;transition:border-color 0.15s}
+.ticket-requestor-input:focus{border-color:var(--orange)}
+.ticket-requestor-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1e1e1e;border:1.5px solid var(--orange);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:300;overflow:hidden}
+.ticket-requestor-list.open{display:block}
+.ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
+.ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
+.ticket-requestor-list li strong{color:var(--orange);font-weight:700}
+.ticket-create-btn{padding:10px 24px;background:#16a34a;border:none;border-radius:4px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
+.ticket-create-btn:hover:not(:disabled){background:#15803d}
+.ticket-create-btn:disabled{opacity:0.5;cursor:not-allowed}
+.ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
+.ticket-created-success.show{display:block}
+.ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
 .retro-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:440px}
 .retro-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .retro-modal-icon{font-size:24px}
@@ -821,6 +857,36 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
         <div class="ticket-output-text" id="ticket-desc-text"></div>
       </div>
     </div>
+    <div class="ticket-create-section">
+      <div class="ticket-create-heading">Step 2 — Create in Jira</div>
+      <div class="ticket-requestor-wrap">
+        <input type="text" class="ticket-requestor-input" id="ticket-requestor" placeholder="Your name..." autocomplete="off"/>
+        <ul class="ticket-requestor-list" id="ticket-requestor-list"></ul>
+      </div>
+      <button class="ticket-create-btn" id="ticket-create-btn" onclick="createTicketFromDraft()">🎫 Create Jira Ticket</button>
+      <div class="ticket-created-success" id="ticket-created-success"></div>
+    </div>
+    <div class="ticket-create-section">
+      <div class="ticket-create-heading">Step 2 — Create in Jira</div>
+      <div class="ticket-create-row">
+        <div>
+          <span class="ticket-create-label">Issue Type</span>
+          <select class="ticket-type-select" id="ticket-issue-type">
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Service Request">Service Request</option>
+          </select>
+        </div>
+        <div>
+          <span class="ticket-create-label">Your Name (Reporter)</span>
+          <div class="ticket-requestor-wrap">
+            <input type="text" class="ticket-requestor-input" id="ticket-requestor" placeholder="Start typing..." autocomplete="off"/>
+            <ul class="ticket-requestor-list" id="ticket-requestor-list"></ul>
+          </div>
+        </div>
+      </div>
+      <button class="ticket-create-btn" id="ticket-create-btn" onclick="createTicketFromDraft()">🎫 Create Jira Ticket</button>
+      <div class="ticket-created-success" id="ticket-created-success"></div>
+    </div>
     <button class="ticket-close-btn" onclick="closeTicketModal()">Close</button>
   </div>
 </div>
@@ -828,6 +894,7 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
 <script>
 // ── Draft Jira Ticket ────────────────────────────────────────────
 const TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/generate-ticket';
+const CREATE_TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/create-from-draft';
 
 function openTicketModal() {
   document.getElementById('ticket-modal').classList.add('show');
@@ -841,6 +908,81 @@ function closeTicketModal() {
   document.getElementById('ticket-status').textContent = '';
   document.getElementById('ticket-output').classList.remove('show');
   document.getElementById('ticket-generate-btn').disabled = false;
+  document.getElementById('ticket-requestor').value = '';
+  document.getElementById('ticket-issue-type').value = 'Software Engineering';
+  document.getElementById('ticket-create-btn').disabled = false;
+  document.getElementById('ticket-create-btn').textContent = '🎫 Create Jira Ticket';
+  document.getElementById('ticket-created-success').classList.remove('show');
+}
+
+// Typeahead for ticket modal requestor
+(function() {
+  window.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('ticket-requestor');
+    const list  = document.getElementById('ticket-requestor-list');
+    if (!input || !list) return;
+    let activeIdx = -1;
+
+    function renderList(query) {
+      const q = query.toLowerCase();
+      const matches = q ? TEAM_MEMBERS.filter(n => n.toLowerCase().includes(q)) : [];
+      if (!matches.length) { list.classList.remove('open'); return; }
+      list.innerHTML = matches.map(name => {
+        const idx = name.toLowerCase().indexOf(q);
+        const hl = name.slice(0,idx) + '<strong>' + name.slice(idx, idx+q.length) + '</strong>' + name.slice(idx+q.length);
+        return `<li data-name="${name}">${hl}</li>`;
+      }).join('');
+      activeIdx = -1;
+      list.classList.add('open');
+    }
+
+    function selectName(name) { input.value = name; list.classList.remove('open'); activeIdx = -1; }
+
+    input.addEventListener('input', () => renderList(input.value.trim()));
+    input.addEventListener('keydown', e => {
+      const items = list.querySelectorAll('li');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx+1, items.length-1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx-1, 0); }
+      else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); selectName(items[activeIdx].dataset.name); return; }
+      else if (e.key === 'Escape') { list.classList.remove('open'); return; }
+      items.forEach((li, i) => li.classList.toggle('tqa-active', i === activeIdx));
+    });
+    list.addEventListener('mousedown', e => { const li = e.target.closest('li'); if (li) selectName(li.dataset.name); });
+    document.addEventListener('click', e => { if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('open'); });
+  });
+})();
+
+async function createTicketFromDraft() {
+  const title       = document.getElementById('ticket-title-text').textContent.trim();
+  const description = document.getElementById('ticket-desc-text').textContent.trim();
+  const requestor   = document.getElementById('ticket-requestor').value.trim();
+  const issueType   = document.getElementById('ticket-issue-type').value;
+  const btn         = document.getElementById('ticket-create-btn');
+  const successEl   = document.getElementById('ticket-created-success');
+
+  if (!requestor) { alert('Please enter your name before creating the ticket.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⟳ Creating...';
+  successEl.classList.remove('show');
+
+  try {
+    const res = await fetch(CREATE_TICKET_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, description, requestor, issueType })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Unknown error');
+    successEl.innerHTML = `✓ Ticket created! <a href="${data.jiraUrl}" target="_blank" class="ticket-created-link">${data.jiraKey}</a>`;
+    successEl.classList.add('show');
+    btn.textContent = '✓ Created';
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '🎫 Create Jira Ticket';
+    alert('Error: ' + e.message);
+  }
 }
 
 async function generateTicket() {
