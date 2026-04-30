@@ -312,6 +312,37 @@
       ]
     },
     {
+      "id": "concierge---real-estate-1777578915094",
+      "label": "Concierge - Real Estate",
+      "visible": true,
+      "dot": "#D4537E",
+      "badgeBg": "#FBEAF0",
+      "badgeText": "#993556",
+      "members": [
+        {
+          "name": "Danae Hall",
+          "visible": true,
+          "role": "Coach",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "David LaBahn",
+          "visible": true,
+          "role": "Coach",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
+          "name": "Colin Bellios",
+          "visible": true,
+          "role": "Coach",
+          "emailOverride": "",
+          "isLeader": false
+        }
+      ]
+    },
+    {
       "id": "coaching---real-estate-1773933448435",
       "label": "Coaching - Real Estate",
       "visible": true,
