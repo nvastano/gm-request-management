@@ -148,84 +148,29 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .standup-meta-row{display:flex;align-items:flex-start;gap:5px;font-size:10px;font-family:var(--mono);color:var(--text-dim);line-height:1.5;margin-top:2px}
 .standup-empty{font-size:11px;font-family:var(--mono);color:var(--muted);text-align:center;padding:20px 8px}
 
+/* Ice Breaker Modal */
+.ib-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
+.ib-modal-overlay.show{display:flex}
+.ib-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:500px}
+.ib-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.ib-icon{font-size:26px}
+.ib-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+.ib-sub{font-size:11px;color:var(--text-dim);font-family:var(--mono);margin-bottom:24px}
+.ib-category{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:14px}
+.ib-category.humorous{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.4);color:var(--yellow)}
+.ib-category.serious{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--green)}
+.ib-category.thought{background:var(--orange-glow);border:1px solid rgba(249,115,22,0.3);color:var(--orange)}
+.ib-question{font-size:18px;font-weight:700;color:var(--text);line-height:1.5;min-height:72px;margin-bottom:24px}
+.ib-btn-row{display:flex;gap:10px}
+.ib-next{flex:1;padding:11px;background:var(--orange);color:#0f172a;border:none;border-radius:6px;font-family:var(--display);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s}
+.ib-next:hover{background:#fb923c;transform:translateY(-1px)}
+.ib-close{padding:11px 18px;background:transparent;color:var(--text-dim);border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.ib-close:hover{border-color:var(--border-light);color:var(--text)}
+.ib-counter{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;margin-top:14px}
+
 /* Retro Modal */
 .retro-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
 .retro-modal-overlay.show{display:flex}
-.metrics-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
-.metrics-modal-overlay.show{display:flex}
-.metrics-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto}
-.metrics-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.metrics-modal-icon{font-size:24px}
-.metrics-modal-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
-.metrics-modal-sub{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-top:2px}
-.jeopardy-grid{display:flex;flex-direction:column;gap:10px}
-.jeopardy-card{background:#0f1e45;border:2px solid #1e3470;border-radius:8px;padding:20px 24px;text-align:center;transition:border-color 0.2s}
-.jeopardy-card.revealed{border-color:var(--orange)}
-.jeopardy-definition{font-size:14px;color:#e8eaf0;line-height:1.65;margin-bottom:16px}
-.jeopardy-reveal-btn{background:var(--orange);color:#fff;border:none;border-radius:6px;padding:8px 22px;font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.15s}
-.jeopardy-reveal-btn:hover:not(:disabled){background:var(--orange-dim);transform:translateY(-1px)}
-.jeopardy-reveal-btn:disabled{opacity:0.5;cursor:default;transform:none}
-.jeopardy-answer{display:none;font-family:var(--display);font-size:24px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.08em;margin-top:14px;animation:jeopardyReveal 0.35s ease}
-.jeopardy-answer.show{display:block}
-@keyframes jeopardyReveal{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
-.metrics-close-btn{margin-top:20px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
-.metrics-close-btn:hover{border-color:var(--orange);color:var(--orange)}
-.ticket-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
-.ticket-modal-overlay.show{display:flex}
-.ticket-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto}
-.ticket-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.ticket-modal-icon{font-size:24px}
-.ticket-modal-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
-.ticket-modal-sub{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-top:2px}
-.ticket-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:6px;display:block}
-.ticket-textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;resize:vertical;box-sizing:border-box;transition:border-color 0.15s}
-.ticket-textarea:focus{outline:none;border-color:var(--orange)}
-.ticket-generate-btn{margin-top:14px;padding:10px 24px;background:var(--orange);border:none;border-radius:4px;color:#111;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
-.ticket-generate-btn:hover{background:var(--orange-dim)}
-.ticket-generate-btn:disabled{opacity:0.5;cursor:not-allowed}
-.ticket-status{margin-top:12px;font-size:12px;font-family:var(--mono);display:none}
-.ticket-status.loading{display:block;color:var(--text-dim)}
-.ticket-status.error{display:block;color:var(--red)}
-.ticket-output{display:none;margin-top:24px;border-top:1px solid var(--border);padding-top:24px}
-.ticket-output.show{display:block}
-.ticket-output-field{margin-bottom:16px}
-.ticket-output-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.ticket-output-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim)}
-.ticket-copy-btn{padding:3px 10px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text-dim);font-family:var(--mono);font-size:10px;cursor:pointer;transition:all 0.15s}
-.ticket-copy-btn:hover{border-color:var(--orange);color:var(--orange)}
-.ticket-copy-btn.copied{border-color:var(--green);color:var(--green)}
-.ticket-output-text{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-size:13px;color:var(--text);white-space:pre-wrap;font-family:var(--sans);line-height:1.5}
-.ticket-close-btn{margin-top:20px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
-.ticket-close-btn:hover{border-color:var(--orange);color:var(--orange)}
-.ticket-create-section{margin-top:20px;border-top:1px solid var(--border);padding-top:20px}
-.ticket-create-heading{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--orange);margin-bottom:12px}
-.ticket-create-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.ticket-create-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);display:block;margin-bottom:5px}
-.ticket-type-select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;cursor:pointer;transition:border-color 0.15s}
-.ticket-type-select:focus{border-color:var(--orange)}
-.ticket-requestor-wrap{position:relative}
-.ticket-requestor-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;box-sizing:border-box;outline:none;transition:border-color 0.15s}
-.ticket-requestor-input:focus{border-color:var(--orange)}
-.ticket-requestor-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1e1e1e;border:1.5px solid var(--orange);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:300;overflow:hidden}
-.ticket-requestor-list.open{display:block}
-.ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
-.ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
-.ticket-requestor-list li strong{color:var(--orange);font-weight:700}
-.ticket-create-btn{padding:10px 24px;background:#16a34a;border:none;border-radius:4px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
-.ticket-create-btn:hover:not(:disabled){background:#15803d}
-.ticket-create-btn:disabled{opacity:0.5;cursor:not-allowed}
-.ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
-.ticket-created-success.show{display:block}
-.ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
-.ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
-.ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
-.ticket-requestor-list li strong{color:var(--orange);font-weight:700}
-.ticket-create-btn{padding:10px 24px;background:#16a34a;border:none;border-radius:4px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
-.ticket-create-btn:hover:not(:disabled){background:#15803d}
-.ticket-create-btn:disabled{opacity:0.5;cursor:not-allowed}
-.ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
-.ticket-created-success.show{display:block}
-.ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
 .retro-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:440px}
 .retro-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .retro-modal-icon{font-size:24px}
@@ -277,21 +222,15 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
       <a href="https://ramseysolutions.atlassian.net/jira/software/c/projects/TRUSTED/boards/7537?quickFilter=24451" target="_blank" class="quick-link">
         <span class="quick-link-icon">🎫</span> Jira Board
       </a>
+      <button onclick="openIbModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
+        <span class="quick-link-icon">🧊</span> Ice Breaker
+      </button>
       <div style="display:flex;flex-direction:column;gap:5px">
         <button onclick="openRetroModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
           <span class="quick-link-icon">🔄</span> Submit Retro Topic
         </button>
         <a href="https://www.notion.so/nvastano/336dc3ec98d78006b779e5dcf39ab60d?v=336dc3ec98d7809a8782000c4ec773e8" target="_blank" style="font-size:11px;font-family:var(--mono);color:var(--sky);text-decoration:underline;padding-left:2px" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--sky)'">View Retro Topics</a>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <button onclick="openMetricsModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
-          <span class="quick-link-icon">📊</span> Metric Definitions
-        </button>
-        <a href="https://lampogroup.sharepoint.com/:x:/t/ProjectManagers/IQC2C01s10KHRZjvNmcvSBN6AZozmBrvePYGFx_Z0CRxmVA" target="_blank" style="font-size:11px;font-family:var(--mono);color:var(--sky);text-decoration:underline;padding-left:2px" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--sky)'">View Squad Metrics</a>
-      </div>
-      <button onclick="openTicketModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
-        <span class="quick-link-icon">🗒️</span> Draft Jira Ticket
-      </button>
 
     </div>
   </div>
@@ -314,12 +253,6 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
         <div class="tool-card-icon">👥</div>
         <div class="tool-card-name">Team Directory</div>
         <div class="tool-card-desc">Browse the org directory. Find team members, roles, and contact info across the organization.</div>
-        <div class="tool-card-arrow">OPEN TOOL →</div>
-      </a>
-      <a href="svp-disclosures.html" class="tool-card">
-        <div class="tool-card-icon">🛡️</div>
-        <div class="tool-card-name">SVP Disclosure Monitor</div>
-        <div class="tool-card-desc">Track FINRA BrokerCheck disclosures for all active SmartVestor Pros. Password protected.</div>
         <div class="tool-card-arrow">OPEN TOOL →</div>
       </a>
     </div>
@@ -661,35 +594,74 @@ renderStandups();
 const RETRO_DB = '336dc3ec98d78006b779e5dcf39ab60d';
 const RETRO_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/retro';
 
-function openMetricsModal() {
-  // Shuffle cards into a random order
-  const grid = document.querySelector('.jeopardy-grid');
-  const cards = [...grid.querySelectorAll('.jeopardy-card')];
-  cards.sort(() => Math.random() - 0.5).forEach(c => grid.appendChild(c));
+// ── ICE BREAKER ───────────────────────────────────────────────
+const ICE_BREAKERS = [
+  // Humorous
+  {q:"If your job title had to be replaced with an emoji, which one would it be and why?", cat:"humorous"},
+  {q:"What's the most useless skill you have that you're secretly proud of?", cat:"humorous"},
+  {q:"If you could replace every meeting with a different activity, what would it be?", cat:"humorous"},
+  {q:"What's a workplace rule you'd abolish if you were in charge for a day?", cat:"humorous"},
+  {q:"If your desk could talk, what's the most embarrassing thing it would say about you?", cat:"humorous"},
+  {q:"What animal do you think you'd be in a corporate jungle and why?", cat:"humorous"},
+  {q:"What's the strangest thing you've ever eaten at your desk?", cat:"humorous"},
+  {q:"If your work style was a TV show genre, what would it be?", cat:"humorous"},
+  {q:"What's the most creative excuse you've ever heard (or used) to get out of a meeting?", cat:"humorous"},
+  {q:"If you could have any fictional character as your coworker, who would make your life the most chaotic?", cat:"humorous"},
+  // Serious
+  {q:"What's one professional skill you're actively working on right now?", cat:"serious"},
+  {q:"What's the best piece of career advice you've ever received?", cat:"serious"},
+  {q:"What's something a previous manager did that you've carried with you?", cat:"serious"},
+  {q:"What does 'doing your best work' look like for you?", cat:"serious"},
+  {q:"What's one thing about your role that energizes you most?", cat:"serious"},
+  {q:"Who in your career has had the biggest impact on how you work, and why?", cat:"serious"},
+  {q:"What's a win from the past month that you haven't celebrated enough?", cat:"serious"},
+  {q:"What's something you've changed your mind about in the last year?", cat:"serious"},
+  {q:"If you could become an expert at something outside your current role, what would it be?", cat:"serious"},
+  {q:"What does a great team dynamic feel like to you?", cat:"serious"},
+  // Thought-provoking
+  {q:"If you could know the answer to one question about the future, what would it be?", cat:"thought"},
+  {q:"What's something most people assume about you that's completely wrong?", cat:"thought"},
+  {q:"If you had to teach a class on any topic, what would it be?", cat:"thought"},
+  {q:"What's a belief you hold that most people in your field would disagree with?", cat:"thought"},
+  {q:"If you could live one day from your past again, which would you choose?", cat:"thought"},
+  {q:"What's something you think is overrated — and what's underrated instead?", cat:"thought"},
+  {q:"What's the most interesting rabbit hole you've gone down recently?", cat:"thought"},
+  {q:"If you could add one hour to every day, how would you spend it?", cat:"thought"},
+  {q:"What's a small thing that makes a surprisingly big difference in your day?", cat:"thought"},
+  {q:"If you had to bet on one thing that will be completely different in your industry 10 years from now, what would it be?", cat:"thought"},
+];
+const IB_LABELS = { humorous:'😄 Humorous', serious:'💬 Serious', thought:'🤔 Makes You Think' };
+const IB_CLASSES = { humorous:'humorous', serious:'serious', thought:'thought' };
+let ibQueue = [], ibIndex = 0;
 
-  // Reset all cards to unrevealed state
-  document.querySelectorAll('.jeopardy-answer').forEach(a => a.classList.remove('show'));
-  document.querySelectorAll('.jeopardy-card').forEach(c => c.classList.remove('revealed'));
-  document.querySelectorAll('.jeopardy-reveal-btn').forEach(b => {
-    b.disabled = false;
-    b.textContent = 'What is it?';
-  });
-  document.getElementById('metrics-modal').classList.add('show');
+function shuffleIb() {
+  ibQueue = [...ICE_BREAKERS].sort(() => Math.random() - 0.5);
+  ibIndex = 0;
 }
-function closeMetricsModal() {
-  document.getElementById('metrics-modal').classList.remove('show');
+
+function openIbModal() {
+  shuffleIb();
+  document.getElementById('ib-modal').classList.add('show');
+  showIbQuestion();
 }
-function revealMetric(btn) {
-  const card = btn.closest('.jeopardy-card');
-  const answer = card.querySelector('.jeopardy-answer');
-  answer.classList.add('show');
-  card.classList.add('revealed');
-  btn.disabled = true;
-  btn.textContent = '✓ Revealed';
+
+function closeIbModal() {
+  document.getElementById('ib-modal').classList.remove('show');
 }
-document.getElementById('metrics-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeMetricsModal();
-});
+
+function nextIbQuestion() {
+  ibIndex = (ibIndex + 1) % ibQueue.length;
+  showIbQuestion();
+}
+
+function showIbQuestion() {
+  const item = ibQueue[ibIndex];
+  const catEl = document.getElementById('ib-category');
+  catEl.textContent = IB_LABELS[item.cat];
+  catEl.className = 'ib-category ' + IB_CLASSES[item.cat];
+  document.getElementById('ib-question').textContent = item.q;
+  document.getElementById('ib-counter').textContent = `${ibIndex + 1} of ${ibQueue.length}`;
+}
 
 function openRetroModal() {
   document.getElementById('retro-modal').classList.add('show');
@@ -753,48 +725,25 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
 });
 </script>
 
-<!-- Metric Definitions Modal -->
-<div class="metrics-modal-overlay" id="metrics-modal">
-  <div class="metrics-modal">
-    <div class="metrics-modal-header">
-      <span class="metrics-modal-icon">📊</span>
-      <div>
-        <div class="metrics-modal-title">Metric Definitions</div>
-        <div class="metrics-modal-sub">Flow metrics used by the team</div>
-      </div>
+<!-- Retro Topic Modal -->
+<!-- Ice Breaker Modal -->
+<div class="ib-modal-overlay" id="ib-modal" onclick="if(event.target===this)closeIbModal()">
+  <div class="ib-modal">
+    <div class="ib-header">
+      <span class="ib-icon">🧊</span>
+      <div class="ib-title">Ice Breaker</div>
     </div>
-    <div class="jeopardy-grid">
-      <div class="jeopardy-card">
-        <div class="jeopardy-definition">The number of cards completed in a given time. (1 week)</div>
-        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
-        <div class="jeopardy-answer">Throughput</div>
-      </div>
-      <div class="jeopardy-card">
-        <div class="jeopardy-definition">What the team is currently working on.</div>
-        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
-        <div class="jeopardy-answer">WIP</div>
-      </div>
-      <div class="jeopardy-card">
-        <div class="jeopardy-definition">The amount of time elapsed (age) of current cards that are sitting on the board. (Not done)</div>
-        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
-        <div class="jeopardy-answer">Aging WIP</div>
-      </div>
-      <div class="jeopardy-card">
-        <div class="jeopardy-definition">The percentage of time we are adding value to work (actually working on it), rather than waiting.</div>
-        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
-        <div class="jeopardy-answer">Flow Efficiency</div>
-      </div>
-      <div class="jeopardy-card">
-        <div class="jeopardy-definition">The time it takes to complete a card once we start working on it in delivery.</div>
-        <button class="jeopardy-reveal-btn" onclick="revealMetric(this)">What is it?</button>
-        <div class="jeopardy-answer">Cycle Time</div>
-      </div>
+    <div class="ib-sub">A question to kick things off — serious, silly, or somewhere in between.</div>
+    <div class="ib-category" id="ib-category"></div>
+    <div class="ib-question" id="ib-question"></div>
+    <div class="ib-btn-row">
+      <button class="ib-next" onclick="nextIbQuestion()">Next Question →</button>
+      <button class="ib-close" onclick="closeIbModal()">Close</button>
     </div>
-    <button class="metrics-close-btn" onclick="closeMetricsModal()">Close</button>
+    <div class="ib-counter" id="ib-counter"></div>
   </div>
 </div>
 
-<!-- Retro Topic Modal -->
 <div class="retro-modal-overlay" id="retro-modal">
   <div class="retro-modal">
     <div class="retro-modal-header">
@@ -819,215 +768,5 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
     <div class="retro-status" id="retro-status"></div>
   </div>
 </div>
-
-<!-- Draft Jira Ticket Modal -->
-<div class="ticket-modal-overlay" id="ticket-modal">
-  <div class="ticket-modal">
-    <div class="ticket-modal-header">
-      <span class="ticket-modal-icon">🗒️</span>
-      <div>
-        <div class="ticket-modal-title">Draft Jira Ticket</div>
-        <div class="ticket-modal-sub">AI-powered ticket generator</div>
-      </div>
-    </div>
-    <label class="ticket-label" for="ticket-input">Request Description</label>
-    <textarea id="ticket-input" class="ticket-textarea" rows="5" placeholder="Describe what you need, the problem it solves, and any relevant context..."></textarea>
-    <div><button class="ticket-generate-btn" id="ticket-generate-btn" onclick="generateTicket()">Generate</button></div>
-    <div class="ticket-status" id="ticket-status"></div>
-    <div class="ticket-output" id="ticket-output">
-      <div class="ticket-output-field">
-        <div class="ticket-output-row">
-          <span class="ticket-output-label">Ticket Title</span>
-          <button class="ticket-copy-btn" id="copy-title-btn" onclick="copyToClipboard('ticket-title-text', this)">Copy</button>
-        </div>
-        <div class="ticket-output-text" id="ticket-title-text"></div>
-      </div>
-      <div class="ticket-output-field">
-        <div class="ticket-output-row">
-          <span class="ticket-output-label">Ticket Description</span>
-          <button class="ticket-copy-btn" id="copy-desc-btn" onclick="copyToClipboard('ticket-desc-text', this)">Copy</button>
-        </div>
-        <div class="ticket-output-text" id="ticket-desc-text"></div>
-      </div>
-    </div>
-    <div class="ticket-create-section">
-      <div class="ticket-create-heading">Step 2 — Create in Jira</div>
-      <div class="ticket-create-row">
-        <div>
-          <span class="ticket-create-label">Issue Type</span>
-          <select class="ticket-type-select" id="ticket-issue-type">
-            <option value="Software Engineering">Software Engineering</option>
-            <option value="Service Request">Service Request</option>
-          </select>
-        </div>
-        <div>
-          <span class="ticket-create-label">Your Name (Reporter)</span>
-          <div class="ticket-requestor-wrap">
-            <input type="text" class="ticket-requestor-input" id="ticket-requestor" placeholder="Start typing..." autocomplete="off"/>
-            <ul class="ticket-requestor-list" id="ticket-requestor-list"></ul>
-          </div>
-        </div>
-      </div>
-      <button class="ticket-create-btn" id="ticket-create-btn" onclick="createTicketFromDraft()">🎫 Create Jira Ticket</button>
-      <div class="ticket-created-success" id="ticket-created-success"></div>
-    </div>
-    <button class="ticket-close-btn" onclick="closeTicketModal()">Close</button>
-  </div>
-</div>
-
-<script>
-// ── Draft Jira Ticket ────────────────────────────────────────────
-const TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/generate-ticket';
-const CREATE_TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/create-from-draft';
-
-function openTicketModal() {
-  document.getElementById('ticket-modal').classList.add('show');
-  document.getElementById('ticket-input').focus();
-}
-
-function closeTicketModal() {
-  document.getElementById('ticket-modal').classList.remove('show');
-  document.getElementById('ticket-input').value = '';
-  document.getElementById('ticket-status').className = 'ticket-status';
-  document.getElementById('ticket-status').textContent = '';
-  document.getElementById('ticket-output').classList.remove('show');
-  document.getElementById('ticket-generate-btn').disabled = false;
-  document.getElementById('ticket-requestor').value = '';
-  document.getElementById('ticket-issue-type').value = 'Software Engineering';
-  document.getElementById('ticket-create-btn').disabled = false;
-  document.getElementById('ticket-create-btn').textContent = '🎫 Create Jira Ticket';
-  document.getElementById('ticket-created-success').classList.remove('show');
-}
-
-// Typeahead for ticket modal requestor
-(function() {
-  window.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('ticket-requestor');
-    const list  = document.getElementById('ticket-requestor-list');
-    if (!input || !list) return;
-    let activeIdx = -1;
-
-    function renderList(query) {
-      const q = query.toLowerCase();
-      const matches = q ? TEAM_MEMBERS.filter(n => n.toLowerCase().includes(q)) : [];
-      if (!matches.length) { list.classList.remove('open'); return; }
-      list.innerHTML = matches.map(name => {
-        const idx = name.toLowerCase().indexOf(q);
-        const hl = name.slice(0,idx) + '<strong>' + name.slice(idx, idx+q.length) + '</strong>' + name.slice(idx+q.length);
-        return `<li data-name="${name}">${hl}</li>`;
-      }).join('');
-      activeIdx = -1;
-      list.classList.add('open');
-    }
-
-    function selectName(name) { input.value = name; list.classList.remove('open'); activeIdx = -1; }
-
-    input.addEventListener('input', () => renderList(input.value.trim()));
-    input.addEventListener('keydown', e => {
-      const items = list.querySelectorAll('li');
-      if (!items.length) return;
-      if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx+1, items.length-1); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx-1, 0); }
-      else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); selectName(items[activeIdx].dataset.name); return; }
-      else if (e.key === 'Escape') { list.classList.remove('open'); return; }
-      items.forEach((li, i) => li.classList.toggle('tqa-active', i === activeIdx));
-    });
-    list.addEventListener('mousedown', e => { const li = e.target.closest('li'); if (li) selectName(li.dataset.name); });
-    document.addEventListener('click', e => { if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('open'); });
-  });
-})();
-
-async function createTicketFromDraft() {
-  const title       = document.getElementById('ticket-title-text').textContent.trim();
-  const description = document.getElementById('ticket-desc-text').textContent.trim();
-  const requestor   = document.getElementById('ticket-requestor').value.trim();
-  const issueType   = document.getElementById('ticket-issue-type').value;
-  const btn         = document.getElementById('ticket-create-btn');
-  const successEl   = document.getElementById('ticket-created-success');
-
-  if (!requestor) { alert('Please enter your name before creating the ticket.'); return; }
-
-  btn.disabled = true;
-  btn.textContent = '⟳ Creating...';
-  successEl.classList.remove('show');
-
-  try {
-    const res = await fetch(CREATE_TICKET_WORKER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, requestor, issueType })
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(data.error || 'Unknown error');
-    successEl.innerHTML = `✓ Ticket created! <a href="${data.jiraUrl}" target="_blank" class="ticket-created-link">${data.jiraKey}</a>`;
-    successEl.classList.add('show');
-    btn.textContent = '✓ Created';
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = '🎫 Create Jira Ticket';
-    alert('Error: ' + e.message);
-  }
-}
-
-async function generateTicket() {
-  const input = document.getElementById('ticket-input').value.trim();
-  const statusEl = document.getElementById('ticket-status');
-  const outputEl = document.getElementById('ticket-output');
-  const btn = document.getElementById('ticket-generate-btn');
-
-  if (!input) {
-    statusEl.className = 'ticket-status error';
-    statusEl.textContent = '⚠ Please enter a request description.';
-    return;
-  }
-
-  btn.disabled = true;
-  outputEl.classList.remove('show');
-  statusEl.className = 'ticket-status loading';
-  statusEl.textContent = '⟳ Generating ticket...';
-
-  try {
-    const res = await fetch(TICKET_WORKER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ description: input })
-    });
-
-    const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(data.error || `Error ${res.status}`);
-
-    document.getElementById('ticket-title-text').textContent = data.title;
-    document.getElementById('ticket-desc-text').textContent = data.description;
-    // Reset copy buttons
-    document.getElementById('copy-title-btn').textContent = 'Copy';
-    document.getElementById('copy-title-btn').className = 'ticket-copy-btn';
-    document.getElementById('copy-desc-btn').textContent = 'Copy';
-    document.getElementById('copy-desc-btn').className = 'ticket-copy-btn';
-
-    statusEl.className = 'ticket-status';
-    outputEl.classList.add('show');
-  } catch(e) {
-    statusEl.className = 'ticket-status error';
-    statusEl.textContent = '✗ Error: ' + e.message;
-    btn.disabled = false;
-  }
-}
-
-function copyToClipboard(id, btn) {
-  const text = document.getElementById(id).textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓ Copied';
-    btn.className = 'ticket-copy-btn copied';
-    setTimeout(() => {
-      btn.textContent = 'Copy';
-      btn.className = 'ticket-copy-btn';
-    }, 2000);
-  });
-}
-
-document.getElementById('ticket-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeTicketModal();
-});
-</script>
 </body>
 </html>
