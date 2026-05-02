@@ -710,10 +710,6 @@ function revealMetric(btn) {
   btn.disabled = true;
   btn.textContent = '✓ Revealed';
 }
-document.getElementById('metrics-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeMetricsModal();
-});
-
 // ── ICE BREAKER ───────────────────────────────────────────────
 const ICE_BREAKERS = [
   // Humorous
@@ -989,6 +985,10 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
 // ── Draft Jira Ticket ────────────────────────────────────────────
 const TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/generate-ticket';
 const CREATE_TICKET_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/create-from-draft';
+
+document.getElementById('metrics-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeMetricsModal();
+});
 
 function openTicketModal() {
   document.getElementById('ticket-modal').classList.add('show');
