@@ -1046,8 +1046,9 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
         <input type="text" class="triage-other-input" id="triage-other-input" placeholder="Enter squad name..."/>
       </div>
       <div class="triage-action-row">
-        <button class="triage-copy-btn" id="triage-copy-btn" onclick="copyTriageSquad()">📋 Copy Squad Name</button>
+        <button class="triage-copy-btn" id="triage-copy-btn" onclick="confirmTriageRouting()">✓ Confirm &amp; Copy</button>
       </div>
+      <div id="triage-confirm-status" style="display:none;margin-top:10px;font-size:12px;font-family:var(--mono);color:var(--green)"></div>
     </div>
     <button class="ticket-close-btn" onclick="closeTriageModal()">Close</button>
   </div>
@@ -1213,6 +1214,9 @@ document.getElementById('ticket-modal').addEventListener('click', function(e) {
 
 // ── Triage Ticket ────────────────────────────────────────────────
 const TRIAGE_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/triage-ticket';
+const CONFIRM_ROUTING_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/confirm-routing';
+let triageSuggestedSquad = '';
+let triageCurrentKey = '';
 
 function openTriageModal() {
   document.getElementById('triage-modal').classList.add('show');
@@ -1226,10 +1230,15 @@ function closeTriageModal() {
   document.getElementById('triage-status').textContent = '';
   document.getElementById('triage-result').classList.remove('show');
   document.getElementById('triage-fetch-btn').disabled = false;
-  document.getElementById('triage-copy-btn').textContent = '📋 Copy Squad Name';
+  document.getElementById('triage-copy-btn').textContent = '✓ Confirm & Copy';
   document.getElementById('triage-copy-btn').className = 'triage-copy-btn';
+  document.getElementById('triage-copy-btn').disabled = false;
   document.getElementById('triage-other-input').style.display = 'none';
-  document.getElementById('triage-squad-select').value = 'Biz Ops (Control Freaks)';
+  document.getElementById('triage-squad-select').value = 'Grease Monkeys (Sales Ops)';
+  document.getElementById('triage-confirm-status').style.display = 'none';
+  document.getElementById('triage-confirm-status').textContent = '';
+  triageSuggestedSquad = '';
+  triageCurrentKey = '';
 }
 
 function handleTriageSquadChange() {
@@ -1237,21 +1246,51 @@ function handleTriageSquadChange() {
   document.getElementById('triage-other-input').style.display = sel === 'other' ? 'block' : 'none';
 }
 
-function copyTriageSquad() {
+async function confirmTriageRouting() {
   const sel = document.getElementById('triage-squad-select').value;
-  const squad = sel === 'other'
+  const finalSquad = sel === 'other'
     ? document.getElementById('triage-other-input').value.trim()
     : sel;
-  if (!squad) { alert('Please select or enter a squad name.'); return; }
+  if (!finalSquad) { alert('Please select or enter a squad name.'); return; }
+
   const btn = document.getElementById('triage-copy-btn');
-  navigator.clipboard.writeText(squad).then(() => {
-    btn.textContent = '✓ Copied!';
-    btn.className = 'triage-copy-btn copied';
-    setTimeout(() => {
-      btn.textContent = '📋 Copy Squad Name';
-      btn.className = 'triage-copy-btn';
-    }, 2000);
-  });
+  const statusEl = document.getElementById('triage-confirm-status');
+  const wasOverride = finalSquad !== triageSuggestedSquad;
+
+  btn.textContent = '⟳ Saving...';
+  btn.disabled = true;
+
+  // Copy to clipboard immediately
+  navigator.clipboard.writeText(finalSquad).catch(() => {});
+
+  // Save decision to Worker (fire and forget — don't block user if it fails)
+  try {
+    await fetch(CONFIRM_ROUTING_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ticketKey: triageCurrentKey,
+        title: document.getElementById('triage-summary').textContent,
+        suggested: triageSuggestedSquad,
+        final: finalSquad,
+        override: wasOverride
+      })
+    });
+  } catch (_) {}
+
+  btn.textContent = '✓ Copied!';
+  btn.className = 'triage-copy-btn copied';
+
+  statusEl.textContent = wasOverride
+    ? `✓ Override saved — I'll remember that "${triageSuggestedSquad}" should route to "${finalSquad}".`
+    : '✓ Confirmed — suggestion accepted.';
+  statusEl.style.display = 'block';
+
+  setTimeout(() => {
+    btn.textContent = '✓ Confirm & Copy';
+    btn.className = 'triage-copy-btn';
+    btn.disabled = false;
+  }, 2000);
 }
 
 async function triageTicket() {
@@ -1295,6 +1334,8 @@ async function triageTicket() {
     document.getElementById('triage-summary').textContent = data.title || '—';
     document.getElementById('triage-suggestion-squad').textContent = data.suggestedSquad || '—';
     document.getElementById('triage-suggestion-reason').textContent = data.reason || '';
+    triageSuggestedSquad = data.suggestedSquad || '';
+    triageCurrentKey = ticketKey;
 
     // Pre-select the suggested squad in the dropdown if it matches
     const sel = document.getElementById('triage-squad-select');
