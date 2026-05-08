@@ -93,6 +93,8 @@ body::before{
 .cal-event{font-size:9px;padding:1px 3px;border-radius:2px;margin-top:1px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cal-event.birthday{background:rgba(251,191,36,0.2);color:var(--yellow)}
 .cal-event.ramseyversary{background:rgba(249,115,22,0.2);color:var(--orange)}
+.cal-event.holiday{background:rgba(239,68,68,0.15);color:#f87171}
+.cal-day.office-closed{background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.25)}
 
 /* Events list */
 .events-list{margin-top:20px;display:flex;flex-direction:column;gap:8px}
@@ -100,6 +102,7 @@ body::before{
 .event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .event-dot.birthday{background:var(--yellow)}
 .event-dot.ramseyversary{background:var(--orange)}
+.event-dot.holiday{background:#f87171}
 .event-name{font-size:13px;font-weight:600;flex:1}
 .event-type{font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:0.08em}
 .event-date{font-size:12px;font-family:var(--mono);color:var(--text-dim)}
@@ -477,6 +480,21 @@ const EVENTS = [
   {name:'Chris Spurgeon', type:'ramseyversary', month:12, day:8},
 ];
 
+// ── Company Holidays (Office Closed) ──────────────────
+const HOLIDAYS = [
+  {name:"New Year's Day",              year:2026, month:1,  day:1},
+  {name:"New Year's Day Celebration",  year:2026, month:1,  day:2},
+  {name:"Good Friday",                 year:2026, month:4,  day:3},
+  {name:"Memorial Day",                year:2026, month:5,  day:25},
+  {name:"Independence Day Celebration",year:2026, month:7,  day:3},
+  {name:"Labor Day",                   year:2026, month:9,  day:7},
+  {name:"Thanksgiving Day",            year:2026, month:11, day:26},
+  {name:"Day After Thanksgiving",      year:2026, month:11, day:27},
+  {name:"Christmas Eve",               year:2026, month:12, day:24},
+  {name:"Christmas Day",               year:2026, month:12, day:25},
+  {name:"New Year's Eve",              year:2026, month:12, day:31},
+  {name:"New Year's Day",              year:2027, month:1,  day:1},
+];
 
 // Standup Schedule
 const STANDUPS = {
@@ -572,6 +590,10 @@ function getEventsForDay(month1, day) {
   return EVENTS.filter(e => e.month === month1 && e.day === day);
 }
 
+function getHolidaysForDay(year, month1, day) {
+  return HOLIDAYS.filter(h => h.year === year && h.month === month1 && h.day === day);
+}
+
 function daysUntil(month1, day) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -601,8 +623,11 @@ function renderCal() {
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = today.getDate()===d && today.getMonth()===calMonth && today.getFullYear()===calYear;
     const evs = getEventsForDay(calMonth + 1, d);
+    const hols = getHolidaysForDay(calYear, calMonth + 1, d);
     const evHtml = evs.map(e => `<div class="cal-event ${e.type}">${e.name.split(' ')[0]} ${e.type==='birthday'?'🎂':'🐏'}</div>`).join('');
-    grid.innerHTML += `<div class="cal-day ${isToday?'today':''} ${evs.length?'has-event':''}"><div class="cal-day-num">${d}</div>${evHtml}</div>`;
+    const holHtml = hols.map(h => `<div class="cal-event holiday">🏢 ${h.name}</div>`).join('');
+    const hasAnything = evs.length || hols.length;
+    grid.innerHTML += `<div class="cal-day ${isToday?'today':''} ${hasAnything?'has-event':''} ${hols.length?'office-closed':''}"><div class="cal-day-num">${d}</div>${evHtml}${holHtml}</div>`;
   }
 
   // Next month padding
@@ -612,19 +637,32 @@ function renderCal() {
     grid.innerHTML += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
   }
 
-  // Events list - show all upcoming in next 60 days sorted
+  // Events list - combine team events + upcoming holidays, sorted by days away
   const list = document.getElementById('events-list');
-  const upcoming = EVENTS.map(e => ({...e, days: daysUntil(e.month, e.day)}))
-    .sort((a,b) => a.days - b.days);
+  const now2 = new Date();
+  const todayFlat = new Date(now2.getFullYear(), now2.getMonth(), now2.getDate());
+
+  // Team birthdays/ramseyversaries
+  const teamEvents = EVENTS.map(e => ({...e, days: daysUntil(e.month, e.day)}));
+
+  // Holidays - compute days until, using their specific year
+  const holidayEvents = HOLIDAYS.map(h => {
+    const hDate = new Date(h.year, h.month - 1, h.day);
+    const diff = Math.round((hDate - todayFlat) / 86400000);
+    return {...h, type:'holiday', days: diff};
+  }).filter(h => h.days >= 0); // only future/today holidays
+
+  const upcoming = [...teamEvents, ...holidayEvents].sort((a,b) => a.days - b.days);
 
   list.innerHTML = upcoming.map(e => {
     const dClass = e.days === 0 ? 'today' : e.days <= 14 ? 'soon' : '';
     const dLabel = e.days === 0 ? 'TODAY! 🎉' : e.days === 1 ? 'Tomorrow' : `${e.days}d away`;
     const monthName = MONTHS[e.month-1].slice(0,3);
+    let typeLabel = e.type === 'birthday' ? '🎂 BIRTHDAY' : e.type === 'ramseyversary' ? '🐏 RAMSEYVERSARY' : '🏢 OFFICE CLOSED';
     return `<div class="event-item">
       <div class="event-dot ${e.type}"></div>
       <div class="event-name">${e.name}</div>
-      <div class="event-type">${e.type==='birthday'?'🎂 BIRTHDAY':'🐏 RAMSEYVERSARY'}</div>
+      <div class="event-type">${typeLabel}</div>
       <div class="event-date">${monthName} ${e.day}</div>
       <div class="event-days ${dClass}">${dLabel}</div>
     </div>`;
