@@ -237,25 +237,7 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
 .ticket-created-success.show{display:block}
 .ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
-/* Triage Ticket Modal */
-.triage-result{display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:20px}
-.triage-result.show{display:block}
-.triage-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.triage-meta-cell{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px}
-.triage-meta-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:3px}
-.triage-meta-value{font-size:13px;color:var(--text)}
-.triage-summary-box{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-size:13px;color:var(--text);line-height:1.5;margin-bottom:16px}
-.triage-suggestion-box{background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.3);border-radius:6px;padding:14px 16px;margin-bottom:16px}
-.triage-suggestion-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--orange);margin-bottom:6px}
-.triage-suggestion-squad{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
-.triage-suggestion-reason{font-size:12px;color:var(--text-dim);font-style:italic}
-.triage-squad-section{margin-bottom:14px}
-.triage-other-input{display:none;width:100%;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;box-sizing:border-box;outline:none;transition:border-color 0.15s}
-.triage-other-input:focus{border-color:var(--orange)}
-.triage-action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.triage-copy-btn{padding:10px 20px;background:var(--orange);border:none;border-radius:4px;color:#111;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
-.triage-copy-btn:hover{background:var(--orange-dim)}
-.triage-copy-btn.copied{background:var(--green);color:#111}
+
 .ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
 .ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
 .ticket-requestor-list li strong{color:var(--orange);font-weight:700}
@@ -333,9 +315,6 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
       </div>
       <button onclick="openTicketModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
         <span class="quick-link-icon">🗒️</span> Draft Jira Ticket
-      </button>
-      <button onclick="openTriageModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
-        <span class="quick-link-icon">🔀</span> Triage Ticket
       </button>
 
     </div>
@@ -1005,54 +984,6 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
   </div>
 </div>
 
-<div class="ticket-modal-overlay" id="triage-modal">
-  <div class="ticket-modal">
-    <div class="ticket-modal-header">
-      <span class="ticket-modal-icon">🔀</span>
-      <div>
-        <div class="ticket-modal-title">Triage Ticket</div>
-        <div class="ticket-modal-sub">Paste a ticket — get a routing suggestion</div>
-      </div>
-    </div>
-    <label class="ticket-label" for="triage-input">Jira Ticket URL or Key</label>
-    <input type="text" id="triage-input" class="ticket-requestor-input" style="width:100%;box-sizing:border-box" placeholder="e.g. TRUSTED-89530 or paste the full URL" autocomplete="off"/>
-    <div style="margin-top:14px"><button class="ticket-generate-btn" id="triage-fetch-btn" onclick="triageTicket()">Fetch &amp; Analyze</button></div>
-    <div class="ticket-status" id="triage-status"></div>
-    <div class="triage-result" id="triage-result">
-      <div class="triage-meta-grid">
-        <div class="triage-meta-cell"><div class="triage-meta-label">Ticket</div><div class="triage-meta-value" id="triage-key"></div></div>
-        <div class="triage-meta-cell"><div class="triage-meta-label">Type</div><div class="triage-meta-value" id="triage-type"></div></div>
-        <div class="triage-meta-cell"><div class="triage-meta-label">Status</div><div class="triage-meta-value" id="triage-status-val"></div></div>
-        <div class="triage-meta-cell"><div class="triage-meta-label">Reporter</div><div class="triage-meta-value" id="triage-reporter"></div></div>
-      </div>
-      <div class="ticket-output-label" style="margin-bottom:6px">Summary</div>
-      <div class="triage-summary-box" id="triage-summary"></div>
-      <div class="triage-suggestion-box">
-        <div class="triage-suggestion-label">AI Routing Suggestion</div>
-        <div class="triage-suggestion-squad" id="triage-suggestion-squad"></div>
-        <div class="triage-suggestion-reason" id="triage-suggestion-reason"></div>
-      </div>
-      <div class="triage-squad-section">
-        <span class="ticket-create-label">Route To</span>
-        <select class="ticket-type-select" id="triage-squad-select" onchange="handleTriageSquadChange()">
-          <option value="Grease Monkeys (Sales Ops)">Grease Monkeys (Sales Ops)</option>
-          <option value="Biz Ops (Control Freaks)">Biz Ops (Control Freaks)</option>
-          <option value="Accounting">Accounting</option>
-          <option value="Pro Triage">Pro Triage</option>
-          <option value="Pro Support">Pro Support</option>
-          <option value="DNA">DNA</option>
-          <option value="other">Other (type below)</option>
-        </select>
-        <input type="text" class="triage-other-input" id="triage-other-input" placeholder="Enter squad name..."/>
-      </div>
-      <div class="triage-action-row">
-        <button class="triage-copy-btn" id="triage-copy-btn" onclick="confirmTriageRouting()">✓ Confirm &amp; Copy</button>
-      </div>
-      <div id="triage-confirm-status" style="display:none;margin-top:10px;font-size:12px;font-family:var(--mono);color:var(--green)"></div>
-    </div>
-    <button class="ticket-close-btn" onclick="closeTriageModal()">Close</button>
-  </div>
-</div>
 
 <script>
 // ── Draft Jira Ticket ────────────────────────────────────────────
@@ -1212,155 +1143,6 @@ document.getElementById('ticket-modal').addEventListener('click', function(e) {
   if (e.target === this) closeTicketModal();
 });
 
-// ── Triage Ticket ────────────────────────────────────────────────
-const TRIAGE_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/triage-ticket';
-const CONFIRM_ROUTING_WORKER = 'https://squad-ops.nicholas-vastano.workers.dev/confirm-routing';
-let triageSuggestedSquad = '';
-let triageCurrentKey = '';
-
-function openTriageModal() {
-  document.getElementById('triage-modal').classList.add('show');
-  document.getElementById('triage-input').focus();
-}
-
-function closeTriageModal() {
-  document.getElementById('triage-modal').classList.remove('show');
-  document.getElementById('triage-input').value = '';
-  document.getElementById('triage-status').className = 'ticket-status';
-  document.getElementById('triage-status').textContent = '';
-  document.getElementById('triage-result').classList.remove('show');
-  document.getElementById('triage-fetch-btn').disabled = false;
-  document.getElementById('triage-copy-btn').textContent = '✓ Confirm & Copy';
-  document.getElementById('triage-copy-btn').className = 'triage-copy-btn';
-  document.getElementById('triage-copy-btn').disabled = false;
-  document.getElementById('triage-other-input').style.display = 'none';
-  document.getElementById('triage-squad-select').value = 'Grease Monkeys (Sales Ops)';
-  document.getElementById('triage-confirm-status').style.display = 'none';
-  document.getElementById('triage-confirm-status').textContent = '';
-  triageSuggestedSquad = '';
-  triageCurrentKey = '';
-}
-
-function handleTriageSquadChange() {
-  const sel = document.getElementById('triage-squad-select').value;
-  document.getElementById('triage-other-input').style.display = sel === 'other' ? 'block' : 'none';
-}
-
-async function confirmTriageRouting() {
-  const sel = document.getElementById('triage-squad-select').value;
-  const finalSquad = sel === 'other'
-    ? document.getElementById('triage-other-input').value.trim()
-    : sel;
-  if (!finalSquad) { alert('Please select or enter a squad name.'); return; }
-
-  const btn = document.getElementById('triage-copy-btn');
-  const statusEl = document.getElementById('triage-confirm-status');
-  const wasOverride = finalSquad !== triageSuggestedSquad;
-
-  btn.textContent = '⟳ Saving...';
-  btn.disabled = true;
-
-  // Copy to clipboard immediately
-  navigator.clipboard.writeText(finalSquad).catch(() => {});
-
-  // Save decision to Worker (fire and forget — don't block user if it fails)
-  try {
-    await fetch(CONFIRM_ROUTING_WORKER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ticketKey: triageCurrentKey,
-        title: document.getElementById('triage-summary').textContent,
-        suggested: triageSuggestedSquad,
-        final: finalSquad,
-        override: wasOverride
-      })
-    });
-  } catch (_) {}
-
-  btn.textContent = '✓ Copied!';
-  btn.className = 'triage-copy-btn copied';
-
-  statusEl.textContent = wasOverride
-    ? `✓ Override saved — I'll remember that "${triageSuggestedSquad}" should route to "${finalSquad}".`
-    : '✓ Confirmed — suggestion accepted.';
-  statusEl.style.display = 'block';
-
-  setTimeout(() => {
-    btn.textContent = '✓ Confirm & Copy';
-    btn.className = 'triage-copy-btn';
-    btn.disabled = false;
-  }, 2000);
-}
-
-async function triageTicket() {
-  const raw = document.getElementById('triage-input').value.trim();
-  const statusEl = document.getElementById('triage-status');
-  const resultEl = document.getElementById('triage-result');
-  const btn = document.getElementById('triage-fetch-btn');
-
-  if (!raw) {
-    statusEl.className = 'ticket-status error';
-    statusEl.textContent = '⚠ Please enter a ticket key or URL.';
-    return;
-  }
-
-  const match = raw.match(/([A-Z]+-\d+)/);
-  if (!match) {
-    statusEl.className = 'ticket-status error';
-    statusEl.textContent = '⚠ Could not find a ticket key (e.g. TRUSTED-89530). Check your input and try again.';
-    return;
-  }
-  const ticketKey = match[1];
-
-  btn.disabled = true;
-  resultEl.classList.remove('show');
-  statusEl.className = 'ticket-status loading';
-  statusEl.textContent = `⟳ Fetching ${ticketKey}...`;
-
-  try {
-    const res = await fetch(TRIAGE_WORKER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ticketKey })
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(data.error || `Error ${res.status}`);
-
-    document.getElementById('triage-key').textContent = ticketKey;
-    document.getElementById('triage-type').textContent = data.issueType || '—';
-    document.getElementById('triage-status-val').textContent = data.status || '—';
-    document.getElementById('triage-reporter').textContent = data.reporter || '—';
-    document.getElementById('triage-summary').textContent = data.title || '—';
-    document.getElementById('triage-suggestion-squad').textContent = data.suggestedSquad || '—';
-    document.getElementById('triage-suggestion-reason').textContent = data.reason || '';
-    triageSuggestedSquad = data.suggestedSquad || '';
-    triageCurrentKey = ticketKey;
-
-    // Pre-select the suggested squad in the dropdown if it matches
-    const sel = document.getElementById('triage-squad-select');
-    const knownValues = Array.from(sel.options).map(o => o.value).filter(v => v !== 'other');
-    if (data.suggestedSquad && knownValues.includes(data.suggestedSquad)) {
-      sel.value = data.suggestedSquad;
-      document.getElementById('triage-other-input').style.display = 'none';
-    } else if (data.suggestedSquad) {
-      sel.value = 'other';
-      document.getElementById('triage-other-input').style.display = 'block';
-      document.getElementById('triage-other-input').value = data.suggestedSquad;
-    }
-
-    statusEl.className = 'ticket-status';
-    resultEl.classList.add('show');
-  } catch(e) {
-    statusEl.className = 'ticket-status error';
-    statusEl.textContent = '✗ Error: ' + e.message;
-    btn.disabled = false;
-  }
-}
-
-document.getElementById('triage-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeTriageModal();
-});
 </script>
 </body>
 </html>
