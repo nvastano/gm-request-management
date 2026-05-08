@@ -17,21 +17,21 @@
   --sans:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Oswald',sans-serif;
 }
 html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--sans)}
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(249,115,22,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.03) 1px,transparent 1px);
-  background-size:40px 40px;
-}
+  background-size:40px 40px;}
 
 /* ── PASSWORD GATE ── */
 #gate{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;}
-.gate-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px 40px;max-width:400px;width:100%;text-align:center;}
+.gate-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px 40px;max-width:420px;width:100%;text-align:center;}
 .gate-icon{font-size:48px;margin-bottom:16px}
 .gate-title{font-family:var(--display);font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
 .gate-title span{color:var(--orange)}
-.gate-sub{font-size:13px;color:var(--text-dim);margin-bottom:28px}
+.gate-sub{font-size:13px;color:var(--text-dim);margin-bottom:24px}
+.gate-label{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);text-align:left;display:block;margin-bottom:6px}
 .gate-input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg2);color:var(--text);font-family:var(--mono);font-size:15px;text-align:center;letter-spacing:0.1em;margin-bottom:14px;outline:none;}
 .gate-input:focus{border-color:var(--orange)}
+.gate-input.name-input{letter-spacing:0;text-align:left;font-family:var(--sans)}
 .gate-btn{width:100%;padding:13px;border-radius:8px;border:none;background:var(--orange);color:#fff;font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background 0.15s;}
 .gate-btn:hover{background:var(--orange-dim)}
 .gate-err{color:var(--red);font-size:13px;margin-top:10px;min-height:18px}
@@ -48,8 +48,18 @@ body::before{
 .dash-title{font-family:var(--display);font-size:36px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;line-height:1}
 .dash-title span{color:var(--orange)}
 .dash-sub{font-size:13px;color:var(--text-dim);margin-top:6px}
+.header-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.user-chip{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:20px;background:var(--surface);border:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.user-chip strong{color:var(--text)}
+.user-chip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0;line-height:1}
+.user-chip button:hover{color:var(--orange)}
+.sync-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:var(--mono);font-size:11px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+.sync-btn:hover{border-color:var(--orange);color:var(--orange)}
+.sync-btn.syncing{border-color:var(--sky);color:var(--sky);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
 .back-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:var(--mono);font-size:11px;cursor:pointer;text-decoration:none;transition:all 0.15s;letter-spacing:0.06em;}
 .back-btn:hover{border-color:var(--orange);color:var(--orange)}
+.sync-status{font-family:var(--mono);font-size:11px;color:var(--muted)}
 
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
@@ -68,7 +78,7 @@ body::before{
 .search-input{width:100%;padding:10px 16px 10px 38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--sans);font-size:14px;outline:none;}
 .search-input:focus{border-color:var(--orange)}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px}
-.filter-select{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--sans);font-size:14px;cursor:pointer;outline:none;min-width:140px;}
+.filter-select{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--sans);font-size:14px;cursor:pointer;outline:none;min-width:150px;}
 .filter-select:focus{border-color:var(--orange)}
 .result-count{font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-left:auto;align-self:center}
 
@@ -102,12 +112,11 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
 .expand-btn:hover{border-color:var(--orange);color:var(--orange)}
 .expand-btn.active{border-color:var(--orange);color:var(--orange);background:var(--orange-glow)}
 
-/* Disclosure detail rows */
+/* Disclosure cards */
 .detail-row td{padding:0;background:var(--bg2) !important;}
 .detail-inner{padding:0 16px 16px 16px}
-.disc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-top:12px;}
-.disc-card.needs-review{border-left:3px solid var(--yellow)}
-.disc-card.acknowledged{border-left:3px solid var(--green);opacity:0.75}
+.disc-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:8px;padding:16px 20px;margin-top:12px;transition:opacity 0.2s,border-color 0.2s;}
+.disc-card.acknowledged{border-left-color:var(--green);opacity:0.7}
 .disc-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .disc-id{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:4px}
 .disc-date{font-family:var(--mono);font-size:12px;color:var(--text-dim)}
@@ -118,13 +127,26 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
 .disc-amount{display:inline-block;margin-top:8px;margin-right:6px;padding:3px 10px;border-radius:4px;font-family:var(--mono);font-size:12px;}
 .disc-amount.damage{background:rgba(248,113,113,0.12);color:#f87171;}
 .disc-amount.settled{background:rgba(52,211,153,0.12);color:#34d399;}
-.disc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
-.ack-btn{padding:5px 14px;border-radius:6px;border:1px solid;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+.disc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.ack-btn{padding:5px 16px;border-radius:6px;border:1px solid;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;display:inline-flex;align-items:center;gap:6px}
+.ack-btn:disabled{opacity:0.4;cursor:not-allowed}
 .ack-btn.needs{border-color:var(--yellow);color:var(--yellow);background:rgba(251,191,36,0.08);}
-.ack-btn.needs:hover{background:rgba(251,191,36,0.18);}
+.ack-btn.needs:hover:not(:disabled){background:rgba(251,191,36,0.18);}
 .ack-btn.acked{border-color:var(--green);color:var(--green);background:rgba(52,211,153,0.08);}
-.ack-btn.acked:hover{background:rgba(52,211,153,0.18);}
-.ack-who{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.ack-btn.acked:hover:not(:disabled){background:rgba(52,211,153,0.18);}
+.ack-meta{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.5}
+.ack-meta strong{color:var(--text-dim)}
+.notes-input{background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:13px;padding:8px 12px;resize:none;width:100%;margin-top:8px;outline:none;}
+.notes-input:focus{border-color:var(--orange)}
+.notes-toggle{background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer;padding:0;text-decoration:underline;text-decoration-style:dotted;}
+.notes-toggle:hover{color:var(--text-dim)}
+
+/* Toast notification */
+#toast{position:fixed;bottom:32px;right:32px;z-index:9998;pointer-events:none}
+.toast-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:13px;color:var(--text);margin-top:8px;opacity:0;transform:translateY(8px);transition:all 0.2s}
+.toast-item.show{opacity:1;transform:translateY(0)}
+.toast-item.green{border-color:var(--green);color:var(--green)}
+.toast-item.red{border-color:var(--red);color:var(--red)}
 
 /* No results */
 .no-results{text-align:center;padding:60px 20px;color:var(--text-dim);font-family:var(--mono);font-size:13px}
@@ -132,10 +154,7 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
 /* Footer */
 .footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
-@media(max-width:768px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .dash-title{font-size:26px}
-}
+@media(max-width:768px){.stats{grid-template-columns:repeat(2,1fr)}.dash-title{font-size:26px}.header-right{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -146,7 +165,10 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
     <div class="gate-icon">🛡️</div>
     <div class="gate-title">SVP <span>Disclosure</span> Monitor</div>
     <div class="gate-sub">Grease Monkeys · SmartVestor Pro Compliance</div>
+    <label class="gate-label" for="pw-input">Password</label>
     <input id="pw-input" class="gate-input" type="password" placeholder="Enter password" autocomplete="current-password"/>
+    <label class="gate-label" for="name-input" style="margin-top:4px">Your name</label>
+    <input id="name-input" class="gate-input name-input" type="text" placeholder="e.g. Nick Vastano" autocomplete="name"/>
     <button class="gate-btn" onclick="checkPw()">Enter</button>
     <div class="gate-err" id="pw-err"></div>
   </div>
@@ -160,7 +182,12 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
       <div class="dash-title">Disclosure <span>Monitor</span></div>
       <div class="dash-sub">1,329 SmartVestor Pros · AdvizorPro data · Baseline pulled May 8, 2026 · Click a name to view their AdvizorPro profile</div>
     </div>
-    <a href="index.html" class="back-btn">← Back to Hub</a>
+    <div class="header-right">
+      <div class="user-chip">Reviewing as: <strong id="display-name">—</strong><button onclick="changeName()" title="Change name">✎</button></div>
+      <button class="sync-btn" id="sync-btn" onclick="syncFromSharePoint()">↻ Sync</button>
+      <span class="sync-status" id="sync-status"></span>
+      <a href="index.html" class="back-btn">← Back to Hub</a>
+    </div>
   </div>
 
   <div class="stats">
@@ -174,12 +201,14 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
       <div class="stat-sub" id="stat-needs-sub"></div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">With Disclosures</div>
-      <div class="stat-value red">152</div>
+      <div class="stat-label">All Reviewed</div>
+      <div class="stat-value green" id="stat-acked">—</div>
+      <div class="stat-sub">advisors fully acknowledged</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Clean (0 Disclosures)</div>
-      <div class="stat-value green">1,193</div>
+      <div class="stat-label">With Disclosures</div>
+      <div class="stat-value red">152</div>
+      <div class="stat-sub">208 total records</div>
     </div>
   </div>
 
@@ -233,54 +262,151 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
 
   <div class="footer">
     <span>Grease Monkeys — Ramsey Solutions Partner Management</span>
-    <span>Data: AdvizorPro · Baseline: May 8, 2026 · 1,329 SmartVestor Pros</span>
+    <span>Data: AdvizorPro · Baseline: May 8, 2026 · Acknowledgments synced via SharePoint</span>
   </div>
 </div>
 
+<div id="toast"></div>
+
 <script>
+// ── CONFIG — paste your Power Automate URLs here ───────────────────────
+const FLOW_GET = 'PASTE_GET_FLOW_URL_HERE';
+const FLOW_POST = 'PASTE_POST_FLOW_URL_HERE';
+
 // ── PASSWORD ──────────────────────────────────────────────────────────
 const CORRECT_PW = "lenakelly";
 function checkPw() {
-  const v = document.getElementById('pw-input').value;
-  if (v === CORRECT_PW) {
+  const pw = document.getElementById('pw-input').value;
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) { document.getElementById('pw-err').textContent = 'Please enter your name.'; return; }
+  if (pw === CORRECT_PW) {
+    localStorage.setItem('svp_reviewer', name);
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     sessionStorage.setItem('svp_auth', '1');
+    document.getElementById('display-name').textContent = name;
     init();
   } else {
-    document.getElementById('pw-err').textContent = 'Incorrect password. Try again.';
+    document.getElementById('pw-err').textContent = 'Incorrect password.';
     document.getElementById('pw-input').value = '';
     document.getElementById('pw-input').focus();
   }
 }
-document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('name-input').focus(); });
+document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
 if (sessionStorage.getItem('svp_auth') === '1') {
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.addEventListener('DOMContentLoaded', init);
-  if (document.readyState !== 'loading') init();
+  const saved = localStorage.getItem('svp_reviewer') || '';
+  if (saved) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('display-name').textContent = saved;
+    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState !== 'loading') init();
+  }
+}
+function changeName() {
+  const n = prompt('Enter your name:', localStorage.getItem('svp_reviewer') || '');
+  if (n && n.trim()) { localStorage.setItem('svp_reviewer', n.trim()); document.getElementById('display-name').textContent = n.trim(); }
+}
+function getReviewer() { return localStorage.getItem('svp_reviewer') || 'Unknown'; }
+
+// ── ACKNOWLEDGMENT STATE ───────────────────────────────────────────────
+// Map of disclosure_id (number) → {acknowledged_by, acknowledged_at, notes}
+let ackMap = {};
+
+function loadLocalAcks() {
+  try { ackMap = JSON.parse(localStorage.getItem('svp_ack_sharepoint') || '{}'); } catch { ackMap = {}; }
+}
+function saveLocalAcks() { localStorage.setItem('svp_ack_sharepoint', JSON.stringify(ackMap)); }
+function isAcked(id) { return !!ackMap[id]; }
+
+// ── SHAREPOINT SYNC ────────────────────────────────────────────────────
+async function syncFromSharePoint() {
+  if (FLOW_GET === 'PASTE_GET_FLOW_URL_HERE') {
+    showToast('⚠ SharePoint not connected yet. Paste your flow URLs in the config.', 'red');
+    return;
+  }
+  const btn = document.getElementById('sync-btn');
+  const status = document.getElementById('sync-status');
+  btn.classList.add('syncing'); btn.textContent = '↻ Syncing…';
+  status.textContent = '';
+  try {
+    const res = await fetch(FLOW_GET);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json(); // expects [{disclosure_id, acknowledged_by, acknowledged_at, notes}]
+    ackMap = {};
+    rows.forEach(r => {
+      if (r.disclosure_id) {
+        ackMap[r.disclosure_id] = {
+          acknowledged_by: r.acknowledged_by || '',
+          acknowledged_at: r.acknowledged_at || '',
+          notes: r.notes || ''
+        };
+      }
+    });
+    saveLocalAcks();
+    updateStats();
+    applyFilters();
+    const now = new Date().toLocaleTimeString();
+    status.textContent = 'Last synced ' + now;
+    showToast('✓ Synced ' + rows.length + ' acknowledgments from SharePoint', 'green');
+  } catch (e) {
+    showToast('✗ Sync failed: ' + e.message, 'red');
+  } finally {
+    btn.classList.remove('syncing'); btn.textContent = '↻ Sync';
+  }
 }
 
-// ── ACKNOWLEDGMENT STORAGE ─────────────────────────────────────────────
-const ACK_KEY = 'svp_ack_v2';
-function getAcks() {
-  try { return new Set(JSON.parse(localStorage.getItem(ACK_KEY) || '[]')); }
-  catch { return new Set(); }
+async function postAck(discId, advisorCrd, advisorName, action, notes) {
+  if (FLOW_POST === 'PASTE_POST_FLOW_URL_HERE') {
+    // Fallback: just store locally
+    if (action === 'add') {
+      ackMap[discId] = { acknowledged_by: getReviewer(), acknowledged_at: new Date().toISOString(), notes: notes || '' };
+    } else {
+      delete ackMap[discId];
+    }
+    saveLocalAcks();
+    return;
+  }
+  const body = { disclosure_id: discId, advisor_crd: advisorCrd, advisor_name: advisorName,
+    action, acknowledged_by: getReviewer(), acknowledged_at: new Date().toISOString(), notes: notes || '' };
+  const res = await fetch(FLOW_POST, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  // Update local state immediately
+  if (action === 'add') {
+    ackMap[discId] = { acknowledged_by: getReviewer(), acknowledged_at: new Date().toISOString(), notes: notes || '' };
+  } else {
+    delete ackMap[discId];
+  }
+  saveLocalAcks();
 }
-function saveAcks(set) {
-  localStorage.setItem(ACK_KEY, JSON.stringify([...set]));
-}
-function toggleAck(discId) {
-  const acks = getAcks();
-  if (acks.has(discId)) { acks.delete(discId); } else { acks.add(discId); }
-  saveAcks(acks);
-  updateStats();
-  // Re-render just the expanded rows that are open
-  document.querySelectorAll('.detail-row').forEach(row => {
-    const crd = parseInt(row.dataset.crd);
-    const pro = PROS.find(p => p.crd === crd);
-    if (pro) row.querySelector('td').innerHTML = buildDetailInner(pro);
-  });
+
+// ── TOGGLE ACKNOWLEDGMENT ─────────────────────────────────────────────
+async function toggleAck(discId, advisorCrd, advisorName, btnEl) {
+  btnEl.disabled = true;
+  const notesEl = document.getElementById('notes-' + discId);
+  const notes = notesEl ? notesEl.value.trim() : '';
+  const action = isAcked(discId) ? 'remove' : 'add';
+  try {
+    await postAck(discId, advisorCrd, advisorName, action, notes);
+    showToast(action === 'add' ? '✓ Marked as reviewed' : 'Acknowledgment removed', action === 'add' ? 'green' : '');
+  } catch(e) {
+    showToast('✗ Could not save: ' + e.message, 'red');
+  } finally {
+    btnEl.disabled = false;
+    updateStats();
+    // Re-render open detail rows
+    document.querySelectorAll('.detail-row[data-crd]').forEach(row => {
+      if (row.style.display !== 'none') {
+        const crd = parseInt(row.dataset.crd);
+        const pro = PROS.find(p => p.crd === crd);
+        if (pro) row.querySelector('td').innerHTML = buildDetailInner(pro);
+      }
+    });
+    // Update badge in the main row
+    const badge = document.getElementById('badge-' + advisorCrd);
+    if (badge) badge.outerHTML = buildBadge(PROS.find(p => p.crd === advisorCrd));
+  }
 }
 
 // ── DATA ──────────────────────────────────────────────────────────────
@@ -298,12 +424,22 @@ function sortBy(col) {
 
 // ── STATS ─────────────────────────────────────────────────────────────
 function updateStats() {
-  const acks = getAcks();
-  // Count advisors where at least one disclosure is unacknowledged
-  const needsCount = PROS.filter(p => p.disclosures.length > 0 && p.disclosures.some(d => !acks.has(d.id))).length;
-  const totalUnacked = PROS.reduce((sum, p) => sum + p.disclosures.filter(d => !acks.has(d.id)).length, 0);
-  document.getElementById('stat-needs').textContent = needsCount;
+  const needsAdvisors = PROS.filter(p => p.disclosures.length > 0 && p.disclosures.some(d => !isAcked(d.id)));
+  const ackedAdvisors = PROS.filter(p => p.disclosures.length > 0 && p.disclosures.every(d => isAcked(d.id)));
+  const totalUnacked = PROS.reduce((s, p) => s + p.disclosures.filter(d => !isAcked(d.id)).length, 0);
+  document.getElementById('stat-needs').textContent = needsAdvisors.length;
   document.getElementById('stat-needs-sub').textContent = totalUnacked + ' disclosure' + (totalUnacked !== 1 ? 's' : '') + ' unreviewed';
+  document.getElementById('stat-acked').textContent = ackedAdvisors.length;
+}
+
+// ── BUILD BADGE (shared) ──────────────────────────────────────────────
+function buildBadge(p) {
+  if (!p || p.disclosures.length === 0) return '<span id="badge-' + (p ? p.crd : '') + '" class="badge badge-clean">✓ Clean</span>';
+  const unacked = p.disclosures.filter(d => !isAcked(d.id)).length;
+  const all = p.disclosures.length;
+  if (unacked === 0)  return `<span id="badge-${p.crd}" class="badge badge-acked">✓ All Reviewed</span>`;
+  if (unacked === all) return `<span id="badge-${p.crd}" class="badge badge-needs">⚠ Needs Review (${unacked})</span>`;
+  return `<span id="badge-${p.crd}" class="badge badge-partial">◑ ${unacked} of ${all} remaining</span>`;
 }
 
 // ── FILTERS ───────────────────────────────────────────────────────────
@@ -311,22 +447,22 @@ function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
   const state = document.getElementById('state-filter').value;
   const status = document.getElementById('status-filter').value;
-  const acks = getAcks();
 
   let rows = PROS.filter(p => {
     if (q && !p.name.toLowerCase().includes(q) && !p.firm.toLowerCase().includes(q) && !String(p.crd).includes(q)) return false;
     if (state && p.state !== state) return false;
-    if (status === 'needs' && !(p.disclosures.length > 0 && p.disclosures.some(d => !acks.has(d.id)))) return false;
-    if (status === 'acked' && !(p.disclosures.length > 0 && p.disclosures.every(d => acks.has(d.id)))) return false;
-    if (status === 'disc' && p.disclosures.length === 0) return false;
-    if (status === 'clean' && p.disclosures.length > 0) return false;
+    const hasDisc = p.disclosures.length > 0;
+    const unacked = hasDisc ? p.disclosures.filter(d => !isAcked(d.id)).length : 0;
+    if (status === 'needs' && !(hasDisc && unacked > 0)) return false;
+    if (status === 'acked' && !(hasDisc && unacked === 0)) return false;
+    if (status === 'disc' && !hasDisc) return false;
+    if (status === 'clean' && hasDisc) return false;
     return true;
   });
 
   rows.sort((a, b) => {
     let av = a[sortCol], bv = b[sortCol];
-    if (typeof av === 'string') av = av.toLowerCase();
-    if (typeof bv === 'string') bv = bv.toLowerCase();
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
     return av < bv ? -sortDir : av > bv ? sortDir : 0;
   });
 
@@ -334,13 +470,13 @@ function applyFilters() {
   renderTable(rows);
 }
 
-// ── DISCLOSURE DETAIL HTML ────────────────────────────────────────────
+// ── DETAIL INNER ──────────────────────────────────────────────────────
 function buildDetailInner(p) {
-  const acks = getAcks();
   let html = '<div class="detail-inner">';
   p.disclosures.forEach(d => {
-    const isAcked = acks.has(d.id);
-    html += `<div class="disc-card ${isAcked ? 'acknowledged' : 'needs-review'}">`;
+    const acked = isAcked(d.id);
+    const meta = ackMap[d.id];
+    html += `<div class="disc-card${acked ? ' acknowledged' : ''}">`;
     html += '<div class="disc-header">';
     if (d.id) html += `<span class="disc-id">#${d.id}</span>`;
     if (d.eventDate) html += `<span class="disc-date">${d.eventDate}</span>`;
@@ -354,12 +490,21 @@ function buildDetailInner(p) {
     if (d.settlementAmount) amounts += `<span class="disc-amount settled">Settled: ${d.settlementAmount}</span>`;
     if (amounts) html += `<div style="margin-top:8px">${amounts}</div>`;
     html += '<div class="disc-footer">';
-    if (isAcked) {
-      html += `<button class="ack-btn acked" onclick="toggleAck(${d.id})">✓ Acknowledged — click to undo</button>`;
+    if (acked && meta) {
+      const dt = meta.acknowledged_at ? new Date(meta.acknowledged_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+      html += `<div>
+        <button class="ack-btn acked" onclick="toggleAck(${d.id},${p.crd},${JSON.stringify(p.name)},this)">✓ Acknowledged — undo?</button>
+        <div class="ack-meta" style="margin-top:6px">Reviewed by <strong>${meta.acknowledged_by}</strong>${dt ? ' on ' + dt : ''}${meta.notes ? '<br>Note: ' + meta.notes : ''}</div>
+      </div>`;
     } else {
-      html += `<button class="ack-btn needs" onclick="toggleAck(${d.id})">Mark as Reviewed</button>`;
+      html += `<div style="width:100%">
+        <button class="ack-btn needs" onclick="toggleAck(${d.id},${p.crd},${JSON.stringify(p.name)},this)">✓ Mark as Reviewed</button>
+        <button class="notes-toggle" style="margin-left:12px" onclick="toggleNotes(${d.id})">+ add note</button>
+        <div id="notes-wrap-${d.id}" style="display:none;margin-top:8px">
+          <textarea id="notes-${d.id}" class="notes-input" rows="2" placeholder="Optional note about this disclosure…"></textarea>
+        </div>
+      </div>`;
     }
-    html += '<span class="ack-who">Stored locally in your browser</span>';
     html += '</div></div>';
   });
   html += '</div>';
@@ -368,7 +513,6 @@ function buildDetailInner(p) {
 
 // ── RENDER TABLE ──────────────────────────────────────────────────────
 function renderTable(rows) {
-  const acks = getAcks();
   const tbody = document.getElementById('tbody');
   if (rows.length === 0) {
     tbody.innerHTML = '';
@@ -376,48 +520,27 @@ function renderTable(rows) {
     return;
   }
   document.getElementById('no-results').style.display = 'none';
-
   let html = '';
   rows.forEach(p => {
     const apUrl = `https://app.advizorpro.com/advisors?q=${p.crd}`;
     const hasDisc = p.disclosures.length > 0;
-    const unacked = hasDisc ? p.disclosures.filter(d => !acks.has(d.id)).length : 0;
-    const allAcked = hasDisc && unacked === 0;
-
-    let badge = '';
-    if (!hasDisc) {
-      badge = '<span class="badge badge-clean">✓ Clean</span>';
-    } else if (allAcked) {
-      badge = '<span class="badge badge-acked">✓ All Reviewed</span>';
-    } else if (unacked === p.disclosures.length) {
-      badge = `<span class="badge badge-needs">⚠ Needs Review (${unacked})</span>`;
-    } else {
-      badge = `<span class="badge badge-partial">◑ ${unacked} Remaining</span>`;
-    }
-
     html += `<tr id="row-${p.crd}">`;
     html += `<td class="name-cell"><a href="${apUrl}" target="_blank" rel="noopener">${p.name}</a></td>`;
     html += `<td class="firm-cell" title="${p.firm}">${p.firm}</td>`;
     html += `<td class="state-cell">${p.state}</td>`;
     html += `<td class="count-cell">${p.totalCount > 0 ? p.totalCount : '—'}</td>`;
-    html += `<td>${badge}</td>`;
-    if (hasDisc) {
-      html += `<td><button class="expand-btn" id="exp-${p.crd}" onclick="toggleDetail(${p.crd})">Details ▼</button></td>`;
-    } else {
-      html += '<td></td>';
-    }
+    html += `<td>${buildBadge(p)}</td>`;
+    html += `<td>${hasDisc ? `<button class="expand-btn" id="exp-${p.crd}" onclick="toggleDetail(${p.crd})">Details ▼</button>` : ''}</td>`;
     html += '</tr>';
-
     if (hasDisc) {
       html += `<tr class="detail-row" id="detail-${p.crd}" data-crd="${p.crd}" style="display:none">`;
-      html += `<td colspan="6">${buildDetailInner(p)}</td>`;
-      html += '</tr>';
+      html += `<td colspan="6">${buildDetailInner(p)}</td></tr>`;
     }
   });
   tbody.innerHTML = html;
 }
 
-// ── EXPAND/COLLAPSE ───────────────────────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────────────────
 function toggleDetail(crd) {
   const row = document.getElementById(`detail-${crd}`);
   const btn = document.getElementById(`exp-${crd}`);
@@ -427,11 +550,27 @@ function toggleDetail(crd) {
   btn.classList.toggle('active', !open);
   document.getElementById(`row-${crd}`).classList.toggle('expanded', !open);
 }
+function toggleNotes(discId) {
+  const wrap = document.getElementById('notes-wrap-' + discId);
+  if (wrap) { wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none'; }
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  const el = document.createElement('div');
+  el.className = 'toast-item' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  t.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 3500);
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────
 function init() {
+  loadLocalAcks();
   updateStats();
   applyFilters();
+  // Auto-sync on load if flows are configured
+  if (FLOW_GET !== 'PASTE_GET_FLOW_URL_HERE') syncFromSharePoint();
 }
 </script>
 </body>
