@@ -242,6 +242,13 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .ticket-created-success{display:none;margin-top:12px;padding:12px 16px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;font-size:13px;color:#16a34a}
 .ticket-created-success.show{display:block}
 .ticket-created-link{color:var(--orange);text-decoration:underline;font-weight:700}
+.ticket-attach-row{margin-bottom:14px}
+.ticket-attach-label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:var(--bg2);border:1px dashed var(--border);border-radius:4px;padding:7px 14px;font-size:12px;color:var(--text-dim);font-family:var(--mono);transition:all 0.15s;letter-spacing:0.04em}
+.ticket-attach-label:hover{border-color:var(--orange);color:var(--orange)}
+.ticket-attach-label.has-file{border-color:rgba(22,163,74,0.5);color:#4ade80;background:rgba(22,163,74,0.06)}
+.ticket-attach-clear{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;margin-left:6px;line-height:1;display:none}
+.ticket-attach-clear:hover{color:var(--red)}
+.ticket-attach-preview{display:none;max-height:70px;border-radius:4px;margin-top:8px;border:1px solid var(--border)}
 
 .ticket-requestor-list li{list-style:none;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.1s}
 .ticket-requestor-list li:hover,.ticket-requestor-list li.tqa-active{background:rgba(249,115,22,0.15)}
@@ -1017,6 +1024,15 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
           </div>
         </div>
       </div>
+      <div class="ticket-attach-row">
+        <span class="ticket-create-label">Attachment (optional)</span>
+        <label class="ticket-attach-label" id="ticket-attach-label" for="ticket-image-input">
+          📎 Choose image...
+          <input type="file" id="ticket-image-input" accept="image/*" style="display:none" onchange="handleTicketImageSelect(event)">
+        </label>
+        <button class="ticket-attach-clear" id="ticket-attach-clear" onclick="clearTicketImage()">✕ Remove</button>
+        <br><img class="ticket-attach-preview" id="ticket-attach-preview" alt="preview">
+      </div>
       <button class="ticket-create-btn" id="ticket-create-btn" onclick="createTicketFromDraft()">🎫 Create Jira Ticket</button>
       <div class="ticket-created-success" id="ticket-created-success"></div>
     </div>
@@ -1051,6 +1067,36 @@ function closeTicketModal() {
   document.getElementById('ticket-create-btn').disabled = false;
   document.getElementById('ticket-create-btn').textContent = '🎫 Create Jira Ticket';
   document.getElementById('ticket-created-success').classList.remove('show');
+  clearTicketImage();
+}
+
+// ── Ticket image attachment ───────────────────────────
+let ticketImageFile = null;
+
+function handleTicketImageSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  ticketImageFile = file;
+  const label = document.getElementById('ticket-attach-label');
+  label.firstChild.textContent = '📎 ' + file.name;
+  label.classList.add('has-file');
+  const clearBtn = document.getElementById('ticket-attach-clear');
+  clearBtn.style.display = 'inline';
+  const preview = document.getElementById('ticket-attach-preview');
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = 'block';
+}
+
+function clearTicketImage() {
+  ticketImageFile = null;
+  const input = document.getElementById('ticket-image-input');
+  if (input) input.value = '';
+  const label = document.getElementById('ticket-attach-label');
+  if (label) { label.firstChild.textContent = '📎 Choose image...'; label.classList.remove('has-file'); }
+  const clearBtn = document.getElementById('ticket-attach-clear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  const preview = document.getElementById('ticket-attach-preview');
+  if (preview) { preview.src = ''; preview.style.display = 'none'; }
 }
 
 // Typeahead for ticket modal requestor
@@ -1105,11 +1151,23 @@ async function createTicketFromDraft() {
   btn.textContent = '⟳ Creating...';
   successEl.classList.remove('show');
 
+  // Convert image to base64 if one was selected
+  let imageBase64 = null, imageFilename = null, imageMimeType = null;
+  if (ticketImageFile) {
+    imageBase64 = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result.split(',')[1]); // strip data:...;base64,
+      reader.readAsDataURL(ticketImageFile);
+    });
+    imageFilename = ticketImageFile.name;
+    imageMimeType = ticketImageFile.type;
+  }
+
   try {
     const res = await fetch(CREATE_TICKET_WORKER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, requestor, issueType })
+      body: JSON.stringify({ title, description, requestor, issueType, imageBase64, imageFilename, imageMimeType })
     });
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || 'Unknown error');
