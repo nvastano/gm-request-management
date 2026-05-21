@@ -63,7 +63,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
+.stat-card:hover{border-color:var(--orange);background:var(--surface2)}
+.stat-card.active{border-color:var(--orange);background:var(--surface2);box-shadow:0 0 0 1px var(--orange)}
 .stat-label{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
 .stat-value{font-family:var(--display);font-size:32px;font-weight:700;color:var(--text);line-height:1}
 .stat-value.orange{color:var(--orange)}
@@ -192,21 +194,21 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
   </div>
 
   <div class="stats">
-    <div class="stat-card">
+    <div class="stat-card" onclick="filterByCard('')" id="card-all">
       <div class="stat-label">Total SVPs</div>
       <div class="stat-value orange">1,329</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="filterByCard('needs')" id="card-needs">
       <div class="stat-label">Needs Review</div>
       <div class="stat-value yellow" id="stat-needs">—</div>
       <div class="stat-sub" id="stat-needs-sub"></div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="filterByCard('acked')" id="card-acked">
       <div class="stat-label">All Reviewed</div>
       <div class="stat-value green" id="stat-acked">—</div>
       <div class="stat-sub">advisors fully acknowledged</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="filterByCard('disc')" id="card-disc">
       <div class="stat-label">With Disclosures</div>
       <div class="stat-value red">152</div>
       <div class="stat-sub">208 total records</div>
@@ -423,6 +425,19 @@ const PROS = [{"crd":7505612,"name":"Aaron Armstrong","firm":"LASALLE ST. INVEST
 
 // ── SORT STATE ────────────────────────────────────────────────────────
 let sortCol = 'totalCount', sortDir = -1;
+function filterByCard(val) {
+  document.getElementById('status-filter').value = val;
+  // Highlight active card
+  ['card-all','card-needs','card-acked','card-disc'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  const map = {'':'card-all','needs':'card-needs','acked':'card-acked','disc':'card-disc'};
+  if (map[val]) document.getElementById(map[val]).classList.add('active');
+  applyFilters();
+  // Scroll to table
+  document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
 function sortBy(col) {
   if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = col === 'totalCount' ? -1 : 1; }
   document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
