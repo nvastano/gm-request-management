@@ -200,6 +200,13 @@
           "isLeader": false
         },
         {
+          "name": "Tiffany Thomas",
+          "visible": true,
+          "role": "AE",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
           "name": "Caitlin Hogan",
           "visible": true,
           "role": "MRR",
@@ -212,21 +219,29 @@
           "isLeader": false
         },
         {
+          "name": "Kate Franqui",
+          "visible": true,
+          "role": "MRR",
+          "emailOverride": "",
+          "isLeader": false
+        },
+        {
           "name": "Jalen Rogers",
           "visible": true,
           "role": "Team Lead",
           "isLeader": true
         },
         {
-          "name": "Autumn Hampton",
+          "name": "Dalton Walker",
           "visible": true,
           "role": "SDR",
           "isLeader": false
         },
         {
-          "name": "Dalton Walker",
+          "name": "Wrylan Hodges",
           "visible": true,
           "role": "SDR",
+          "emailOverride": "",
           "isLeader": false
         },
         {
