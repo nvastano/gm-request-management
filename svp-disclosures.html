@@ -249,6 +249,7 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
       <thead>
         <tr>
           <th onclick="sortBy('name')">Name <span class="sort-arrow">↕</span></th>
+          <th onclick="sortBy('crd')">CRD <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('firm')">Firm <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('state')">State <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('totalCount')">Disclosures <span class="sort-arrow">↕</span></th>
@@ -534,6 +535,7 @@ function renderTable(rows) {
     const hasDisc = p.disclosures.length > 0;
     html += `<tr id="row-${p.crd}">`;
     html += `<td class="name-cell"><a href="${apUrl}" target="_blank" rel="noopener">${p.name}</a></td>`;
+    html += `<td class="state-cell">${p.crd}</td>`;
     html += `<td class="firm-cell" title="${p.firm}">${p.firm}</td>`;
     html += `<td class="state-cell">${p.state}</td>`;
     html += `<td class="count-cell">${p.totalCount > 0 ? p.totalCount : '—'}</td>`;
@@ -542,7 +544,7 @@ function renderTable(rows) {
     html += '</tr>';
     if (hasDisc) {
       html += `<tr class="detail-row" id="detail-${p.crd}" data-crd="${p.crd}" style="display:none">`;
-      html += `<td colspan="6">${buildDetailInner(p)}</td></tr>`;
+      html += `<td colspan="7">${buildDetailInner(p)}</td></tr>`;
     }
   });
   tbody.innerHTML = html;
