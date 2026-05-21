@@ -185,6 +185,7 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
     <div class="header-right">
       <div class="user-chip">Reviewing as: <strong id="display-name">—</strong><button onclick="changeName()" title="Change name">✎</button></div>
       <button class="sync-btn" id="sync-btn" onclick="syncFromSharePoint()">↻ Sync</button>
+      <button class="sync-btn" onclick="exportApprovals()" style="border-color:#34d399;color:#34d399">↓ Export Approvals</button>
       <span class="sync-status" id="sync-status"></span>
       <a href="index.html" class="back-btn">← Back to Hub</a>
     </div>
@@ -571,6 +572,58 @@ function init() {
   applyFilters();
   // Auto-sync on load if flows are configured
   if (FLOW_GET !== 'PASTE_GET_FLOW_URL_HERE') syncFromSharePoint();
+}
+
+// ── EXPORT APPROVALS ──────────────────────────────────────────────────
+function exportApprovals() {
+  const reviewer = getReviewer();
+  const rows = [];
+  Object.entries(ackMap).forEach(([discId, meta]) => {
+    // Find the pro this disclosure belongs to
+    let advisorName = '', advisorCrd = '', firm = '', state = '', discType = '', resolution = '', eventDate = '';
+    for (const p of PROS) {
+      const found = p.disclosures.find(d => String(d.id) === String(discId));
+      if (found) {
+        advisorName = p.name;
+        advisorCrd  = p.crd;
+        firm        = p.firm;
+        state       = p.state;
+        discType    = found.disclosureType || '';
+        resolution  = found.disclosureResolution || '';
+        eventDate   = found.eventDate || '';
+        break;
+      }
+    }
+    rows.push({
+      disclosure_id:    discId,
+      advisor_crd:      advisorCrd,
+      advisor_name:     advisorName,
+      firm,
+      state,
+      disclosure_type:  discType,
+      resolution,
+      event_date:       eventDate,
+      decision:         'Approved',
+      acknowledged_by:  meta.acknowledged_by || reviewer,
+      acknowledged_at:  meta.acknowledged_at || new Date().toISOString(),
+      notes:            meta.notes || ''
+    });
+  });
+
+  if (rows.length === 0) {
+    showToast('No approvals to export yet.', '');
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href     = url;
+  a.download = `svp_approvals_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`✓ Exported ${rows.length} approval${rows.length !== 1 ? 's' : ''}`, 'green');
 }
 </script>
 </body>
