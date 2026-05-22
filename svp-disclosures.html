@@ -185,7 +185,7 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
       <div class="dash-sub">1,329 SmartVestor Pros · AdvizorPro data · Baseline pulled May 8, 2026 · Click a name to view their AdvizorPro profile</div>
     </div>
     <div class="header-right">
-      <div class="user-chip">Reviewing as: <strong id="display-name">—</strong><button onclick="changeName()" title="Change name">✎</button></div>
+      <div class="user-chip">Reviewing as: <strong id="display-name">—</strong><button onclick="changeName()" title="Change name">✎</button><button onclick="logOut()" title="Log out" style="margin-left:6px;font-size:11px;padding:1px 7px;border-radius:3px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#f87171;cursor:pointer;font-family:var(--mono,monospace);letter-spacing:0.04em;">← Log out</button></div>
       <button class="sync-btn" id="sync-btn" onclick="syncFromSharePoint()">↻ Sync</button>
       <button class="sync-btn" onclick="exportApprovals()" style="border-color:#34d399;color:#34d399">↓ Export Approvals</button>
       <span class="sync-status" id="sync-status"></span>
@@ -311,6 +311,17 @@ if (sessionStorage.getItem('svp_auth') === '1') {
 function changeName() {
   const n = prompt('Enter your name:', localStorage.getItem('svp_reviewer') || '');
   if (n && n.trim()) { localStorage.setItem('svp_reviewer', n.trim()); document.getElementById('display-name').textContent = n.trim(); }
+}
+function logOut() {
+  sessionStorage.removeItem('svp_auth');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-err').textContent = '';
+  // Pre-fill name so they don't have to retype it
+  const saved = localStorage.getItem('svp_reviewer') || '';
+  document.getElementById('name-input').value = saved;
+  document.getElementById('pw-input').focus();
 }
 function getReviewer() { return localStorage.getItem('svp_reviewer') || 'Unknown'; }
 
