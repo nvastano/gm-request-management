@@ -1368,41 +1368,11 @@ document.querySelectorAll('.squad-card').forEach(card => {
 });
 
 // ── Squad Router ──────────────────────────────────────────────────────
-const ROUTER_DATA = {
-  grease:   { squad: 'Grease Monkeys',  type: 'BOB / ownership reassignment · merge duplicates · data changes', tag: 'Nick Vastano',        component: 'Sales Ops' },
-  adventure:{ squad: 'Adventure Squad', type: 'Lead notification / delivery timing issue',                       tag: 'Chris Woolcott',       component: 'Platform' },
-  control:  { squad: 'Control Freaks',  type: 'Data retrieval — deactivated advisor',                            tag: 'Giorgi Navrozashvili', component: 'Biz Ops' },
-  netsuite: { squad: 'NetSuite',        type: 'Billing · cap adjustment · credit request',                       tag: 'Danielle Both',        component: null },
-  landon:   { squad: 'Landon Whitlock', type: 'Product or UI behavior changed / broken',                         tag: 'Landon Whitlock',      component: 'CX Investing Product' }
-};
-
 function openRouterModal() {
-  resetRouter();
   document.getElementById('router-modal').classList.add('show');
 }
 function closeRouterModal() {
   document.getElementById('router-modal').classList.remove('show');
-}
-function routeTo(key) {
-  const d = ROUTER_DATA[key];
-  document.getElementById('router-squad-name').textContent = d.squad;
-  document.getElementById('router-ticket-type').textContent = d.type;
-  document.getElementById('router-tag').textContent = d.tag;
-  const comp = document.getElementById('router-component');
-  if (d.component) {
-    comp.textContent = d.component;
-    comp.className = 'router-detail-val';
-  } else {
-    comp.textContent = 'None';
-    comp.className = 'router-detail-val none';
-  }
-  document.getElementById('router-wizard').style.opacity = '0.3';
-  document.getElementById('router-result').classList.add('show');
-  document.getElementById('router-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-function resetRouter() {
-  document.getElementById('router-wizard').style.opacity = '1';
-  document.getElementById('router-result').classList.remove('show');
 }
 document.getElementById('router-modal').addEventListener('click', function(e) {
   if (e.target === this) closeRouterModal();
