@@ -281,6 +281,39 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
 .retro-status.success{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--green)}
 .retro-status.error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:var(--red)}
 .retro-status.loading{background:var(--orange-glow);border:1px solid rgba(249,115,22,0.3);color:var(--orange)}
+
+/* Squad Router Modal */
+.router-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px}
+.router-modal-overlay.show{display:flex}
+.router-modal{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:4px;padding:32px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.router-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.router-modal-icon{font-size:24px}
+.router-modal-title{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+.router-modal-sub{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-bottom:24px}
+.router-section-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--orange);margin-bottom:12px}
+.router-options{display:flex;flex-direction:column;gap:8px}
+.router-option{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 16px;font-size:13px;color:var(--text-dim);cursor:pointer;text-align:left;transition:all 0.15s;font-family:var(--sans);font-weight:500}
+.router-option:hover{border-color:var(--orange);color:var(--text);background:var(--orange-glow)}
+.router-result{display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--border-light);border-left:3px solid var(--orange);border-radius:6px;padding:20px}
+.router-result.show{display:block}
+.router-result-squad{font-family:var(--display);font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--orange);margin-bottom:4px}
+.router-result-type{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px}
+.router-detail-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:13px}
+.router-detail-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);width:90px;flex-shrink:0}
+.router-detail-val{color:var(--text);font-weight:600}
+.router-detail-val.none{color:var(--muted);font-style:italic;font-weight:400}
+.router-reset-btn{margin-top:16px;padding:6px 16px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);font-family:var(--mono);font-size:11px;cursor:pointer;transition:all 0.15s;letter-spacing:0.06em}
+.router-reset-btn:hover{border-color:var(--orange);color:var(--orange)}
+.router-divider{height:1px;background:var(--border);margin:24px 0}
+.router-table{width:100%;border-collapse:collapse;font-size:12px}
+.router-table th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+.router-table td{padding:10px;border-bottom:1px solid rgba(51,51,51,0.5);color:var(--text-dim);vertical-align:top;line-height:1.5}
+.router-table tr:last-child td{border-bottom:none}
+.router-table tr:hover td{background:var(--surface2);color:var(--text)}
+.router-table .squad-cell{font-family:var(--display);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--orange);white-space:nowrap}
+.router-table .tag-cell{font-family:var(--mono);font-size:11px;white-space:nowrap}
+.router-close-btn{margin-top:20px;padding:8px 20px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.router-close-btn:hover{border-color:var(--orange);color:var(--orange)}
 </style>
 </head>
 <body>
@@ -327,6 +360,9 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
       </div>
       <button onclick="openTicketModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
         <span class="quick-link-icon">🗒️</span> Draft Jira Ticket
+      </button>
+      <button onclick="openRouterModal()" class="quick-link" style="cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;">
+        <span class="quick-link-icon">🗺️</span> Ticket Router
       </button>
 
     </div>
@@ -974,6 +1010,92 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
   </div>
 </div>
 
+<!-- Squad Router Modal -->
+<div class="router-modal-overlay" id="router-modal">
+  <div class="router-modal">
+    <div class="router-modal-header">
+      <div class="router-modal-icon">🗺️</div>
+      <div>
+        <div class="router-modal-title">Ticket Router</div>
+      </div>
+    </div>
+    <div class="router-modal-sub">Answer one question to find the right squad, tag, and component.</div>
+
+    <div id="router-wizard">
+      <div class="router-section-label">What type of work is this ticket about?</div>
+      <div class="router-options">
+        <button class="router-option" onclick="routeTo('grease')">👤 Reassigning an advisor, changing BOB ownership, or merging duplicate records</button>
+        <button class="router-option" onclick="routeTo('adventure')">🔔 Lead notification or delivery timing issue</button>
+        <button class="router-option" onclick="routeTo('control')">📂 Retrieving data for a deactivated advisor</button>
+        <button class="router-option" onclick="routeTo('netsuite')">💰 Billing, cap adjustment, or credit request</button>
+        <button class="router-option" onclick="routeTo('landon')">🖥️ Product or UI behavior changed or is broken</button>
+      </div>
+    </div>
+
+    <div class="router-result" id="router-result">
+      <div class="router-result-squad" id="router-squad-name"></div>
+      <div class="router-result-type" id="router-ticket-type"></div>
+      <div class="router-detail-row">
+        <span class="router-detail-label">Tag</span>
+        <span class="router-detail-val" id="router-tag"></span>
+      </div>
+      <div class="router-detail-row">
+        <span class="router-detail-label">Component</span>
+        <span class="router-detail-val" id="router-component"></span>
+      </div>
+      <button class="router-reset-btn" onclick="resetRouter()">← Ask again</button>
+    </div>
+
+    <div class="router-divider"></div>
+
+    <div class="router-section-label">Full Routing Reference</div>
+    <table class="router-table">
+      <thead>
+        <tr>
+          <th>Ticket Type</th>
+          <th>Squad / Person</th>
+          <th>Tag</th>
+          <th>Component</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>BOB reassignment, advisor ownership change, merge duplicates</td>
+          <td class="squad-cell">Grease Monkeys</td>
+          <td class="tag-cell">Nick Vastano</td>
+          <td>Sales Ops</td>
+        </tr>
+        <tr>
+          <td>Lead notification or delivery timing issue</td>
+          <td class="squad-cell">Adventure Squad</td>
+          <td class="tag-cell">Chris Woolcott</td>
+          <td>Platform</td>
+        </tr>
+        <tr>
+          <td>Data retrieval for a deactivated advisor</td>
+          <td class="squad-cell">Control Freaks</td>
+          <td class="tag-cell">Giorgi Navrozashvili</td>
+          <td>Biz Ops</td>
+        </tr>
+        <tr>
+          <td>Billing, cap adjustment, or credit request</td>
+          <td class="squad-cell">NetSuite</td>
+          <td class="tag-cell">Danielle Both</td>
+          <td><em style="color:var(--muted)">None</em></td>
+        </tr>
+        <tr>
+          <td>Product or UI behavior changed / broken</td>
+          <td class="squad-cell">Landon Whitlock</td>
+          <td class="tag-cell">Landon Whitlock</td>
+          <td>CX Investing Product</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="router-close-btn" onclick="closeRouterModal()">Close</button>
+  </div>
+</div>
+
 <!-- Draft Jira Ticket Modal -->
 <div class="ticket-modal-overlay" id="ticket-modal">
   <div class="ticket-modal">
@@ -1270,6 +1392,47 @@ document.querySelectorAll('.squad-card').forEach(card => {
   monkey.className = 'squad-monkey-overlay';
   monkey.alt = name + ' monkey';
   wrap.appendChild(monkey);
+});
+
+// ── Squad Router ──────────────────────────────────────────────────────
+const ROUTER_DATA = {
+  grease:   { squad: 'Grease Monkeys',  type: 'BOB / ownership reassignment · merge duplicates · data changes', tag: 'Nick Vastano',        component: 'Sales Ops' },
+  adventure:{ squad: 'Adventure Squad', type: 'Lead notification / delivery timing issue',                       tag: 'Chris Woolcott',       component: 'Platform' },
+  control:  { squad: 'Control Freaks',  type: 'Data retrieval — deactivated advisor',                            tag: 'Giorgi Navrozashvili', component: 'Biz Ops' },
+  netsuite: { squad: 'NetSuite',        type: 'Billing · cap adjustment · credit request',                       tag: 'Danielle Both',        component: null },
+  landon:   { squad: 'Landon Whitlock', type: 'Product or UI behavior changed / broken',                         tag: 'Landon Whitlock',      component: 'CX Investing Product' }
+};
+
+function openRouterModal() {
+  resetRouter();
+  document.getElementById('router-modal').classList.add('show');
+}
+function closeRouterModal() {
+  document.getElementById('router-modal').classList.remove('show');
+}
+function routeTo(key) {
+  const d = ROUTER_DATA[key];
+  document.getElementById('router-squad-name').textContent = d.squad;
+  document.getElementById('router-ticket-type').textContent = d.type;
+  document.getElementById('router-tag').textContent = d.tag;
+  const comp = document.getElementById('router-component');
+  if (d.component) {
+    comp.textContent = d.component;
+    comp.className = 'router-detail-val';
+  } else {
+    comp.textContent = 'None';
+    comp.className = 'router-detail-val none';
+  }
+  document.getElementById('router-wizard').style.opacity = '0.3';
+  document.getElementById('router-result').classList.add('show');
+  document.getElementById('router-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function resetRouter() {
+  document.getElementById('router-wizard').style.opacity = '1';
+  document.getElementById('router-result').classList.remove('show');
+}
+document.getElementById('router-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeRouterModal();
 });
 
 </script>
