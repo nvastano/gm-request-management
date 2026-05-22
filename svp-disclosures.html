@@ -404,7 +404,8 @@ async function postAck(discId, advisorCrd, advisorName, action, notes) {
 }
 
 // ── TOGGLE ACKNOWLEDGMENT ─────────────────────────────────────────────
-async function toggleAck(discId, advisorCrd, advisorName, btnEl) {
+async function toggleAck(discId, advisorCrd, btnEl) {
+  const advisorName = (PROS.find(p => p.crd === advisorCrd) || {}).name || '';
   btnEl.disabled = true;
   const notesEl = document.getElementById('notes-' + discId);
   const notes = notesEl ? notesEl.value.trim() : '';
@@ -528,12 +529,12 @@ function buildDetailInner(p) {
     if (acked && meta) {
       const dt = meta.acknowledged_at ? new Date(meta.acknowledged_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
       html += `<div>
-        <button class="ack-btn acked" onclick="toggleAck('${d.id}',${p.crd},${JSON.stringify(p.name)},this)">✓ Acknowledged — undo?</button>
+        <button class="ack-btn acked" onclick="toggleAck('${d.id}',${p.crd},this)">✓ Acknowledged — undo?</button>
         <div class="ack-meta" style="margin-top:6px">Reviewed by <strong>${meta.acknowledged_by}</strong>${dt ? ' on ' + dt : ''}${meta.notes ? '<br>Note: ' + meta.notes : ''}</div>
       </div>`;
     } else {
       html += `<div style="width:100%">
-        <button class="ack-btn needs" onclick="toggleAck('${d.id}',${p.crd},${JSON.stringify(p.name)},this)">✓ Mark as Reviewed</button>
+        <button class="ack-btn needs" onclick="toggleAck('${d.id}',${p.crd},this)">✓ Mark as Reviewed</button>
         <button class="notes-toggle" style="margin-left:12px" onclick="toggleNotes('${d.id}')">+ add note</button>
         <div id="notes-wrap-${d.id}" style="display:none;margin-top:8px">
           <textarea id="notes-${d.id}" class="notes-input" rows="2" placeholder="Optional note about this disclosure…"></textarea>
