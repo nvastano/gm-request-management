@@ -1019,42 +1019,15 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
         <div class="router-modal-title">Ticket Router</div>
       </div>
     </div>
-    <div class="router-modal-sub">Answer one question to find the right squad, tag, and component.</div>
-
-    <div id="router-wizard">
-      <div class="router-section-label">What type of work is this ticket about?</div>
-      <div class="router-options">
-        <button class="router-option" onclick="routeTo('grease')">👤 Reassigning an advisor, changing BOB ownership, or merging duplicate records</button>
-        <button class="router-option" onclick="routeTo('adventure')">🔔 Lead notification or delivery timing issue</button>
-        <button class="router-option" onclick="routeTo('control')">📂 Retrieving data for a deactivated advisor</button>
-        <button class="router-option" onclick="routeTo('netsuite')">💰 Billing, cap adjustment, or credit request</button>
-        <button class="router-option" onclick="routeTo('landon')">🖥️ Product or UI behavior changed or is broken</button>
-      </div>
-    </div>
-
-    <div class="router-result" id="router-result">
-      <div class="router-result-squad" id="router-squad-name"></div>
-      <div class="router-result-type" id="router-ticket-type"></div>
-      <div class="router-detail-row">
-        <span class="router-detail-label">Tag</span>
-        <span class="router-detail-val" id="router-tag"></span>
-      </div>
-      <div class="router-detail-row">
-        <span class="router-detail-label">Component</span>
-        <span class="router-detail-val" id="router-component"></span>
-      </div>
-      <button class="router-reset-btn" onclick="resetRouter()">← Ask again</button>
-    </div>
-
-    <div class="router-divider"></div>
+    <div class="router-modal-sub">Use this reference to find the right squad, contact, and component for any ticket.</div>
 
     <div class="router-section-label">Full Routing Reference</div>
     <table class="router-table">
       <thead>
         <tr>
           <th>Ticket Type</th>
-          <th>Squad / Person</th>
-          <th>Tag</th>
+          <th>Squad / Department</th>
+          <th>Contact</th>
           <th>Component</th>
         </tr>
       </thead>
