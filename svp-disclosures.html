@@ -450,7 +450,7 @@ function filterByCard(val) {
 }
 
 function sortBy(col) {
-  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = col === 'totalCount' ? -1 : 1; }
+  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = (col === 'totalCount' || col === 'contractStartDate') ? -1 : 1; }
   document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
   const idx = ['name','firm','state','totalCount'].indexOf(col);
   if (idx >= 0) document.querySelectorAll('thead th')[idx].classList.add('sorted');
@@ -498,8 +498,8 @@ function applyFilters() {
   rows.sort((a, b) => {
     let av = a[sortCol], bv = b[sortCol];
     if (sortCol === 'contractStartDate') {
-      av = av ? new Date(av).getTime() : 0;
-      bv = bv ? new Date(bv).getTime() : 0;
+      const pd = v => { const t = new Date(v).getTime(); return isNaN(t) ? 0 : t; };
+      av = pd(av); bv = pd(bv);
     } else if (typeof av === 'string') {
       av = av.toLowerCase(); bv = bv.toLowerCase();
     }
