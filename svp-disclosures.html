@@ -497,7 +497,12 @@ function applyFilters() {
 
   rows.sort((a, b) => {
     let av = a[sortCol], bv = b[sortCol];
-    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (sortCol === 'contractStartDate') {
+      av = av ? new Date(av).getTime() : 0;
+      bv = bv ? new Date(bv).getTime() : 0;
+    } else if (typeof av === 'string') {
+      av = av.toLowerCase(); bv = bv.toLowerCase();
+    }
     return av < bv ? -sortDir : av > bv ? sortDir : 0;
   });
 
