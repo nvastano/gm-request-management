@@ -705,12 +705,6 @@
         </div>
       </div>
 
-      <!-- NP field (conditional) -->
-      <div class="conditional-field form-row" id="np-field">
-        <label class="form-label" for="f-np-name">NP Name / ID <span class="req">*</span></label>
-        <input class="form-input" id="f-np-name" type="text" placeholder="New Pro name or ID" autocomplete="off" />
-      </div>
-
       <!-- Description -->
       <div class="form-row">
         <label class="form-label" for="f-description">Description <span class="req">*</span></label>
@@ -809,11 +803,6 @@ const REQUEST_TYPES = [
   { label: 'SmartVestor Rotation Change', squad: 'Sales Ops', category: 'Operations', proRelated: true },
   { label: 'Streamlit Report Issue', squad: 'DNA', category: 'Operations' },
   { label: 'Other', squad: 'Sales Ops', category: 'Operations' },
-  { label: 'NP - Dock Issues', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
-  { label: 'NP - Salesforce Cadence Request/Issue', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
-  { label: 'NP - Salesforce Account/Opp Blocked', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
-  { label: 'NP - Salesforce Duplicate/Merge Request', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
-  { label: 'NP - Other', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
 ];
 
 // ════════════════════════════════════════════════
@@ -853,7 +842,6 @@ const CATEGORY_META = {
   'Pro Support':           { icon: '🆘', desc: 'Portal issues, login problems, referral issues' },
   'Billing & Accounting':  { icon: '💰', desc: 'Billing questions, accounting requests, pricing' },
   'Operations':            { icon: '⚙️',  desc: 'NTM, reporting, slot counts, duplicates, and more' },
-  'NP (New Pro)':          { icon: '🌱', desc: 'New Pro onboarding, Salesforce NP issues, dock issues' },
 };
 
 // ════════════════════════════════════════════════
@@ -1019,10 +1007,7 @@ function populateStep2() {
 
   // Conditional fields
   const proFields = document.getElementById('pro-fields');
-  const npField   = document.getElementById('np-field');
-
   proFields.classList.toggle('visible', !!selectedType.proRelated);
-  npField.classList.toggle('visible', !!selectedType.npRelated);
 
   validateStep2();
 }
@@ -1038,15 +1023,12 @@ function validateStep2() {
   if (selectedType && selectedType.proRelated) {
     ok = ok && document.getElementById('f-pro-name').value.trim();
   }
-  if (selectedType && selectedType.npRelated) {
-    ok = ok && document.getElementById('f-np-name').value.trim();
-  }
 
   document.getElementById('btn-next-2').disabled = !ok;
 }
 
 // Attach live validation
-['f-subject', 'f-vertical', 'f-description', 'f-name', 'f-pro-name', 'f-np-name'].forEach(id => {
+['f-subject', 'f-vertical', 'f-description', 'f-name', 'f-pro-name'].forEach(id => {
   document.getElementById(id).addEventListener('input', validateStep2);
 });
 
@@ -1066,7 +1048,6 @@ function buildReviewCard() {
   const name     = document.getElementById('f-name').value.trim();
   const proName  = document.getElementById('f-pro-name').value.trim();
   const sfId     = document.getElementById('f-sf-id').value.trim();
-  const npName   = document.getElementById('f-np-name').value.trim();
   const file     = document.getElementById('f-screenshot').files[0];
 
   // Auto-discard notice
@@ -1081,9 +1062,6 @@ function buildReviewCard() {
   if (selectedType.proRelated) {
     rows.push({ key: 'Pro Name', val: proName || '—' });
     rows.push({ key: 'Salesforce ID', val: sfId || '(not provided)' });
-  }
-  if (selectedType.npRelated) {
-    rows.push({ key: 'NP Name / ID', val: npName || '—' });
   }
   rows.push({ key: 'Subject', val: subject });
   rows.push({ key: 'Description', val: desc, clamp: true });
@@ -1177,7 +1155,6 @@ async function submitRequest() {
     requestorName: document.getElementById('f-name').value.trim(),
     proName:       document.getElementById('f-pro-name').value.trim() || undefined,
     sfId:          document.getElementById('f-sf-id').value.trim() || undefined,
-    npName:        document.getElementById('f-np-name').value.trim() || undefined,
   };
 
   if (file) {
