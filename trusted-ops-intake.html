@@ -160,19 +160,74 @@
       margin-bottom: 28px;
     }
 
-    /* ─── CATEGORY SECTIONS ─── */
-    .category-section { margin-bottom: 28px; }
+    /* ─── CATEGORY CARDS GRID ─── */
+    .category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-    .category-label {
-      font-family: var(--sans);
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .category-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .category-card:hover {
+      border-color: var(--orange);
+      background: var(--orange-glow2);
+    }
+
+    .category-card-icon { font-size: 1.5rem; }
+
+    .category-card-name {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    .category-card-count {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    /* ─── TYPE PICKER (phase 2 of step 1) ─── */
+    #type-picker { display: none; }
+    #type-picker.visible { display: block; }
+
+    .back-to-cats {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
       color: var(--orange);
-      margin-bottom: 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+    }
+
+    .back-to-cats:hover { opacity: 0.75; }
+
+    .type-picker-heading {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      letter-spacing: 0.02em;
     }
 
     /* ─── REQUEST TYPE CARDS GRID ─── */
@@ -585,19 +640,32 @@
 
   <!-- ════════ STEP 1 ════════ -->
   <div class="wizard-step active" id="step-1">
-    <h1 class="step-title">Trusted Ops Request</h1>
-    <p class="step-subtitle">Select the type of request to get started.</p>
 
-    <div id="type-categories">
-      <!-- Rendered by JS -->
+    <!-- Phase A: Category picker -->
+    <div id="category-picker">
+      <h1 class="step-title">Trusted Ops Request</h1>
+      <p class="step-subtitle">What area is your request about?</p>
+      <div class="category-grid" id="category-grid">
+        <!-- Rendered by JS -->
+      </div>
     </div>
 
-    <!-- Squad assignment bar -->
-    <div id="squad-bar"></div>
+    <!-- Phase B: Type picker (shown after category selected) -->
+    <div id="type-picker">
+      <button class="back-to-cats" id="btn-back-to-cats">← All Categories</button>
+      <div class="type-picker-heading" id="type-picker-heading">— </div>
+      <div class="type-grid" id="type-grid">
+        <!-- Rendered by JS -->
+      </div>
 
-    <div class="step-nav">
-      <button class="btn btn-primary" id="btn-next-1" disabled>Next →</button>
+      <!-- Squad assignment bar -->
+      <div id="squad-bar"></div>
+
+      <div class="step-nav">
+        <button class="btn btn-primary" id="btn-next-1" disabled>Next →</button>
+      </div>
     </div>
+
   </div>
 
   <!-- ════════ STEP 2 ════════ -->
@@ -770,7 +838,7 @@ let currentStep = 1;
 let selectedType = null; // reference to REQUEST_TYPES entry
 
 // ════════════════════════════════════════════════
-//  BUILD STEP 1 — TYPE GRID
+//  HELPERS
 // ════════════════════════════════════════════════
 function squadBadgeHTML(squad, small = false) {
   const color = SQUAD_COLORS[squad] || '#888';
@@ -778,65 +846,107 @@ function squadBadgeHTML(squad, small = false) {
   return `<span class="badge" style="background:${color};${sz}">${squad}</span>`;
 }
 
-function buildTypeGrid() {
-  // Group by category, preserving original insertion order
-  const categories = {};
+// Category metadata: icon + description
+const CATEGORY_META = {
+  'Account & Pro Changes': { icon: '👤', desc: 'Deactivations, account edits, Pro status changes' },
+  'CRM & Tech':            { icon: '🔧', desc: 'Salesforce, CRM connections, contracts, sequences' },
+  'Pro Support':           { icon: '🆘', desc: 'Portal issues, login problems, referral issues' },
+  'Billing & Accounting':  { icon: '💰', desc: 'Billing questions, accounting requests, pricing' },
+  'Operations':            { icon: '⚙️',  desc: 'NTM, reporting, slot counts, duplicates, and more' },
+  'NP (New Pro)':          { icon: '🌱', desc: 'New Pro onboarding, Salesforce NP issues, dock issues' },
+};
+
+// ════════════════════════════════════════════════
+//  BUILD STEP 1 — PHASE A: CATEGORY GRID
+// ════════════════════════════════════════════════
+function buildCategoryGrid() {
+  // Collect unique categories in order
+  const seen = new Set();
   const catOrder = [];
   for (const rt of REQUEST_TYPES) {
-    if (!categories[rt.category]) {
-      categories[rt.category] = [];
-      catOrder.push(rt.category);
-    }
-    categories[rt.category].push(rt);
+    if (!seen.has(rt.category)) { seen.add(rt.category); catOrder.push(rt.category); }
   }
 
-  const container = document.getElementById('type-categories');
-  container.innerHTML = '';
+  const grid = document.getElementById('category-grid');
+  grid.innerHTML = '';
 
   for (const cat of catOrder) {
-    const types = categories[cat];
-    const section = document.createElement('div');
-    section.className = 'category-section';
+    const count = REQUEST_TYPES.filter(r => r.category === cat).length;
+    const meta  = CATEGORY_META[cat] || { icon: '📋', desc: '' };
 
-    const label = document.createElement('div');
-    label.className = 'category-label';
-    label.textContent = cat;
-    section.appendChild(label);
-
-    const grid = document.createElement('div');
-    grid.className = 'type-grid';
-
-    for (const rt of types) {
-      const card = document.createElement('div');
-      card.className = 'type-card';
-      card.dataset.label = rt.label;
-
-      const top = document.createElement('div');
-      top.className = 'type-card-top';
-
-      const lbl = document.createElement('div');
-      lbl.className = 'type-card-label';
-      lbl.textContent = rt.label;
-
-      top.appendChild(lbl);
-      top.innerHTML += squadBadgeHTML(rt.squad, true);
-      card.appendChild(top);
-
-      if (rt.autoDiscard) {
-        const pill = document.createElement('div');
-        pill.className = 'badge-auto';
-        pill.textContent = '📧 Email Routed';
-        card.appendChild(pill);
-      }
-
-      card.addEventListener('click', () => selectType(rt, card));
-      grid.appendChild(card);
-    }
-
-    section.appendChild(grid);
-    container.appendChild(section);
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    card.innerHTML = `
+      <div class="category-card-icon">${meta.icon}</div>
+      <div class="category-card-name">${cat}</div>
+      <div class="category-card-count">${count} request type${count !== 1 ? 's' : ''}</div>
+    `;
+    card.addEventListener('click', () => showTypePicker(cat));
+    grid.appendChild(card);
   }
 }
+
+// ════════════════════════════════════════════════
+//  BUILD STEP 1 — PHASE B: TYPE GRID FOR CATEGORY
+// ════════════════════════════════════════════════
+function showTypePicker(category) {
+  // Hide category picker, show type picker
+  document.getElementById('category-picker').style.display = 'none';
+  const typePicker = document.getElementById('type-picker');
+  typePicker.classList.add('visible');
+
+  // Update heading
+  const meta = CATEGORY_META[category] || { icon: '📋' };
+  document.getElementById('type-picker-heading').textContent = `${meta.icon}  ${category}`;
+
+  // Render type cards
+  const grid = document.getElementById('type-grid');
+  grid.innerHTML = '';
+
+  const types = REQUEST_TYPES.filter(rt => rt.category === category);
+
+  for (const rt of types) {
+    const card = document.createElement('div');
+    card.className = 'type-card';
+    card.dataset.label = rt.label;
+
+    const top = document.createElement('div');
+    top.className = 'type-card-top';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'type-card-label';
+    lbl.textContent = rt.label;
+
+    top.appendChild(lbl);
+    top.innerHTML += squadBadgeHTML(rt.squad, true);
+    card.appendChild(top);
+
+    if (rt.autoDiscard) {
+      const pill = document.createElement('div');
+      pill.className = 'badge-auto';
+      pill.textContent = '📧 Email Routed';
+      card.appendChild(pill);
+    }
+
+    card.addEventListener('click', () => selectType(rt, card));
+    grid.appendChild(card);
+  }
+
+  // Reset squad bar and Next button when switching categories
+  const bar = document.getElementById('squad-bar');
+  bar.className = '';
+  bar.innerHTML = '';
+  document.getElementById('btn-next-1').disabled = true;
+  selectedType = null;
+}
+
+// ── Back to categories ────────────────────────
+document.getElementById('btn-back-to-cats').addEventListener('click', () => {
+  document.getElementById('type-picker').classList.remove('visible');
+  document.getElementById('category-picker').style.display = '';
+  selectedType = null;
+  document.getElementById('btn-next-1').disabled = true;
+});
 
 // ════════════════════════════════════════════════
 //  SELECT TYPE
@@ -1128,7 +1238,7 @@ document.getElementById('btn-submit').addEventListener('click', submitRequest);
 // ════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════
-buildTypeGrid();
+buildCategoryGrid();
 </script>
 </body>
 </html>
