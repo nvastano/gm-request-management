@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trusted Ops Request — Grease Monkeys</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f2ef; --bg2: #ffffff; --surface: #ffffff; --surface2: #f9f8f6;
+      --border: #e2ddd8; --border-light: #cdc8c2; --orange: #f97316;
+      --orange-dim: #ea6c0a; --orange-glow: rgba(249,115,22,0.1);
+      --orange-glow2: rgba(249,115,22,0.06); --text: #111111; --text-dim: #3d3935;
+      --muted: #6b6560; --green: #16a34a; --green-bg: rgba(22,163,74,0.08);
+      --red: #dc2626; --yellow: #d97706;
+      --sans: 'Plus Jakarta Sans', sans-serif; --mono: 'JetBrains Mono', monospace;
+      --display: 'Oswald', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: #ffffff;
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 28px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+    }
+
+    .header-text { display: flex; flex-direction: column; line-height: 1.15; }
+
+    .site-name {
+      font-family: var(--display);
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--text);
+    }
+
+    .site-name span { color: var(--orange); }
+
+    .site-tagline {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── PAGE LAYOUT ─── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 36px 20px 60px;
+    }
+
+    /* ─── STEP INDICATOR ─── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 0.8rem;
+      border: 2px solid #cdc8c2;
+      background: transparent;
+      color: var(--muted);
+      transition: all 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-dot.active {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+      box-shadow: 0 0 0 4px var(--orange-glow);
+    }
+
+    .step-dot.completed {
+      background: var(--orange-dim);
+      border-color: var(--orange-dim);
+      color: #fff;
+    }
+
+    .step-connector {
+      width: 60px;
+      height: 2px;
+      background: #e2ddd8;
+      transition: background 0.3s;
+    }
+
+    .step-connector.completed { background: var(--orange-dim); }
+
+    .step-label {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-top: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .step-indicator-wrap { margin-bottom: 36px; }
+
+    /* ─── WIZARD STEP PANELS ─── */
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; }
+
+    /* ─── STEP HEADINGS ─── */
+    .step-title {
+      font-family: var(--display);
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    .step-subtitle {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* ─── CATEGORY SECTIONS ─── */
+    .category-section { margin-bottom: 28px; }
+
+    .category-label {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--orange);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── REQUEST TYPE CARDS GRID ─── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .type-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px 10px 12px;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 58px;
+    }
+
+    .type-card:hover {
+      border-color: var(--border-light);
+      background: var(--surface2);
+    }
+
+    .type-card.selected {
+      border-color: var(--orange);
+      background: var(--orange-glow2);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+    }
+
+    .type-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .type-card-label {
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    /* ─── BADGES ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #fff;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .badge-auto {
+      background: #d97706;
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 99px;
+      font-weight: 600;
+      white-space: nowrap;
+      margin-top: 2px;
+      align-self: flex-start;
+      width: fit-content;
+    }
+
+    /* ─── SQUAD ASSIGNMENT BAR ─── */
+    #squad-bar {
+      margin-top: 18px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border-left: 4px solid #cdc8c2;
+      font-size: 0.83rem;
+      color: var(--text-dim);
+      font-family: var(--mono);
+      display: none;
+      animation: slideDown 0.2s ease;
+      transition: border-color 0.2s;
+    }
+
+    #squad-bar.visible { display: block; }
+    #squad-bar.auto-discard { border-color: #d97706; background: rgba(217,119,6,0.06); }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── STEP NAV BUTTONS ─── */
+    .step-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s, opacity 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--orange-dim);
+      box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface2);
+      border-color: var(--border-light);
+    }
+
+    /* ─── STEP 2 — FORM ─── */
+    .selected-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      padding: 5px 14px 5px 10px;
+      margin-bottom: 24px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .form-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 24px;
+    }
+
+    .form-row { margin-bottom: 18px; }
+
+    .form-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .form-label .req { color: var(--orange); margin-left: 2px; }
+
+    .form-hint {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+      background: #fff;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.5;
+    }
+
+    .form-file-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border: 1.5px dashed var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--muted);
+      transition: border-color 0.15s, background 0.15s;
+      background: var(--bg);
+    }
+
+    .form-file-label:hover {
+      border-color: var(--orange);
+      background: var(--orange-glow2);
+      color: var(--orange);
+    }
+
+    input[type="file"] { display: none; }
+
+    .conditional-field { display: none; }
+    .conditional-field.visible { display: block; }
+    .conditional-row-2col { display: none; }
+    .conditional-row-2col.visible { display: grid; }
+
+    /* ─── STEP 3 — REVIEW ─── */
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .review-row {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.84rem;
+    }
+
+    .review-row:last-child { border-bottom: none; }
+
+    .review-key {
+      width: 140px;
+      flex-shrink: 0;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-top: 2px;
+    }
+
+    .review-val {
+      flex: 1;
+      color: var(--text);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .review-val.desc-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .review-val.desc-expanded { display: block; }
+
+    .expand-btn {
+      background: none;
+      border: none;
+      color: var(--orange);
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: var(--mono);
+      padding: 2px 0;
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* ─── AUTO-DISCARD NOTICE ─── */
+    .notice-amber {
+      background: rgba(217,119,6,0.08);
+      border: 1px solid rgba(217,119,6,0.25);
+      border-left: 4px solid #d97706;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.82rem;
+      color: #92400e;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .notice-amber strong { font-weight: 700; }
+
+    /* ─── SUCCESS PANEL ─── */
+    .success-panel {
+      background: var(--green-bg);
+      border: 1.5px solid var(--green);
+      border-radius: 12px;
+      padding: 36px 28px;
+      text-align: center;
+      display: none;
+    }
+
+    .success-panel.visible { display: block; }
+
+    .success-icon {
+      font-size: 2.2rem;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    .success-title {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .success-link {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 22px;
+      background: var(--green);
+      color: #fff;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: opacity 0.15s;
+    }
+
+    .success-link:hover { opacity: 0.85; }
+
+    /* ─── ERROR MESSAGE ─── */
+    .error-msg {
+      background: rgba(220,38,38,0.08);
+      border: 1px solid rgba(220,38,38,0.3);
+      border-radius: 7px;
+      color: var(--red);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 540px) {
+      .type-grid { grid-template-columns: 1fr; }
+      .form-row-2col { grid-template-columns: 1fr; }
+      .review-key { width: 110px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <a href="index.html">
+    <img src="logo.png" alt="Grease Monkeys logo" />
+    <div class="header-text">
+      <span class="site-name">Grease <span>Monkeys</span></span>
+      <span class="site-tagline">Keeping Business Moving</span>
+    </div>
+  </a>
+</header>
+
+<!-- ═══════════ PAGE ═══════════ -->
+<div class="page">
+
+  <!-- Step indicator wrapper -->
+  <div class="step-indicator-wrap">
+    <div class="step-indicator" id="step-indicator">
+      <div class="step-dot active" id="dot-1">1</div>
+      <div class="step-connector" id="conn-1"></div>
+      <div class="step-dot" id="dot-2">2</div>
+      <div class="step-connector" id="conn-2"></div>
+      <div class="step-dot" id="dot-3">3</div>
+    </div>
+    <div class="step-label" id="step-label">Step 1 of 3 — Select Request Type</div>
+  </div>
+
+  <!-- ════════ STEP 1 ════════ -->
+  <div class="wizard-step active" id="step-1">
+    <h1 class="step-title">Trusted Ops Request</h1>
+    <p class="step-subtitle">Select the type of request to get started.</p>
+
+    <div id="type-categories">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Squad assignment bar -->
+    <div id="squad-bar"></div>
+
+    <div class="step-nav">
+      <button class="btn btn-primary" id="btn-next-1" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- ════════ STEP 2 ════════ -->
+  <div class="wizard-step" id="step-2">
+    <!-- Selected chip -->
+    <div class="selected-chip" id="selected-chip">
+      <span id="chip-label">—</span>
+      <span class="badge" id="chip-badge"></span>
+    </div>
+
+    <div class="form-panel">
+
+      <!-- Subject -->
+      <div class="form-row">
+        <label class="form-label" for="f-subject">Subject <span class="req">*</span></label>
+        <span class="form-hint">Brief one-line summary of your request</span>
+        <input class="form-input" id="f-subject" type="text" placeholder="e.g. Pro account deactivation — John Smith" autocomplete="off" />
+      </div>
+
+      <!-- Vertical -->
+      <div class="form-row">
+        <label class="form-label" for="f-vertical">Vertical <span class="req">*</span></label>
+        <span class="form-hint">e.g. SmartVestor, Real Estate, Tax ELP</span>
+        <input class="form-input" id="f-vertical" type="text" placeholder="SmartVestor" autocomplete="off" />
+      </div>
+
+      <!-- Pro fields (conditional) -->
+      <div class="conditional-row-2col" id="pro-fields">
+        <div>
+          <label class="form-label" for="f-pro-name">Pro Name <span class="req">*</span></label>
+          <input class="form-input" id="f-pro-name" type="text" placeholder="First Last" autocomplete="off" />
+        </div>
+        <div>
+          <label class="form-label" for="f-sf-id">Salesforce ID</label>
+          <span class="form-hint">SF account ID if known</span>
+          <input class="form-input" id="f-sf-id" type="text" placeholder="0011U00000xxxxx" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- NP field (conditional) -->
+      <div class="conditional-field form-row" id="np-field">
+        <label class="form-label" for="f-np-name">NP Name / ID <span class="req">*</span></label>
+        <input class="form-input" id="f-np-name" type="text" placeholder="New Pro name or ID" autocomplete="off" />
+      </div>
+
+      <!-- Description -->
+      <div class="form-row">
+        <label class="form-label" for="f-description">Description <span class="req">*</span></label>
+        <span class="form-hint">Provide as much detail as possible so the team can act quickly</span>
+        <textarea class="form-textarea" id="f-description" placeholder="Describe the issue or request in detail..."></textarea>
+      </div>
+
+      <!-- Your Name -->
+      <div class="form-row">
+        <label class="form-label" for="f-name">Your Name <span class="req">*</span></label>
+        <input class="form-input" id="f-name" type="text" placeholder="First Last" autocomplete="name" />
+      </div>
+
+      <!-- Screenshot -->
+      <div class="form-row">
+        <label class="form-label">Screenshot <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <span class="form-hint">Attach a screenshot if helpful</span>
+        <label class="form-file-label" for="f-screenshot">
+          <span>📎</span>
+          <span id="file-name-display">Choose file…</span>
+        </label>
+        <input type="file" id="f-screenshot" accept="image/*" />
+      </div>
+
+    </div><!-- /form-panel -->
+
+    <div class="step-nav">
+      <button class="btn btn-secondary" id="btn-back-2">← Back</button>
+      <button class="btn btn-primary" id="btn-next-2" disabled>Review →</button>
+    </div>
+  </div><!-- /step-2 -->
+
+  <!-- ════════ STEP 3 ════════ -->
+  <div class="wizard-step" id="step-3">
+    <h1 class="step-title">Review Your Request</h1>
+
+    <!-- Auto-discard notice (conditional) -->
+    <div class="notice-amber" id="review-auto-notice" style="display:none">
+      📧 <strong>Email Routing Notice</strong> — After this ticket is created, it will be routed to the appropriate team via email and discarded from the Jira board. This is expected behavior.
+    </div>
+
+    <!-- Summary card -->
+    <div class="review-card" id="review-card">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div id="submit-error" class="error-msg"></div>
+
+    <div class="step-nav">
+      <button class="btn btn-secondary" id="btn-back-3">← Back</button>
+      <button class="btn btn-primary" id="btn-submit">Submit Request</button>
+    </div>
+  </div><!-- /step-3 -->
+
+  <!-- ════════ SUCCESS ════════ -->
+  <div class="success-panel" id="success-panel">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Request Submitted!</div>
+    <p style="font-size:0.85rem;color:var(--muted);">Your Jira ticket has been created and the team has been notified.</p>
+    <a href="#" class="success-link" id="success-ticket-link" target="_blank" rel="noopener"></a>
+    <br/>
+    <a href="trusted-ops-intake.html" style="display:inline-block;margin-top:14px;font-size:0.8rem;color:var(--muted);font-family:var(--mono);">Submit another request</a>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ════════════════════════════════════════════════
+//  REQUEST TYPE DATA
+// ════════════════════════════════════════════════
+const REQUEST_TYPES = [
+  { label: 'Pro Deactivation', squad: 'Sales Ops', category: 'Account & Pro Changes', proRelated: true },
+  { label: 'Cancel Deactivation', squad: 'Sales Ops', category: 'Account & Pro Changes', proRelated: true },
+  { label: 'Late Deactivation', squad: 'Sales Ops', category: 'Account & Pro Changes', proRelated: true },
+  { label: 'Pro Leaving Before Starting', squad: 'Sales Ops', category: 'Account & Pro Changes', proRelated: true, autoDiscard: true },
+  { label: 'Pro/Applicant Account Change', squad: 'Sales Ops', category: 'Account & Pro Changes', proRelated: true },
+  { label: 'Pro CRM Connection Issues', squad: 'Pro Triage', category: 'CRM & Tech', proRelated: true },
+  { label: 'Salesforce', squad: 'Sales Ops', category: 'CRM & Tech' },
+  { label: 'Comms/Hot Rod Issues', squad: 'Pro Triage', category: 'CRM & Tech' },
+  { label: "Can't Send Contract", squad: 'Sales Ops', category: 'CRM & Tech', proRelated: true },
+  { label: 'Outreach Sequence', squad: 'Sales Ops', category: 'CRM & Tech' },
+  { label: 'Pro Portal Issues', squad: 'Pro Support', category: 'Pro Support', proRelated: true, autoDiscard: true },
+  { label: 'RPT Log In Issue', squad: 'Pro Support', category: 'Pro Support', proRelated: true },
+  { label: 'RE Pro Team Member Issue', squad: 'Pro Triage', category: 'Pro Support', proRelated: true },
+  { label: 'Direct Referral Issue', squad: 'Pro Triage', category: 'Pro Support', proRelated: true },
+  { label: 'Billing Issue', squad: 'Accounting', category: 'Billing & Accounting', autoDiscard: true },
+  { label: 'Accounting', squad: 'Biz Ops', category: 'Billing & Accounting' },
+  { label: 'Add RE Pro to Pricing Test', squad: 'Sales Ops', category: 'Billing & Accounting', autoDiscard: true },
+  { label: 'NTM Request', squad: 'Sales Ops', category: 'Operations' },
+  { label: 'Reporting Request', squad: 'Sales Ops', category: 'Operations' },
+  { label: 'B2B Sales Ops Request', squad: 'Sales Ops', category: 'Operations' },
+  { label: 'List Upload Failure', squad: 'Sales Ops', category: 'Operations' },
+  { label: 'Increase Slot Count', squad: 'Sales Ops', category: 'Operations', proRelated: true },
+  { label: 'Opportunity Creation Issue', squad: 'Sales Ops', category: 'Operations' },
+  { label: 'Duplicates', squad: 'Sales Ops', category: 'Operations', proRelated: true },
+  { label: 'SmartVestor Rotation Change', squad: 'Sales Ops', category: 'Operations', proRelated: true },
+  { label: 'Streamlit Report Issue', squad: 'DNA', category: 'Operations' },
+  { label: 'Other', squad: 'Sales Ops', category: 'Operations' },
+  { label: 'NP - Dock Issues', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
+  { label: 'NP - Salesforce Cadence Request/Issue', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
+  { label: 'NP - Salesforce Account/Opp Blocked', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
+  { label: 'NP - Salesforce Duplicate/Merge Request', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
+  { label: 'NP - Other', squad: 'NP Ops', category: 'NP (New Pro)', npRelated: true },
+];
+
+// ════════════════════════════════════════════════
+//  SQUAD COLORS
+// ════════════════════════════════════════════════
+const SQUAD_COLORS = {
+  'Sales Ops':  '#f97316',
+  'Pro Triage': '#3b82f6',
+  'Pro Support':'#16a34a',
+  'Biz Ops':    '#7c3aed',
+  'NP Ops':     '#0891b2',
+  'Accounting': '#d97706',
+  'DNA':        '#6b7280',
+};
+
+const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let currentStep = 1;
+let selectedType = null; // reference to REQUEST_TYPES entry
+
+// ════════════════════════════════════════════════
+//  BUILD STEP 1 — TYPE GRID
+// ════════════════════════════════════════════════
+function squadBadgeHTML(squad, small = false) {
+  const color = SQUAD_COLORS[squad] || '#888';
+  const sz = small ? 'font-size:0.6rem;padding:2px 6px' : '';
+  return `<span class="badge" style="background:${color};${sz}">${squad}</span>`;
+}
+
+function buildTypeGrid() {
+  // Group by category, preserving original insertion order
+  const categories = {};
+  const catOrder = [];
+  for (const rt of REQUEST_TYPES) {
+    if (!categories[rt.category]) {
+      categories[rt.category] = [];
+      catOrder.push(rt.category);
+    }
+    categories[rt.category].push(rt);
+  }
+
+  const container = document.getElementById('type-categories');
+  container.innerHTML = '';
+
+  for (const cat of catOrder) {
+    const types = categories[cat];
+    const section = document.createElement('div');
+    section.className = 'category-section';
+
+    const label = document.createElement('div');
+    label.className = 'category-label';
+    label.textContent = cat;
+    section.appendChild(label);
+
+    const grid = document.createElement('div');
+    grid.className = 'type-grid';
+
+    for (const rt of types) {
+      const card = document.createElement('div');
+      card.className = 'type-card';
+      card.dataset.label = rt.label;
+
+      const top = document.createElement('div');
+      top.className = 'type-card-top';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'type-card-label';
+      lbl.textContent = rt.label;
+
+      top.appendChild(lbl);
+      top.innerHTML += squadBadgeHTML(rt.squad, true);
+      card.appendChild(top);
+
+      if (rt.autoDiscard) {
+        const pill = document.createElement('div');
+        pill.className = 'badge-auto';
+        pill.textContent = '📧 Email Routed';
+        card.appendChild(pill);
+      }
+
+      card.addEventListener('click', () => selectType(rt, card));
+      grid.appendChild(card);
+    }
+
+    section.appendChild(grid);
+    container.appendChild(section);
+  }
+}
+
+// ════════════════════════════════════════════════
+//  SELECT TYPE
+// ════════════════════════════════════════════════
+function selectType(rt, cardEl) {
+  // Deselect all
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  cardEl.classList.add('selected');
+  selectedType = rt;
+
+  // Update squad bar
+  const bar = document.getElementById('squad-bar');
+  bar.className = 'visible' + (rt.autoDiscard ? ' auto-discard' : '');
+
+  const squadColor = SQUAD_COLORS[rt.squad] || '#888';
+
+  if (rt.autoDiscard) {
+    bar.innerHTML = `→ After ticket creation, this will be routed to <strong style="color:${squadColor}">${rt.squad}</strong> via email and discarded from the board.`;
+    bar.style.borderLeftColor = '#d97706';
+  } else {
+    bar.innerHTML = `→ This request will be handled by: <strong style="color:${squadColor}">${rt.squad}</strong>`;
+    bar.style.borderLeftColor = squadColor;
+  }
+
+  document.getElementById('btn-next-1').disabled = false;
+}
+
+// ════════════════════════════════════════════════
+//  STEP NAVIGATION
+// ════════════════════════════════════════════════
+const STEP_LABELS = [
+  'Step 1 of 3 — Select Request Type',
+  'Step 2 of 3 — Fill in Details',
+  'Step 3 of 3 — Review & Submit',
+];
+
+function goToStep(n) {
+  document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+  document.getElementById(`step-${n}`).classList.add('active');
+
+  // Update dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.classList.remove('active', 'completed');
+    if (i < n) dot.classList.add('completed');
+    else if (i === n) dot.classList.add('active');
+  }
+  // Update connectors
+  for (let i = 1; i <= 2; i++) {
+    const conn = document.getElementById(`conn-${i}`);
+    conn.classList.toggle('completed', i < n);
+  }
+
+  document.getElementById('step-label').textContent = STEP_LABELS[n - 1];
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ════════════════════════════════════════════════
+//  STEP 2 — POPULATE & CONDITIONAL FIELDS
+// ════════════════════════════════════════════════
+function populateStep2() {
+  if (!selectedType) return;
+
+  // Chip
+  document.getElementById('chip-label').textContent = selectedType.label;
+  const chipBadge = document.getElementById('chip-badge');
+  chipBadge.textContent = selectedType.squad;
+  chipBadge.style.background = SQUAD_COLORS[selectedType.squad] || '#888';
+
+  // Conditional fields
+  const proFields = document.getElementById('pro-fields');
+  const npField   = document.getElementById('np-field');
+
+  proFields.classList.toggle('visible', !!selectedType.proRelated);
+  npField.classList.toggle('visible', !!selectedType.npRelated);
+
+  validateStep2();
+}
+
+function validateStep2() {
+  const subject  = document.getElementById('f-subject').value.trim();
+  const vertical = document.getElementById('f-vertical').value.trim();
+  const desc     = document.getElementById('f-description').value.trim();
+  const name     = document.getElementById('f-name').value.trim();
+
+  let ok = subject && vertical && desc && name;
+
+  if (selectedType && selectedType.proRelated) {
+    ok = ok && document.getElementById('f-pro-name').value.trim();
+  }
+  if (selectedType && selectedType.npRelated) {
+    ok = ok && document.getElementById('f-np-name').value.trim();
+  }
+
+  document.getElementById('btn-next-2').disabled = !ok;
+}
+
+// Attach live validation
+['f-subject', 'f-vertical', 'f-description', 'f-name', 'f-pro-name', 'f-np-name'].forEach(id => {
+  document.getElementById(id).addEventListener('input', validateStep2);
+});
+
+// File input display
+document.getElementById('f-screenshot').addEventListener('change', function() {
+  const display = document.getElementById('file-name-display');
+  display.textContent = this.files[0] ? this.files[0].name : 'Choose file…';
+});
+
+// ════════════════════════════════════════════════
+//  STEP 3 — REVIEW CARD
+// ════════════════════════════════════════════════
+function buildReviewCard() {
+  const subject  = document.getElementById('f-subject').value.trim();
+  const vertical = document.getElementById('f-vertical').value.trim();
+  const desc     = document.getElementById('f-description').value.trim();
+  const name     = document.getElementById('f-name').value.trim();
+  const proName  = document.getElementById('f-pro-name').value.trim();
+  const sfId     = document.getElementById('f-sf-id').value.trim();
+  const npName   = document.getElementById('f-np-name').value.trim();
+  const file     = document.getElementById('f-screenshot').files[0];
+
+  // Auto-discard notice
+  const notice = document.getElementById('review-auto-notice');
+  notice.style.display = (selectedType && selectedType.autoDiscard) ? 'block' : 'none';
+
+  // Build rows
+  const rows = [];
+
+  rows.push({ key: 'Request Type', val: selectedType.label, badge: selectedType.squad });
+  rows.push({ key: 'Vertical', val: vertical });
+  if (selectedType.proRelated) {
+    rows.push({ key: 'Pro Name', val: proName || '—' });
+    rows.push({ key: 'Salesforce ID', val: sfId || '(not provided)' });
+  }
+  if (selectedType.npRelated) {
+    rows.push({ key: 'NP Name / ID', val: npName || '—' });
+  }
+  rows.push({ key: 'Subject', val: subject });
+  rows.push({ key: 'Description', val: desc, clamp: true });
+  rows.push({ key: 'Submitted By', val: name });
+  if (file) rows.push({ key: 'Screenshot', val: file.name });
+
+  const card = document.getElementById('review-card');
+  card.innerHTML = '';
+
+  for (const row of rows) {
+    const div = document.createElement('div');
+    div.className = 'review-row';
+
+    const keyEl = document.createElement('div');
+    keyEl.className = 'review-key';
+    keyEl.textContent = row.key;
+
+    const valEl = document.createElement('div');
+    valEl.className = 'review-val' + (row.clamp ? ' desc-clamp' : '');
+    valEl.textContent = row.val;
+
+    div.appendChild(keyEl);
+
+    if (row.badge) {
+      const wrap = document.createElement('div');
+      wrap.className = 'review-val';
+      wrap.style.display = 'flex';
+      wrap.style.alignItems = 'center';
+      wrap.style.gap = '8px';
+      wrap.textContent = row.val;
+      wrap.innerHTML += ' ' + squadBadgeHTML(row.badge, true);
+      div.appendChild(wrap);
+    } else {
+      div.appendChild(valEl);
+    }
+
+    card.appendChild(div);
+
+    // Expand button for long descriptions
+    if (row.clamp && desc.length > 160) {
+      const expandBtn = document.createElement('button');
+      expandBtn.className = 'expand-btn';
+      expandBtn.textContent = 'Show more';
+      let expanded = false;
+      expandBtn.addEventListener('click', () => {
+        expanded = !expanded;
+        valEl.classList.toggle('desc-expanded', expanded);
+        valEl.classList.toggle('desc-clamp', !expanded);
+        expandBtn.textContent = expanded ? 'Show less' : 'Show more';
+      });
+      // Insert after the row
+      card.appendChild(expandBtn);
+    }
+  }
+}
+
+// ════════════════════════════════════════════════
+//  SUBMISSION
+// ════════════════════════════════════════════════
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // result is "data:mime/type;base64,XXXX" — strip the prefix
+      const b64 = reader.result.split(',')[1];
+      resolve(b64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitRequest() {
+  const btn = document.getElementById('btn-submit');
+  const errEl = document.getElementById('submit-error');
+
+  btn.disabled = true;
+  btn.textContent = '⟳ Submitting…';
+  errEl.classList.remove('visible');
+  errEl.textContent = '';
+
+  const file = document.getElementById('f-screenshot').files[0];
+
+  const payload = {
+    requestType:   selectedType.label,
+    squad:         selectedType.squad,
+    autoDiscard:   !!selectedType.autoDiscard,
+    vertical:      document.getElementById('f-vertical').value.trim(),
+    subject:       document.getElementById('f-subject').value.trim(),
+    description:   document.getElementById('f-description').value.trim(),
+    requestorName: document.getElementById('f-name').value.trim(),
+    proName:       document.getElementById('f-pro-name').value.trim() || undefined,
+    sfId:          document.getElementById('f-sf-id').value.trim() || undefined,
+    npName:        document.getElementById('f-np-name').value.trim() || undefined,
+  };
+
+  if (file) {
+    payload.imageBase64   = await fileToBase64(file);
+    payload.imageFilename = file.name;
+    payload.imageMimeType = file.type;
+  }
+
+  try {
+    const res = await fetch(`${WORKER_URL}/trusted-ops`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (data.ok && data.jiraKey) {
+      // Hide wizard, show success
+      document.querySelector('.step-indicator-wrap').style.display = 'none';
+      document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
+
+      const successPanel = document.getElementById('success-panel');
+      const ticketLink   = document.getElementById('success-ticket-link');
+      ticketLink.href        = data.jiraUrl || '#';
+      ticketLink.textContent = `Jira ticket ${data.jiraKey} created →`;
+      successPanel.classList.add('visible');
+    } else {
+      throw new Error(data.error || 'Unexpected response from server.');
+    }
+  } catch (err) {
+    errEl.textContent = `Error: ${err.message}`;
+    errEl.classList.add('visible');
+    btn.disabled = false;
+    btn.textContent = 'Submit Request';
+  }
+}
+
+// ════════════════════════════════════════════════
+//  WIRE UP BUTTONS
+// ════════════════════════════════════════════════
+document.getElementById('btn-next-1').addEventListener('click', () => {
+  goToStep(2);
+  populateStep2();
+});
+
+document.getElementById('btn-back-2').addEventListener('click', () => goToStep(1));
+
+document.getElementById('btn-next-2').addEventListener('click', () => {
+  goToStep(3);
+  buildReviewCard();
+});
+
+document.getElementById('btn-back-3').addEventListener('click', () => goToStep(2));
+
+document.getElementById('btn-submit').addEventListener('click', submitRequest);
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+buildTypeGrid();
+</script>
+</body>
+</html>
