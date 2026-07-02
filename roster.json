@@ -256,6 +256,12 @@
           "emailOverride": "",
           "isLeader": false
         },
+        {
+          "name": "Alex Shepherd",
+          "visible": true,
+          "role": "Leader",
+          "isLeader": false
+        }
       ]
     },
     {
@@ -346,13 +352,6 @@
       "badgeBg": "#FBEAF0",
       "badgeText": "#993556",
       "members": [
-        {
-          "name": "Alex Shepherd",
-          "visible": true,
-          "role": "Leader",
-          "emailOverride": "",
-          "isLeader": true
-        },
         {
           "name": "Danae Hall",
           "visible": true,
