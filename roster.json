@@ -148,6 +148,12 @@
       "badgeText": "#0F6E56",
       "members": [
         {
+          "name": "Jason Blake",
+          "visible": true,
+          "role": "EVP",
+          "isLeader": true
+        },
+        {
           "name": "Chandler Gaines",
           "visible": true,
           "role": "VP",
