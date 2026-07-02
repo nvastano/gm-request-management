@@ -170,6 +170,12 @@
           "visible": true,
           "role": "VP",
           "isLeader": false
+        },
+        {
+          "name": "Drew Williamson",
+          "visible": true,
+          "role": "VP",
+          "isLeader": false
         }
       ]
     },
@@ -323,6 +329,12 @@
           "visible": true,
           "role": "SDR",
           "isLeader": false
+        },
+        {
+          "name": "Zach Schoenberger",
+          "visible": true,
+          "role": "SDR",
+          "isLeader": false
         }
       ]
     },
@@ -445,8 +457,8 @@
       ]
     },
     {
-      "id": "coaching---investing-and-tax-1773933470548",
-      "label": "Coaching - Investing and Tax",
+      "id": "coaching---investing-1773933470548",
+      "label": "Coaching - Investing",
       "visible": true,
       "dot": "#E24B4A",
       "badgeBg": "#FCEBEB",
@@ -466,12 +478,6 @@
           "isLeader": false
         },
         {
-          "name": "Justin Nguyen",
-          "visible": true,
-          "role": "Coach",
-          "isLeader": false
-        },
-        {
           "name": "Scott Lerman",
           "visible": true,
           "role": "Team Lead",
@@ -485,6 +491,28 @@
         },
         {
           "name": "Sarah Francis",
+          "visible": true,
+          "role": "Coach",
+          "isLeader": false
+        }
+      ]
+    },
+    {
+      "id": "coaching---tax-1773933470999",
+      "label": "Coaching - Tax",
+      "visible": true,
+      "dot": "#E24B4A",
+      "badgeBg": "#FCEBEB",
+      "badgeText": "#A32D2D",
+      "members": [
+        {
+          "name": "Jordan Farley",
+          "visible": true,
+          "role": "Leader",
+          "isLeader": true
+        },
+        {
+          "name": "Justin Nguyen",
           "visible": true,
           "role": "Coach",
           "isLeader": false
@@ -585,44 +613,6 @@
           "role": "Team Lead",
           "emailOverride": "",
           "isLeader": false
-        }
-      ]
-    },
-    {
-      "id": "marketing",
-      "label": "B2B Marketing - Real Estate",
-      "visible": true,
-      "dot": "#7F77DD",
-      "badgeBg": "#EEEDFE",
-      "badgeText": "#534AB7",
-      "members": [
-        {
-          "name": "Richard Prince",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": true,
-          "visible": true
-        },
-        {
-          "name": "Tina Teschner",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Matt George",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Chandler Warrick",
-          "role": "Marketer",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
         }
       ]
     },
