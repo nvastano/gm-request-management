@@ -264,7 +264,8 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
         <tr>
           <th onclick="sortBy('name')">Name <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('crd')">CRD <span class="sort-arrow">↕</span></th>
-          <th onclick="sortBy('firm')">Firm <span class="sort-arrow">↕</span></th>
+          <th onclick="sortBy('bd')">BD <span class="sort-arrow">↕</span></th>
+          <th onclick="sortBy('ria')">RIA <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('state')">State <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('contractStartDate')">Contract Start <span class="sort-arrow">↕</span></th>
           <th onclick="sortBy('totalCount')">Disclosures <span class="sort-arrow">↕</span></th>
@@ -18806,7 +18807,7 @@ function applyFilters() {
   const status = document.getElementById('status-filter').value;
 
   let rows = PROS.filter(p => {
-    if (q && !p.name.toLowerCase().includes(q) && !p.firm.toLowerCase().includes(q) && !String(p.crd).includes(q)) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !(p.firm||'').toLowerCase().includes(q) && !(p.bd||'').toLowerCase().includes(q) && !(p.ria||'').toLowerCase().includes(q) && !String(p.crd).includes(q)) return false;
     if (state && p.state !== state) return false;
     const hasDisc = p.disclosures.length > 0;
     const unacked = hasDisc ? p.disclosures.filter(d => !isAcked(d.id)).length : 0;
@@ -18889,7 +18890,8 @@ function renderTable(rows) {
     html += `<tr id="row-${p.crd}">`;
     html += `<td class="name-cell"><a href="${apUrl}" target="_blank" rel="noopener">${p.name}</a></td>`;
     html += `<td class="state-cell">${p.crd}</td>`;
-    html += `<td class="firm-cell" title="${p.firm}">${p.firm}</td>`;
+    html += `<td class="firm-cell" title="${p.bd||'—'}">${p.bd||'<span style=\"color:var(--muted)\">—</span>'}</td>`;
+    html += `<td class="firm-cell" title="${p.ria||'—'}">${p.ria||'<span style=\"color:var(--muted)\">—</span>'}</td>`;
     html += `<td class="state-cell">${p.state}</td>`;
     html += `<td class="state-cell">${p.contractStartDate || '—'}</td>`;
     html += `<td class="count-cell">${p.totalCount > 0 ? p.totalCount : '—'}</td>`;
