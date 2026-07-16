@@ -22180,6 +22180,7 @@ const FIRM_CHANGES = [
 ];
 // ── FIRM CHANGE LOOKUP ────────────────────────────────────────────────
 const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
+document.getElementById('stat-firm-changed').textContent = firmChangedCRDs.size;
 
   Object.entries(ackMap).forEach(([discId, meta]) => {
     // Find the pro this disclosure belongs to
@@ -22229,48 +22230,9 @@ const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
   showToast(`✓ Exported ${rows.length} approval${rows.length !== 1 ? 's' : ''}`, 'green');
 }
 
-// ── FIRM CHANGES SECTION ──
-function buildFirmChangesSection() {
-  const container = document.getElementById('firm-changes-container');
-  if (!container) return;
-  if (!FIRM_CHANGES || FIRM_CHANGES.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-dim);padding:24px">No firm changes detected.</p>';
-    return;
-  }
-  const rows = FIRM_CHANGES.map(c => {
-    const bdCell = c.bd ? `<span class="firm-tag new">${c.bd}</span>` : '<span class="firm-tag empty">—</span>';
-    const riaCell = c.ria ? `<span class="firm-tag new">${c.ria}</span>` : '<span class="firm-tag empty">—</span>';
-    return `<tr>
-      <td><strong>${c.name}</strong><br><span style="color:var(--text-dim);font-size:11px">${c.state} · CRD ${c.crd}</span></td>
-      <td><span class="firm-tag old">${c.oldFirm || '—'}</span></td>
-      <td>${bdCell}</td>
-      <td>${riaCell}</td>
-    </tr>`;
-  }).join('');
-  container.innerHTML = `
-    <table class="firm-changes-table">
-      <thead><tr>
-        <th>Pro</th>
-        <th>Firm on File</th>
-        <th>Current BD</th>
-        <th>Current RIA</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-}
-document.addEventListener('DOMContentLoaded', buildFirmChangesSection);
 
 </script>
 
-<!-- FIRM CHANGES SECTION -->
-<div class="firm-changes-section" id="firm-changes-section" style="padding:0 24px 40px">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-top:32px;border-top:1px solid var(--border)">
-    <h2 style="font-family:var(--display);font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em">Firm Changes</h2>
-    <span class="fc-badge"><span class="fc-count">55</span> Pros with Updated Firms</span>
-  </div>
-  <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px">These pros have a different BD or RIA in AdvizorPro than what was on file at the last baseline pull. Review and update Salesforce accordingly.</p>
-  <div id="firm-changes-container"></div>
-</div>
 
 </body>
 </html>
