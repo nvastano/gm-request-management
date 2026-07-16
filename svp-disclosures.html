@@ -62,7 +62,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .sync-status{font-family:var(--mono);font-size:11px;color:var(--muted)}
 
 /* Stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:32px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
 .stat-card:hover{border-color:var(--orange);background:var(--surface2)}
 .stat-card.active{border-color:var(--orange);background:var(--surface2);box-shadow:0 0 0 1px var(--orange)}
@@ -21437,9 +21437,6 @@ const PROS = [
   }
 ];
 
-// ── FIRM CHANGE LOOKUP ────────────────────────────────────────────────
-const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
-
 // ── SORT STATE ────────────────────────────────────────────────────────
 let sortCol = 'totalCount', sortDir = -1;
 function filterByCard(val) {
@@ -22181,6 +22178,9 @@ const FIRM_CHANGES = [
     "apId": "kxok18na1043xx"
   }
 ];
+// ── FIRM CHANGE LOOKUP ────────────────────────────────────────────────
+const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
+
   Object.entries(ackMap).forEach(([discId, meta]) => {
     // Find the pro this disclosure belongs to
     let advisorName = '', advisorCrd = '', firm = '', state = '', discType = '', resolution = '', eventDate = '';
