@@ -225,6 +225,11 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
       <div class="stat-value red">157</div>
       <div class="stat-sub">214 total records</div>
     </div>
+    <div class="stat-card" onclick="filterByCard('firm-changed')" id="card-firm-changed">
+      <div class="stat-label">Firm Changed</div>
+      <div class="stat-value" style="color:#a78bfa" id="stat-firm-changed">—</div>
+      <div class="stat-sub">since baseline</div>
+    </div>
   </div>
 
   <div class="controls">
@@ -254,6 +259,7 @@ td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
       <option value="acked">✅ All Acknowledged</option>
       <option value="disc">📋 Any Disclosures</option>
       <option value="clean">🟢 Clean</option>
+      <option value="firm-changed">🔄 Firm Changed</option>
     </select>
     <span class="result-count" id="result-count"></span>
   </div>
@@ -21431,15 +21437,18 @@ const PROS = [
   }
 ];
 
+// ── FIRM CHANGE LOOKUP ────────────────────────────────────────────────
+const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
+
 // ── SORT STATE ────────────────────────────────────────────────────────
 let sortCol = 'totalCount', sortDir = -1;
 function filterByCard(val) {
   document.getElementById('status-filter').value = val;
   // Highlight active card
-  ['card-all','card-needs','card-acked','card-disc'].forEach(id => {
+  ['card-all','card-needs','card-acked','card-disc','card-firm-changed'].forEach(id => {
     document.getElementById(id).classList.remove('active');
   });
-  const map = {'':'card-all','needs':'card-needs','acked':'card-acked','disc':'card-disc'};
+  const map = {'':'card-all','needs':'card-needs','acked':'card-acked','disc':'card-disc','firm-changed':'card-firm-changed'};
   if (map[val]) document.getElementById(map[val]).classList.add('active');
   applyFilters();
   // Scroll to table
@@ -21462,6 +21471,7 @@ function updateStats() {
   document.getElementById('stat-needs').textContent = needsAdvisors.length;
   document.getElementById('stat-needs-sub').textContent = totalUnacked + ' disclosure' + (totalUnacked !== 1 ? 's' : '') + ' unreviewed';
   document.getElementById('stat-acked').textContent = ackedAdvisors.length;
+  document.getElementById('stat-firm-changed').textContent = firmChangedCRDs.size;
 }
 
 // ── BUILD BADGE (shared) ──────────────────────────────────────────────
@@ -21489,6 +21499,7 @@ function applyFilters() {
     if (status === 'acked' && !(hasDisc && unacked === 0)) return false;
     if (status === 'disc' && !hasDisc) return false;
     if (status === 'clean' && hasDisc) return false;
+    if (status === 'firm-changed' && !firmChangedCRDs.has(p.crd)) return false;
     return true;
   });
 
