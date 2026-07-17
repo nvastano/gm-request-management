@@ -438,6 +438,13 @@
           "role": "Coach",
           "emailOverride": "lily.lee@ramseysolutions.com",
           "isLeader": false
+        },
+        {
+          "name": "Brooks Pender",
+          "visible": true,
+          "role": "Coach",
+          "emailOverride": "",
+          "isLeader": false
         }
       ]
     },
@@ -640,24 +647,31 @@
         },
         {
           "name": "Jessica Ross",
-          "role": "Advocate",
+          "role": "Customer Success Agent",
           "teamNum": "",
           "isLeader": false,
           "visible": true
         },
         {
           "name": "Jessica Bissett",
-          "role": "Advocate",
+          "role": "Customer Success Agent",
           "teamNum": "",
           "isLeader": false,
           "visible": true
         },
         {
           "name": "Julie Goward",
-          "role": "Advocate",
+          "role": "Customer Success Agent",
           "teamNum": "",
           "isLeader": false,
           "visible": true
+        },
+        {
+          "name": "Mike Thomas",
+          "visible": true,
+          "role": "AE",
+          "emailOverride": "",
+          "isLeader": false
         }
       ]
     }
