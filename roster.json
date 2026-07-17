@@ -640,7 +640,7 @@
       "members": [
         {
           "name": "Matthew Barnett",
-          "role": "",
+          "role": "Customer Success Agent",
           "teamNum": "",
           "isLeader": true,
           "visible": true
@@ -669,7 +669,7 @@
         {
           "name": "Mike Thomas",
           "visible": true,
-          "role": "AE",
+          "role": "Customer Success Agent",
           "emailOverride": "",
           "isLeader": false
         }
