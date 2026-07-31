@@ -1745,7 +1745,15 @@ function exportApprovals() {
   const reviewer = getReviewer();
   const rows = [];
 
-const FIRM_CHANGES = [];
+const FIRM_CHANGES = [
+  {"crd":5167229,"name":"Armand Atkinson","previousFirm":"NBC SECURITIES, INC.","currentFirm":"LANARK FINANCIAL, INC."},
+  {"crd":6943144,"name":"Blake McTee","previousFirm":"USCA SECURITIES LLC","currentFirm":"ARAX ADVISORY PARTNERS"},
+  {"crd":2145300,"name":"Charles Simmons","previousFirm":"FARMERS FINANCIAL SOLUTIONS, LLC","currentFirm":"WAVERLY ADVISORS, LLC"},
+  {"crd":5676607,"name":"Dale McCarty","previousFirm":"INTEGRITY ALLIANCE, LLC.","currentFirm":"LPL FINANCIAL LLC"},
+  {"crd":7378613,"name":"Nick Dreyer","previousFirm":"CAMBRIDGE INVESTMENT RESEARCH, INC.","currentFirm":"OSAIC WEALTH, INC."},
+  {"crd":2356124,"name":"Robert Alvarez","previousFirm":"NBC SECURITIES, INC.","currentFirm":"LANARK FINANCIAL, INC."},
+  {"crd":4546005,"name":"Scott Marmo","previousFirm":"THE RETIREMENT PLANNING GROUP, LLC","currentFirm":"CETERA PLANNING PARTNERS"},
+];
 // ── FIRM CHANGE LOOKUP ────────────────────────────────────────────────
 const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
 document.getElementById('stat-firm-changed').textContent = firmChangedCRDs.size;
