@@ -366,13 +366,6 @@
           "role": "Coach",
           "emailOverride": "",
           "isLeader": false
-        },
-        {
-          "name": "Colin Bellios",
-          "visible": true,
-          "role": "Coach",
-          "emailOverride": "",
-          "isLeader": false
         }
       ]
     },
@@ -385,12 +378,6 @@
       "badgeText": "#A32D2D",
       "members": [
         {
-          "name": "Jordan Farley",
-          "visible": true,
-          "role": "Leader",
-          "isLeader": true
-        },
-        {
           "name": "Ryan Puhr",
           "visible": true,
           "role": "AD",
@@ -401,12 +388,6 @@
           "visible": true,
           "role": "Team Lead",
           "isLeader": true
-        },
-        {
-          "name": "Colin Bellios",
-          "visible": true,
-          "role": "Coach",
-          "isLeader": false
         },
         {
           "name": "Angelica Dotson",
@@ -627,6 +608,13 @@
           "role": "Team Lead",
           "emailOverride": "",
           "isLeader": false
+        },
+        {
+          "name": "Jordan Farley",
+          "visible": true,
+          "role": "Leader",
+          "emailOverride": "",
+          "isLeader": false
         }
       ]
     },
@@ -638,13 +626,6 @@
       "badgeBg": "#EAF3DE",
       "badgeText": "#3B6D11",
       "members": [
-        {
-          "name": "Matthew Barnett",
-          "role": "Customer Success Agent",
-          "teamNum": "",
-          "isLeader": true,
-          "visible": true
-        },
         {
           "name": "Jessica Ross",
           "role": "Customer Success Agent",
