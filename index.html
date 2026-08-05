@@ -730,14 +730,24 @@ function toggleEditMode() {
   }
 }
 
-function checkPw() {
+async function checkPw() {
   const pw = document.getElementById('pw-input').value;
-  if (pw === 'greasemonkeys') {
-    document.getElementById('modal').classList.remove('show');
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-error').style.display = 'none';
-    enableEdit();
-  } else {
+  try {
+    const res = await fetch('https://squad-ops.nicholas-vastano.workers.dev/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tool: 'dashboard', password: pw })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('modal').classList.remove('show');
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-error').style.display = 'none';
+      enableEdit();
+    } else {
+      document.getElementById('pw-error').style.display = 'block';
+    }
+  } catch {
     document.getElementById('pw-error').style.display = 'block';
   }
 }

@@ -299,22 +299,32 @@ const FLOW_GET = 'PASTE_GET_FLOW_URL_HERE';
 const FLOW_POST = 'PASTE_POST_FLOW_URL_HERE';
 
 // ── PASSWORD ──────────────────────────────────────────────────────────
-const CORRECT_PW = "lenakelly";
-function checkPw() {
+const WORKER_URL = 'https://squad-ops.nicholas-vastano.workers.dev';
+async function checkPw() {
   const pw = document.getElementById('pw-input').value;
   const name = document.getElementById('name-input').value.trim();
   if (!name) { document.getElementById('pw-err').textContent = 'Please enter your name.'; return; }
-  if (pw === CORRECT_PW) {
-    localStorage.setItem('svp_reviewer', name);
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    sessionStorage.setItem('svp_auth', '1');
-    document.getElementById('display-name').textContent = name;
-    init();
-  } else {
-    document.getElementById('pw-err').textContent = 'Incorrect password.';
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').focus();
+  try {
+    const res = await fetch(WORKER_URL + '/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tool: 'svp', password: pw })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      localStorage.setItem('svp_reviewer', name);
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      sessionStorage.setItem('svp_auth', '1');
+      document.getElementById('display-name').textContent = name;
+      init();
+    } else {
+      document.getElementById('pw-err').textContent = 'Incorrect password.';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  } catch {
+    document.getElementById('pw-err').textContent = 'Unable to verify password. Try again.';
   }
 }
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('name-input').focus(); });
