@@ -226,6 +226,18 @@ tbody tr:hover{background:var(--bg)}
 .view-tog{display:flex;background:var(--border);border-radius:10px;padding:3px;gap:2px}
 .view-tog-btn{padding:4px 14px;border-radius:8px;border:none;cursor:pointer;font-size:.8rem;font-weight:600;background:transparent;color:var(--muted);transition:all .15s}
 .view-tog-btn.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+/* ── HISTORY CARDS ── */
+.hist-week{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.hist-week-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.015)}
+.hist-week-title{font-size:.95rem;font-weight:800;letter-spacing:-.01em}
+.hist-member-row{display:flex;align-items:flex-start;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border)}
+.hist-member-row:last-child{border-bottom:none}
+.hist-member-info{flex:1;min-width:0}
+.hist-member-name{font-size:.82rem;font-weight:700;margin-bottom:6px}
+.hist-chips{display:flex;gap:7px;flex-wrap:wrap}
+.hist-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:20px;font-size:.76rem;font-weight:600;background:var(--bg);border:1px solid var(--border);color:var(--text)}
+.hist-chip-hit{background:rgba(0,200,168,.12);border-color:var(--accent);color:var(--accent)}
+.hist-note-text{font-size:.76rem;color:var(--muted);margin-top:7px;font-style:italic;line-height:1.5;padding-left:1px}
 </style>
 </head>
 <body>
@@ -915,7 +927,7 @@ function renderHistory(){
   const weeks=[...new Set(d.entries.map(e=>e.weekStart))].sort().reverse();
 
   const toggleHTML=`<div class="view-tog">
-    <button class="view-tog-btn active">Table</button>
+    <button class="view-tog-btn active">Cards</button>
     <button class="view-tog-btn" onclick="setHistMode('charts')">Charts</button>
   </div>`;
 
@@ -925,20 +937,33 @@ function renderHistory(){
     return;
   }
 
-  const hdrs=members.flatMap(m=>m.metrics.map(mt=>`<th>${m.name}<br><span style="font-weight:500;opacity:.7">${mt.name}</span></th>`));
-  const rows=weeks.map(ws=>{
-    const cells=members.flatMap(m=>m.metrics.map(mt=>{
+  const weekCards=weeks.map(ws=>{
+    const memberRows=members.map(m=>{
       const e=d.entries.filter(x=>x.memberId===m.id&&x.weekStart===ws).sort((a,b)=>b.date.localeCompare(a.date))[0];
-      const a=e?.values?.[mt.id];
-      const g=getGoal(m.id,mt.id,ws);
-      const hit=g>0&&typeof a==='number'&&a>=g;
-      return `<td class="${hit?'td-hit':''}">${a!==undefined?(g>0?a+'/'+g:a):'—'}</td>`;
-    }));
-    return `<tr>
-      <td><strong>${fmtWeek(ws)}</strong></td>
-      ${cells.join('')}
-      <td><button class="btn btn-ghost btn-sm" onclick="openHistEdit('${ws}')">Edit</button></td>
-    </tr>`;
+      const chips=m.metrics.map(mt=>{
+        const a=e?.values?.[mt.id];
+        const g=getGoal(m.id,mt.id,ws);
+        const hit=g>0&&typeof a==='number'&&a>=g;
+        if(a===undefined) return '';
+        return `<span class="hist-chip${hit?' hist-chip-hit':''}">${mt.name}: ${g>0?a+'/'+g:a}${hit?' ✓':''}</span>`;
+      }).filter(Boolean).join('');
+      const note=e?.note?`<div class="hist-note-text">"${e.note}"</div>`:'';
+      return `<div class="hist-member-row">
+        ${avHTML(m,32)}
+        <div class="hist-member-info">
+          <div class="hist-member-name">${m.name}</div>
+          <div class="hist-chips">${chips||`<span style="font-size:.76rem;color:var(--muted)">No data</span>`}</div>
+          ${note}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="hist-week">
+      <div class="hist-week-hdr">
+        <span class="hist-week-title">${fmtWeek(ws)}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openHistEdit('${ws}')">Edit</button>
+      </div>
+      ${memberRows}
+    </div>`;
   }).join('');
 
   document.getElementById('view').innerHTML=`
@@ -950,14 +975,7 @@ function renderHistory(){
         <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
       </div>
     </div>
-    <div class="card" style="padding:0">
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Week</th>${hdrs.join('')}<th></th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>
+    ${weekCards}
   `;
 }
 
@@ -977,9 +995,14 @@ function openHistEdit(ws){
         </div>
       </div>`;
     }).join('');
+    const noteVal=(e?.note||'').replace(/"/g,'&quot;');
     return `<div style="margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${avHTML(m,28)}<span style="font-weight:700">${m.name}</span></div>
       ${inputs}
+      <div class="goal-row" style="align-items:flex-start;margin-top:8px">
+        <span class="goal-row-label" style="padding-top:7px">Note</span>
+        <textarea id="he-note-${m.id}" rows="2" placeholder="Optional note for this week…" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.82rem;font-family:inherit;resize:vertical">${noteVal}</textarea>
+      </div>
     </div>`;
   }).join(`<div style="height:1px;background:var(--border);margin:0 0 16px"></div>`);
 
@@ -1009,12 +1032,13 @@ function saveHistEdit(ws){
         hasAny=true;
       }
     });
-    if(!hasAny) return;
+    const note=(document.getElementById(`he-note-${m.id}`)?.value||'').trim();
+    if(!hasAny&&!note) return;
     const idx=d.entries.findIndex(e=>e.memberId===m.id&&e.weekStart===ws);
     if(idx>=0){
-      d.entries[idx]={...d.entries[idx],values};
+      d.entries[idx]={...d.entries[idx],values,note};
     } else {
-      d.entries.push({id:uid(),date:ws,weekStart:ws,memberId:m.id,values});
+      d.entries.push({id:uid(),date:ws,weekStart:ws,memberId:m.id,values,note});
     }
   });
   DB.save(d);
@@ -1050,6 +1074,10 @@ function openAddWeekModal(){
     return `<div style="margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${avHTML(m,28)}<span style="font-weight:700">${m.name}</span></div>
       ${inputs}
+      <div class="goal-row" style="align-items:flex-start;margin-top:8px">
+        <span class="goal-row-label" style="padding-top:7px">Note</span>
+        <textarea id="aw-note-${m.id}" rows="2" placeholder="Optional note for this week…" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.82rem;font-family:inherit;resize:vertical"></textarea>
+      </div>
     </div>`;
   }).join(`<div style="height:1px;background:var(--border);margin:0 0 16px"></div>`);
 
@@ -1087,14 +1115,15 @@ function saveNewWeek(){
       if(gInp?.value!==''){ goalVals[met.id]=parseInt(gInp.value)||0; hasGoal=true; }
       if(vInp?.value!==''){ entryVals[met.id]=parseInt(vInp.value)||0; hasEntry=true; }
     });
+    const note=(document.getElementById(`aw-note-${m.id}`)?.value||'').trim();
     if(hasGoal){
       if(!d.weeklyGoals[ws]) d.weeklyGoals[ws]={};
       d.weeklyGoals[ws][m.id]={...d.weeklyGoals[ws][m.id],...goalVals};
     }
-    if(hasEntry){
+    if(hasEntry||note){
       const idx=d.entries.findIndex(e=>e.memberId===m.id&&e.weekStart===ws);
-      if(idx>=0){ d.entries[idx]={...d.entries[idx],values:entryVals}; }
-      else { d.entries.push({id:uid(),date:ws,weekStart:ws,memberId:m.id,values:entryVals}); }
+      if(idx>=0){ d.entries[idx]={...d.entries[idx],values:entryVals,note}; }
+      else { d.entries.push({id:uid(),date:ws,weekStart:ws,memberId:m.id,values:entryVals,note}); }
     }
   });
 
