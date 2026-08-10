@@ -242,6 +242,8 @@ tbody tr:hover{background:var(--bg)}
 .hist-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:20px;font-size:.76rem;font-weight:600;background:var(--bg);border:1px solid var(--border);color:var(--text)}
 .hist-chip-hit{background:rgba(0,200,168,.12);border-color:var(--accent);color:var(--accent)}
 .hist-note-text{font-size:.76rem;color:var(--muted);margin-top:7px;font-style:italic;line-height:1.5;padding-left:1px}
+.hist-filter-sel{padding:6px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;appearance:auto;height:34px}
+.hist-filter-sel:focus{outline:none;border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -928,20 +930,39 @@ function deleteMember(id){
 function renderHistory(){
   if(histMode==='charts'){ renderHistoryCharts(); return; }
   const d=DB.get(), members=activeMembers();
-  const weeks=[...new Set(d.entries.map(e=>e.weekStart))].sort().reverse();
+  const allWeeks=[...new Set(d.entries.map(e=>e.weekStart))].sort().reverse();
 
   const toggleHTML=`<div class="view-tog">
     <button class="view-tog-btn active">Cards</button>
     <button class="view-tog-btn" onclick="setHistMode('charts')">Charts</button>
   </div>`;
 
-  if(!weeks.length){
+  if(!allWeeks.length){
     document.getElementById('view').innerHTML=`<div class="sec-hdr"><div class="sec-hdr-text"><h2>History</h2><p>All-time records</p></div><div style="display:flex;gap:8px;margin-left:auto;align-items:center">${toggleHTML}<button class="btn btn-primary" onclick="openAddWeekModal()">+ Add Past Week</button></div></div>
     <div class="empty-state">No entries yet.<p>Run your first standup or add a past week to start building history.</p></div>`;
     return;
   }
 
-  const weekCards=weeks.map(ws=>{
+  // Build month options
+  const monthKeys=[...new Set(allWeeks.map(w=>w.substring(0,7)))].sort().reverse();
+  const fmtMonthLabel=key=>{const[y,m]=key.split('-');return new Date(+y,+m-1,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});};
+  const monthOpts=monthKeys.map(mk=>`<option value="${mk}"${mk===histMonth?' selected':''}>${fmtMonthLabel(mk)}</option>`).join('');
+  const monthSel=`<select class="hist-filter-sel" onchange="setHistMonth(this.value)"><option value="">All months</option>${monthOpts}</select>`;
+
+  // Build week options for selected month
+  let weekSel='';
+  if(histMonth){
+    const weeksInMonth=allWeeks.filter(w=>w.startsWith(histMonth));
+    const weekOpts=weeksInMonth.map(w=>`<option value="${w}"${w===histWeek?' selected':''}>${fmtWeek(w)}</option>`).join('');
+    weekSel=`<select class="hist-filter-sel" onchange="setHistWeek(this.value)"><option value="">All weeks</option>${weekOpts}</select>`;
+  }
+
+  // Filter visible weeks
+  let visibleWeeks=allWeeks;
+  if(histWeek) visibleWeeks=allWeeks.filter(w=>w===histWeek);
+  else if(histMonth) visibleWeeks=allWeeks.filter(w=>w.startsWith(histMonth));
+
+  const weekCards=visibleWeeks.map(ws=>{
     const memberRows=members.map(m=>{
       const e=d.entries.filter(x=>x.memberId===m.id&&x.weekStart===ws).sort((a,b)=>b.date.localeCompare(a.date))[0];
       const chips=m.metrics.map(mt=>{
@@ -970,10 +991,12 @@ function renderHistory(){
     </div>`;
   }).join('');
 
+  const subtitle=histWeek?fmtWeek(histWeek):histMonth?fmtMonthLabel(histMonth):`${allWeeks.length} week${allWeeks.length!==1?'s':''} on record`;
   document.getElementById('view').innerHTML=`
     <div class="sec-hdr">
-      <div class="sec-hdr-text"><h2>History</h2><p>${weeks.length} week${weeks.length!==1?'s':''} on record</p></div>
+      <div class="sec-hdr-text"><h2>History</h2><p>${subtitle}</p></div>
       <div style="display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap">
+        ${monthSel}${weekSel}
         ${toggleHTML}
         <button class="btn btn-primary" onclick="openAddWeekModal()">+ Add Past Week</button>
         <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
@@ -1139,7 +1162,11 @@ function saveNewWeek(){
 
 // ── HISTORY CHARTS ─────────────────────────────────────────────────
 let histMode='table';
+let histMonth='';
+let histWeek='';
 function setHistMode(m){ histMode=m; renderHistory(); }
+function setHistMonth(m){ histMonth=m; histWeek=''; renderHistory(); }
+function setHistWeek(w){ histWeek=w; renderHistory(); }
 
 function renderHistoryCharts(){
   const d=DB.get(), members=activeMembers();
