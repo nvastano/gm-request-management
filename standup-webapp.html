@@ -213,9 +213,10 @@ tbody tr:hover{background:var(--bg)}
 /* ── RESPONSIVE ── */
 @media(max-width:640px){
   .hdr{padding:0 14px}
-  .nav-btn{padding:7px 10px;font-size:.76rem}
+  .nav{display:none}
+  .hdr-week{display:none}
   .hdr-title{display:none}
-  .page{padding:20px 14px}
+  .page{padding:20px 14px 90px}
   .standup-card{padding:24px 18px}
 }
 @media(prefers-reduced-motion:reduce){
@@ -244,6 +245,14 @@ tbody tr:hover{background:var(--bg)}
 .hist-note-text{font-size:.76rem;color:var(--muted);margin-top:7px;font-style:italic;line-height:1.5;padding-left:1px}
 .hist-filter-sel{padding:6px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;appearance:auto;height:34px}
 .hist-filter-sel:focus{outline:none;border-color:var(--accent)}
+/* ── MOBILE BOTTOM TAB BAR ── */
+.mobile-nav{display:none}
+@media(max-width:640px){
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--header);border-top:1px solid rgba(255,255,255,.1);z-index:60;padding-bottom:env(safe-area-inset-bottom,0px);padding-bottom:max(env(safe-area-inset-bottom),0px)}
+  .mobile-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:9px 4px 8px;border:none;background:transparent;color:rgba(255,255,255,.45);font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
+  .mobile-nav-btn.active{color:var(--accent)}
+  .mobile-nav-btn svg{width:22px;height:22px;flex-shrink:0}
+}
 </style>
 </head>
 <body>
@@ -289,6 +298,29 @@ tbody tr:hover{background:var(--bg)}
   <main class="page" id="view"></main>
 </div>
 <div class="toast" id="toast"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-btn active" data-view="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dash
+  </button>
+  <button class="mobile-nav-btn" data-view="standup">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+    Standup
+  </button>
+  <button class="mobile-nav-btn" data-view="goals">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    Goals
+  </button>
+  <button class="mobile-nav-btn" data-view="team">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Team
+  </button>
+  <button class="mobile-nav-btn" data-view="history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    History
+  </button>
+</nav>
 
 <div id="loading" style="display:flex;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:12px">
   <svg width="48" height="36" viewBox="0 0 260 192" fill="none"><defs><linearGradient id="rsg2" x1="130" y1="32" x2="130" y2="182" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#F9A83C"/><stop offset="100%" stop-color="#DF6606"/></linearGradient></defs><path d="M -8,103 C 32,90 86,98 140,104 C 194,110 233,91 267,87 L 267,118 C 240,132 195,143 142,136 C 88,129 35,131 -8,143 Z" fill="#2B4D8C"/><path d="M 83,32 L 177,32 Q 184,32 184,39 L 184,121 Q 184,157 130,182 Q 76,157 76,121 L 76,39 Q 76,32 83,32 Z" fill="url(#rsg2)"/><text x="130" y="136" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="86" fill="white">R</text></svg>
@@ -537,9 +569,16 @@ document.getElementById('nav').addEventListener('click',e=>{
   go(btn.dataset.view);
 });
 
+document.getElementById('mobile-nav').addEventListener('click',e=>{
+  const btn=e.target.closest('.mobile-nav-btn');
+  if(!btn) return;
+  go(btn.dataset.view);
+});
+
 function go(v){
   view=v;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
   render();
 }
 function render(){
