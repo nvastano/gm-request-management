@@ -1302,7 +1302,7 @@ async function createTicketFromDraft() {
     const res = await fetch(CREATE_TICKET_WORKER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, requestor, issueType, imageBase64, imageFilename, imageMimeType })
+      body: JSON.stringify({ title, description, requestor, issueType, glCode, imageBase64, imageFilename, imageMimeType })
     });
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || 'Unknown error');
