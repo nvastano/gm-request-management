@@ -1153,6 +1153,10 @@ document.getElementById('retro-modal').addEventListener('click', function(e) {
           </div>
         </div>
       </div>
+      <div style="margin-bottom:14px">
+        <span class="ticket-create-label">GL Code</span>
+        <input type="text" id="ticket-gl-code" value="420 Trusted Shared Services" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:13px;padding:8px 10px;border-radius:3px;box-sizing:border-box;margin-top:4px">
+      </div>
       <div class="ticket-attach-row">
         <span class="ticket-create-label">Attachment (optional)</span>
         <label class="ticket-attach-label" id="ticket-attach-label" for="ticket-image-input">
@@ -1268,7 +1272,9 @@ function clearTicketImage() {
 
 async function createTicketFromDraft() {
   const title       = document.getElementById('ticket-title-text').textContent.trim();
-  const description = document.getElementById('ticket-desc-text').textContent.trim();
+  const glCode      = document.getElementById('ticket-gl-code').value.trim();
+  const baseDesc    = document.getElementById('ticket-desc-text').textContent.trim();
+  const description = baseDesc + (glCode ? `\n\n---\n\nGL Code: ${glCode}` : '');
   const requestor   = document.getElementById('ticket-requestor').value.trim();
   const issueType   = document.getElementById('ticket-issue-type').value;
   const btn         = document.getElementById('ticket-create-btn');
