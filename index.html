@@ -1273,8 +1273,7 @@ function clearTicketImage() {
 async function createTicketFromDraft() {
   const title       = document.getElementById('ticket-title-text').textContent.trim();
   const glCode      = document.getElementById('ticket-gl-code').value.trim();
-  const baseDesc    = document.getElementById('ticket-desc-text').textContent.trim();
-  const description = baseDesc + (glCode ? `\n\n---\n\nGL Code: ${glCode}` : '');
+  const description = document.getElementById('ticket-desc-text').textContent.trim();
   const requestor   = document.getElementById('ticket-requestor').value.trim();
   const issueType   = document.getElementById('ticket-issue-type').value;
   const btn         = document.getElementById('ticket-create-btn');
