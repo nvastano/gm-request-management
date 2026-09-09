@@ -329,12 +329,6 @@
           "visible": true,
           "role": "SDR",
           "isLeader": false
-        },
-        {
-          "name": "Zach Schoenberger",
-          "visible": true,
-          "role": "SDR",
-          "isLeader": false
         }
       ]
     },
