@@ -136,6 +136,13 @@
           "role": "AD",
           "emailOverride": "",
           "isLeader": false
+        },
+        {
+          "name": "Jordan Farley",
+          "visible": true,
+          "role": "Leader",
+          "emailOverride": "",
+          "isLeader": false
         }
       ]
     },
@@ -483,6 +490,13 @@
           "visible": true,
           "role": "Coach",
           "isLeader": false
+        },
+        {
+          "name": "Brian Ward",
+          "visible": true,
+          "role": "Coach",
+          "emailOverride": "",
+          "isLeader": false
         }
       ]
     },
@@ -622,13 +636,6 @@
       "members": [
         {
           "name": "Jessica Ross",
-          "role": "Customer Success Agent",
-          "teamNum": "",
-          "isLeader": false,
-          "visible": true
-        },
-        {
-          "name": "Jessica Bissett",
           "role": "Customer Success Agent",
           "teamNum": "",
           "isLeader": false,
