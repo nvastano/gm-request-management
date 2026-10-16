@@ -72,6 +72,11 @@ body::before{
 .squad-card:hover .squad-monkey-overlay{opacity:1;}
 .squad-photo-wrap{position:relative;overflow:hidden}
 .squad-countdown{position:absolute;top:8px;right:8px;background:rgba(17,17,17,0.85);border:1px solid var(--orange);border-radius:4px;padding:4px 8px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--orange);letter-spacing:0.02em;white-space:nowrap;backdrop-filter:blur(2px)}
+.baby-name-guess{margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
+.baby-name-btn{width:100%;background:var(--orange);color:#0f172a;border:none;border-radius:6px;padding:8px 10px;font-family:var(--display);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.15s}
+.baby-name-btn:hover{background:var(--orange-dim);transform:translateY(-1px)}
+.baby-name-result{margin-top:8px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--text-dim);min-height:16px}
+.baby-name-result.revealed{color:var(--yellow);font-weight:700;font-size:14px}
 
 /* Editable fields */
 [contenteditable]{outline:none;border-radius:3px;transition:background 0.15s}
@@ -481,6 +486,10 @@ footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--mute
           <div class="squad-dates">
             <div class="squad-date-row"><span class="squad-date-label">🎂 Due Date</span><span class="squad-date-val" id="baby-bday">Feb 9, 2027</span></div>
             <div class="squad-date-row"><span class="squad-date-label">🎀 It's a</span><span class="squad-date-val">Girl!</span></div>
+          </div>
+          <div class="baby-name-guess">
+            <button class="baby-name-btn" onclick="guessBabyName()">🎲 Guess Her Name</button>
+            <div class="baby-name-result" id="baby-name-result">Starts with "S" · 2 syllables</div>
           </div>
         </div>
       </div>
@@ -1391,6 +1400,47 @@ function copyToClipboard(id, btn) {
 document.getElementById('ticket-modal').addEventListener('click', function(e) {
   if (e.target === this) closeTicketModal();
 });
+
+// ── Baby name guessing game ──────────────────────────────────
+const BABY_NAMES = [
+  "Saanvi","Sabina","Sabrina","Sacha","Sadie","Saffron","Sage","Sahara",
+  "Saige","Salena","Sally","Salma","Samantha","Samara","Samira","Sana",
+  "Sandra","Sandrine","Saniya","Sanne","Saoirse","Sapphire","Sarah","Saraid",
+  "Sariah","Sarina","Sarita","Sasha","Saskia","Savannah","Scarlett","Scout",
+  "Season","Seema","Selah","Selena","Selma","Senna","Seraphina","Serena",
+  "Serenity","Shaina","Shania","Shanti","Shari","Sharon","Shauna","Shawna",
+  "Shay","Shayla","Sheila","Shelby","Shelley","Sherry","Shiloh","Shira",
+  "Shirley","Shyla","Sian","Sibyl","Sidney","Sierra","Signe","Sigourney",
+  "Silvia","Simone","Sinead","Siobhan","Sissel","Sita","Skye","Skylar",
+  "Sloane","Snow","Sofia","Soleil","Solenne","Solveig","Somer","Sonia",
+  "Sonja","Sonora","Sophie","Soraya","Sorrel","Spencer","Stacia","Stacy",
+  "Star","Starla","Stella","Stephanie","Sterling","Stevie","Stina","Storm",
+  "Summer","Sunniva","Sunny","Sunshine","Susan","Susanna","Suzanne","Suzette",
+  "Svea","Sybil","Sydney","Sylvia","Sylvie","Symone","Sachi","Sachiko",
+  "Saeko","Safiya","Sahana","Sahira","Sakina","Sakura","Salonee","Salwa",
+  "Samiya","Samiyah","Samreen","Sanaa","Sanaya","Sanjana","Sanvi","Sarai",
+  "Sarahi","Sarika","Sarisha","Satya","Sayuri","Selvi","Senara","Senga",
+  "Seraphine","Shaelyn","Shahira","Shailene","Shakira","Shamira","Shanaya","Shanelle",
+  "Shanique","Sharai","Sharleen","Shaylee","Sheena","Shireen","Shivani","Shoshana",
+  "Sidra","Signy","Sila","Silje","Sima","Simran","Sindy","Sirena",
+  "Sirkka","Sisi","Sitara","Soline","Solomiya","Soma","Sonal","Sonika",
+  "Sora","Sorcha","Sosie","Sulia","Sumaya","Sumayyah","Sunita","Suri",
+  "Suzu","Svetlana","Sydni","Syeda","Sylvana","Seraphita","Shasta","Sheridan",
+  "Shona","Shiori","Shula","Samanthe","Saira","Salimah","Samaya","Sameeha",
+  "Sandhya","Saphira","Sariyah","Savina","Sedona","Senaida","Seonaid","Serilda",
+];
+let lastBabyName = null;
+function guessBabyName(){
+  const el = document.getElementById('baby-name-result');
+  if (!el) return;
+  let pick;
+  do {
+    pick = BABY_NAMES[Math.floor(Math.random() * BABY_NAMES.length)];
+  } while (pick === lastBabyName && BABY_NAMES.length > 1);
+  lastBabyName = pick;
+  el.textContent = pick + '?';
+  el.classList.add('revealed');
+}
 
 // ── Baby countdown ─────────────────────────────────────────
 (function(){
