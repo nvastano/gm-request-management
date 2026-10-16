@@ -336,6 +336,13 @@
           "visible": true,
           "role": "SDR",
           "isLeader": false
+        },
+        {
+          "name": "Jackson Feldbauer",
+          "visible": true,
+          "role": "MRR",
+          "emailOverride": "",
+          "isLeader": false
         }
       ]
     },
