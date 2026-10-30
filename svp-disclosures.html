@@ -100,6 +100,7 @@ td.name-cell a{color:var(--text);text-decoration:none;font-weight:500}
 td.name-cell a:hover{color:var(--orange)}
 td.firm-cell{color:var(--text-dim);font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
 .crd-sub{font-size:11px;color:var(--muted);font-family:var(--mono);display:block;margin-top:2px}
+.firm-change-note{font-size:11px;color:#c77dff;display:block;margin-top:2px}
 td.state-cell{font-family:var(--mono);font-size:12px;color:var(--text-dim);text-align:center}
 td.count-cell{font-family:var(--mono);font-size:14px;text-align:center}
 
@@ -598,8 +599,9 @@ function renderTable(rows) {
   rows.forEach(p => {
     const apUrl = p.apId ? `https://app.advizorpro.com/view/${p.apId}` : `https://app.advizorpro.com/advisors?q=${p.crd}`;
     const hasDisc = p.disclosures.length > 0;
+    const fc = firmChangedByCRD.get(p.crd);
     html += `<tr id="row-${p.crd}">`;
-    html += `<td class="name-cell"><a href="${apUrl}" target="_blank" rel="noopener">${p.name}</a></td>`;
+    html += `<td class="name-cell"><a href="${apUrl}" target="_blank" rel="noopener">${p.name}</a>${fc ? `<span class="firm-change-note" title="Firm changed from ${fc.previousFirm} to ${fc.currentFirm}">⇄ was: ${fc.previousFirm}</span>` : ''}</td>`;
     html += `<td class="state-cell">${p.crd}</td>`;
     html += `<td class="firm-cell" title="${p.bd||'—'}">${p.bd ? `${p.bd}${p.bdCrd ? `<span class='crd-sub'>${p.bdCrd}</span>` : ''}` : '<span style="color:var(--muted)">—</span>'}</td>`;
     html += `<td class="firm-cell" title="${p.ria||'—'}">${p.ria ? `${p.ria}${p.riaCrd ? `<span class='crd-sub'>${p.riaCrd}</span>` : ''}` : '<span style="color:var(--muted)">—</span>'}</td>`;
@@ -900,6 +902,7 @@ const FIRM_CHANGES = [
   }
 ];
 const firmChangedCRDs = new Set(FIRM_CHANGES.map(c => c.crd));
+const firmChangedByCRD = new Map(FIRM_CHANGES.map(c => [c.crd, c]));
 
 // ── EXPORT APPROVALS ──────────────────────────────────────────────────
 function exportApprovals() {
