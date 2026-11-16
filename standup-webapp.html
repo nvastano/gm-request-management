@@ -245,6 +245,20 @@ tbody tr:hover{background:var(--bg)}
 .hist-note-text{font-size:.76rem;color:var(--muted);margin-top:7px;font-style:italic;line-height:1.5;padding-left:1px}
 .hist-filter-sel{padding:6px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;appearance:auto;height:34px}
 .hist-filter-sel:focus{outline:none;border-color:var(--accent)}
+/* ── AGENDA ── */
+.agenda-panel{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:20px}
+.agenda-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.agenda-title{font-size:.82rem;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px}
+.agenda-items{list-style:none;display:flex;flex-direction:column;gap:7px}
+.agenda-item{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:9px;padding:9px 12px}
+.agenda-item-text{flex:1;font-size:.88rem;line-height:1.4}
+.agenda-item-text[contenteditable="true"]{outline:none;border-bottom:1.5px solid var(--accent);padding-bottom:1px;background:transparent}
+.agenda-rm{background:transparent;border:none;color:var(--muted);font-size:1rem;line-height:1;padding:0 2px;opacity:.5;transition:opacity .15s;flex-shrink:0}
+.agenda-rm:hover{opacity:1;color:var(--danger)}
+.agenda-add-row{display:flex;gap:8px;margin-top:10px}
+.agenda-input{flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;background:var(--bg);color:var(--text)}
+.agenda-input:focus{outline:none;border-color:var(--accent)}
+.agenda-empty{font-size:.82rem;color:var(--muted);font-style:italic;padding:4px 0}
 /* ── MOBILE BOTTOM TAB BAR ── */
 .mobile-nav{display:none}
 @media(max-width:640px){
@@ -450,7 +464,8 @@ const DB = {
       const seed={
         members: JSON.parse(JSON.stringify(DEFAULT_MEMBERS)),
         weeklyGoals: JSON.parse(JSON.stringify(SEED_WEEKLY_GOALS)),
-        entries: JSON.parse(JSON.stringify(SEED_ENTRIES))
+        entries: JSON.parse(JSON.stringify(SEED_ENTRIES)),
+        agendaNotes: {}
       };
       _cache = seed;
       await _sb.from('standup_data').upsert({id:1, data:seed});
@@ -479,6 +494,7 @@ const DB = {
         });
       }
     });
+    if(!_cache.agendaNotes){ _cache.agendaNotes={}; patched=true; }
     if(patched) this.save(_cache);
   },
 
@@ -585,6 +601,45 @@ function render(){
   ({dashboard:renderDash,standup:renderStandup,goals:renderGoals,team:renderTeam,history:renderHistory}[view]||renderDash)();
 }
 
+// ── AGENDA HELPERS ─────────────────────────────────────────────────
+function todayKey(){
+  const now=new Date();
+  return now.toISOString().slice(0,10); // "2026-11-16"
+}
+
+function getAgendaItems(){
+  const d=DB.get();
+  if(!d) return [];
+  return (d.agendaNotes||{})[todayKey()] || [];
+}
+
+function addAgendaItem(){
+  const inp=document.getElementById('agenda-new-input');
+  const text=inp?.value?.trim();
+  if(!text) return;
+  const d=DB.get();
+  if(!d.agendaNotes) d.agendaNotes={};
+  const key=todayKey();
+  if(!d.agendaNotes[key]) d.agendaNotes[key]=[];
+  d.agendaNotes[key].push(text);
+  DB.save(d);
+  inp.value='';
+  renderDash();
+}
+
+function removeAgendaItem(idx){
+  const d=DB.get();
+  const key=todayKey();
+  if(!d.agendaNotes?.[key]) return;
+  d.agendaNotes[key].splice(idx,1);
+  DB.save(d);
+  renderDash();
+}
+
+function agendaInputKeydown(e){
+  if(e.key==='Enter'){ e.preventDefault(); addAgendaItem(); }
+}
+
 // ── DASHBOARD ──────────────────────────────────────────────────────
 function renderDash(){
   const ws=curWS(), members=activeMembers();
@@ -635,6 +690,27 @@ function renderDash(){
     <span>⚠️</span><span>No goals set for this week. <a href="#" onclick="go('goals');return false" style="color:#b87a00;font-weight:700;text-decoration:underline">Set them now →</a></span>
   </div>`:'';
 
+  const agendaItems=getAgendaItems();
+  const agendaListHTML=agendaItems.length
+    ? agendaItems.map((item,i)=>`
+        <li class="agenda-item">
+          <span class="agenda-item-text">${item.replace(/</g,'&lt;')}</span>
+          <button class="agenda-rm" onclick="removeAgendaItem(${i})" title="Remove">✕</button>
+        </li>`).join('')
+    : `<li class="agenda-empty">No items yet — add something to cover today.</li>`;
+
+  const agendaPanel=`
+    <div class="agenda-panel">
+      <div class="agenda-hdr">
+        <span class="agenda-title">📋 Today's Standup Agenda</span>
+      </div>
+      <ul class="agenda-items">${agendaListHTML}</ul>
+      <div class="agenda-add-row">
+        <input id="agenda-new-input" class="agenda-input" type="text" placeholder="Add an item to cover…" onkeydown="agendaInputKeydown(event)" maxlength="200">
+        <button class="btn btn-primary btn-sm" onclick="addAgendaItem()">+ Add</button>
+      </div>
+    </div>`;
+
   document.getElementById('view').innerHTML=`
     <div class="sec-hdr">
       <div class="sec-hdr-text"><h2>Weekly Dashboard</h2><p>${fmtWeek(ws)}</p></div>
@@ -645,6 +721,7 @@ function renderDash(){
       </div>
     </div>
     ${noBanner}
+    ${agendaPanel}
     <div class="member-grid">${cards||'<p style="color:var(--muted)">No active team members. Add some in the Team tab.</p>'}</div>
   `;
 }
