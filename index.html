@@ -588,7 +588,6 @@ const STANDUPS = {
   ],
   Wednesday: [
     {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only',vertical:'protections',type:'sales'},
-    {name:'All Coaching',time:'9:30 – 10:00 AM',loc:'Free Spirit (A632)',who:'All Coaching',vertical:'all',type:'coaching'},
     {name:'SmartVestor Sales',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only',vertical:'smartvestor',type:'sales'},
   ],
   Thursday: [
@@ -596,6 +595,7 @@ const STANDUPS = {
     {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only',vertical:'protections',type:'sales'},
     {name:'Real Estate Coaching',time:'9:30 – 10:00 AM',loc:'RE Coach Area (near Spend A532)',who:'RE Coaches Only',vertical:'re',type:'coaching'},
     {name:'SmartVestor Sales',time:'9:30 – 10:00 AM',loc:'Grit (A538)',who:'SmartVestor Sales Only',vertical:'smartvestor',type:'sales'},
+    {name:'Monthly Trusted Coaching Lunch',time:'12:00 – 1:00 PM',loc:'TBD',who:'All Coaching',vertical:'all',type:'coaching',note:'Once per month'},
   ],
   Friday: [
     {name:'Protections Sales',time:'9:30 – 10:00 AM',loc:'Protections Desk Area (Save A533)',who:'Protections Sales Only',vertical:'protections',type:'sales'},
@@ -638,6 +638,7 @@ function renderStandups() {
           <div class="standup-meta-row"><span>⏰</span>${s.time}</div>
           <div class="standup-meta-row"><span>📍</span>${s.loc}</div>
           <div class="standup-meta-row"><span>👥</span>${s.who}</div>
+          ${s.note ? `<div class="standup-meta-row" style="color:var(--orange);margin-top:4px"><span>📅</span>${s.note}</div>` : ''}
         </div>`).join('')
       : '<div class="standup-empty">No standups</div>';
     return `<div class="standup-col">
